@@ -24,12 +24,21 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["admin", "teacher", "student", "parent"],
-      default: "student",
+      required: true,
     },
 
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    mustChangePassword: {
+      type: Boolean,
+      default: true,
+    },
+
+    lastLogin: {
+      type: Date,
     },
   },
   {
@@ -37,6 +46,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
-
-export default User;
+export default mongoose.model("User", userSchema);
