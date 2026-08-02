@@ -19,6 +19,12 @@ const admissionApplicationSchema = new mongoose.Schema(
       trim: true,
     },
 
+    admissionNumber: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
+
     gender: {
       type: String,
       enum: ["Male", "Female"],
@@ -29,7 +35,8 @@ const admissionApplicationSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-        email: {
+    
+    email: {
       type: String,
       required: true,
       lowercase: true,
@@ -47,7 +54,8 @@ const admissionApplicationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-        parentName: {
+
+    parentName: {
       type: String,
       required: true,
       trim: true,
@@ -69,7 +77,8 @@ const admissionApplicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-        currentLevel: {
+
+    currentLevel: {
       type: String,
       required: true,
     },
@@ -78,7 +87,8 @@ const admissionApplicationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-        status: {
+
+    status: {
       type: String,
       enum: [
         "Pending",
@@ -92,11 +102,12 @@ const admissionApplicationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-        passportPhoto: {
+
+    passportPhoto: {
       type: String,
     },
 
-      },
+  },
   {
     timestamps: true,
   }

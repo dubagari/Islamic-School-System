@@ -1,8 +1,10 @@
 import express from "express";
-import { createAdmissionApplication } from "../controllers/admissionController.js";
+import {submitAdmissionApplication, getAdmissions} from "../controllers/admissionController.js";
 
 const router = express.Router();
 
-router.post("/", createAdmissionApplication);
+router.post("/", submitAdmissionApplication);
+
+router.get("/", getAdmissions);
 
 export default router;

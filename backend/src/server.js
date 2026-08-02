@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/api/admissions", admissionRoutes);
+app.use("/api/v1/admissions", admissionRoutes);
 
 
 // Server
