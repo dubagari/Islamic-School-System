@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import dns from "node:dns";
 
 import admissionRoutes from "./routes/admissionRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dotenv.config();
 connectDB();
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/v1/admissions", admissionRoutes);
+app.use("/api/v1/students", studentRoutes);
 
 
 // Server

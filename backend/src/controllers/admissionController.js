@@ -1,4 +1,4 @@
-import {submitAdmissionApplicationService, getAdmissionsService} from "../services/admissionService.js";
+import {submitAdmissionApplicationService, getAdmissionsService, approveAdmissionApplicationService} from "../services/admissionService.js";
 
 
 export const submitAdmissionApplication = async (req, res) => {
@@ -35,5 +35,27 @@ export const getAdmissions = async (req, res) => {
             success: false,
             message: error.message,
         });
+    }
+};
+
+export const approveAdmissionApplication = async (req, res) => {
+    try {
+        const { admissionId } = req.params;
+
+        const application = await approveAdmissionApplicationService(admissionId);
+
+        res.status(200).json({
+            success: true,
+            message: "Admission application approved successfully.",
+            data: application,
+        });
+
+    } catch (error) {
+
+        res.status(400).json({
+            success: false,
+            message: error.message,
+        });
+
     }
 };

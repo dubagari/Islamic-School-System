@@ -93,7 +93,8 @@ const admissionApplicationSchema = new mongoose.Schema(
       enum: [
         "Pending",
         "Approved",
-        "Rejected"
+        "Rejected",
+        "Registered"
       ],
       default: "Pending",
     },

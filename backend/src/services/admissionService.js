@@ -83,3 +83,26 @@ export const getAdmissionsService = async (query) => {
         },
     };
 };
+
+
+export const approveAdmissionApplicationService = async (admissionId) => {
+    const application = await AdmissionApplication.findById(admissionId);
+
+    if (!application) {
+        throw new Error("Admission application not found.");
+    }
+
+    if (application.status === "Approved") {
+        throw new Error("Admission application has already been approved.");
+    }
+
+    if (application.status === "Registered") {
+        throw new Error("Student has already been registered.");
+    }
+
+    application.status = "Approved";
+
+    await application.save();
+
+    return application;
+};
