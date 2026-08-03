@@ -12,6 +12,7 @@ import studentRoutes from "./routes/studentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
+import termRoutes from "./routes/termRoutes.js";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dotenv.config();
@@ -37,6 +38,7 @@ app.use("/api/v1/students", studentRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/password", passwordRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
+app.use("/api/v1/terms", termRoutes);
 
 // Server
 const PORT = process.env.PORT;
