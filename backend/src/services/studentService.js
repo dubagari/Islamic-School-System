@@ -1,6 +1,7 @@
 import AdmissionApplication from "../models/AdmissionApplication.js";
 import Student from "../models/Student.js";
 import { generateStudentRegistrationNumber } from "../utils/generateStudentRegistrationNumber.js";
+import { createStudentAccount } from "./userService.js";
 
 export const confirmStudentPaymentService = async (admissionId) => {
     const application = await AdmissionApplication.findById(admissionId);
@@ -21,6 +22,8 @@ export const confirmStudentPaymentService = async (admissionId) => {
     if (existingStudent) {
             throw new Error("Student has already been registered.");
     }
+    
+
     
     // Generate registration number
     const registrationNumber = await generateStudentRegistrationNumber();
@@ -52,10 +55,17 @@ export const confirmStudentPaymentService = async (admissionId) => {
     status: "Active",
     });
 
+
+const account = await createStudentAccount(student);
+
     // Update application status to Registered
     application.paymentStatus = "Paid";
     application.status = "Registered";
     await application.save();
 
-    return student;
+   return {
+  student,
+  login: account.login,
+}
+
 };  

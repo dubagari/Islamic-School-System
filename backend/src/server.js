@@ -4,8 +4,15 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import dns from "node:dns";
 
+
+
+
 import admissionRoutes from "./routes/admissionRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import passwordRoutes from "./routes/passwordRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
+
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dotenv.config();
 connectDB();
@@ -27,7 +34,9 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/v1/admissions", admissionRoutes);
 app.use("/api/v1/students", studentRoutes);
-
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/password", passwordRoutes);
+app.use("/api/v1/sessions", sessionRoutes);
 
 // Server
 const PORT = process.env.PORT;
