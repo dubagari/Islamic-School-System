@@ -1,35 +1,37 @@
+import mongoose from "mongoose";
 import AcademicClass from "../models/AcademicClass.js";
 import AcademicSection from "../models/AcademicSection.js";
 
-export const createAcademicClassService = async (classData) => {
+import { generateAcademicClassCode } from "../utils/generateAcademicClassCode.js";
+import { formatTitle } from "../utils/formatTitle.js";
 
-  // Check if the academic section exists
+export const createAcademicClassService = async (classData) => {
+  // Validate section ObjectId
+  if (!mongoose.Types.ObjectId.isValid(classData.section)) {
+    throw new Error("Invalid academic section ID.");
+  }
+
+  // Check section exists
   const section = await AcademicSection.findById(classData.section);
 
   if (!section) {
     throw new Error("Academic section not found.");
   }
 
-  // Check if class code already exists
-  const existingCode = await AcademicClass.findOne({
-    code: classData.code.toUpperCase(),
-  });
+  // Format class name
+  const formattedName = formatTitle(classData.name);
 
-  if (existingCode) {
-    throw new Error("Academic class code already exists.");
-  }
-
-  // Check if class name already exists in this section
+  // Check duplicate class name in same section
   const existingName = await AcademicClass.findOne({
     section: classData.section,
-    name: classData.name,
+    name: formattedName,
   });
 
   if (existingName) {
     throw new Error("Academic class already exists in this section.");
   }
 
-  // Check if level already exists in this section
+  // Check duplicate level
   const existingLevel = await AcademicClass.findOne({
     section: classData.section,
     level: classData.level,
@@ -39,23 +41,62 @@ export const createAcademicClassService = async (classData) => {
     throw new Error("Level already exists in this academic section.");
   }
 
-  // Check display order
+  // Capacity validation
+  if (classData.capacity <= 0) {
+    throw new Error("Capacity must be greater than zero.");
+  }
+
+  // Display Order
+  const displayOrder =
+    classData.displayOrder ?? classData.level;
+
   const existingDisplayOrder = await AcademicClass.findOne({
     section: classData.section,
-    displayOrder: classData.displayOrder,
+    displayOrder,
   });
 
   if (existingDisplayOrder) {
     throw new Error("Display order already exists in this academic section.");
   }
 
-  // Validate capacity
-  if (classData.capacity <= 0) {
-    throw new Error("Capacity must be greater than zero.");
+  // Generate or use custom code
+  let classCode;
+
+  if (classData.code) {
+    classCode = classData.code.trim().toUpperCase();
+  } else {
+    classCode = await generateAcademicClassCode(
+      section.code,
+      classData.level,
+      classData.section
+    );
   }
 
-  return await AcademicClass.create({
-    ...classData,
-    code: classData.code.toUpperCase(),
+  // Check code uniqueness
+  const existingCode = await AcademicClass.findOne({
+    code: classCode,
   });
+
+  if (existingCode) {
+    throw new Error("Academic class code already exists.");
+  }
+
+  // Create class
+  return await AcademicClass.create({
+    section: classData.section,
+    name: formattedName,
+    code: classCode,
+    level: classData.level,
+    capacity: classData.capacity,
+    description: classData.description || "",
+    displayOrder,
+    isActive: true,
+  });
+};
+
+
+export const getAcademicClassesService = async () => {
+    return await AcademicClass.find()
+        .populate("section", "name code")
+        .sort({ displayOrder: 1 });
 };
