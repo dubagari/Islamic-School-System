@@ -13,7 +13,7 @@ import authRoutes from "./routes/authRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import termRoutes from "./routes/termRoutes.js";
-import classRoutes from "./routes/classRoutes.js";
+import academicClassRoutes from "./routes/academicClassRoutes.js";
 import academicSectionRoutes from "./routes/academicSectionRoutes.js";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
@@ -41,7 +41,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/password", passwordRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/terms", termRoutes);
-app.use("/api/v1/classes", classRoutes);
+app.use("/api/v1/academic-classes", academicClassRoutes);
 app.use("/api/v1/academic-sections", academicSectionRoutes);
 // Server
 const PORT = process.env.PORT;
