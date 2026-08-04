@@ -15,6 +15,7 @@ import sessionRoutes from "./routes/sessionRoutes.js";
 import termRoutes from "./routes/termRoutes.js";
 import academicClassRoutes from "./routes/academicClassRoutes.js";
 import academicSectionRoutes from "./routes/academicSectionRoutes.js";
+import subjectRoutes from "./routes/subjectRoutes.js";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/terms", termRoutes);
 app.use("/api/v1/academic-classes", academicClassRoutes);
 app.use("/api/v1/academic-sections", academicSectionRoutes);
+app.use("/api/v1/subjects", subjectRoutes);
 // Server
 const PORT = process.env.PORT;
 
