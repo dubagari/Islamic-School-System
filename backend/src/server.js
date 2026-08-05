@@ -17,6 +17,7 @@ import academicClassRoutes from "./routes/academicClassRoutes.js";
 import academicSectionRoutes from "./routes/academicSectionRoutes.js";
 import subjectRoutes from "./routes/subjectRoutes.js";
 import classSubjectRoutes from "./routes/classSubjectRoutes.js";
+import teacherRoutes from "./routes/teacherRoutes.js";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dotenv.config();
@@ -47,7 +48,7 @@ app.use("/api/v1/academic-classes", academicClassRoutes);
 app.use("/api/v1/academic-sections", academicSectionRoutes);
 app.use("/api/v1/subjects", subjectRoutes);
 app.use("/api/v1/class-subjects", classSubjectRoutes);
-
+app.use("/api/v1/teachers", teacherRoutes);
 
 
 

@@ -10,7 +10,7 @@ export const generateNumber = async (counterName, prefix) => {
     }
   );
 
-  const year = new Date().getFullYear();
+const year = String(new Date().getFullYear()).slice(-2);
 
   const sequence = String(counter.value).padStart(5, "0");
 
