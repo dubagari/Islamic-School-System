@@ -180,3 +180,4 @@ export const updateClassSubjectService = async (id, data) => {
 
     return assignment;
 };
+

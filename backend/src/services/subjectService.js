@@ -84,3 +84,69 @@ export const createSubjectService = async (subjectData) => {
     isActive: true,
 });
 };
+
+
+export const getAllClassSubjectsService = async () => {
+    return await ClassSubject.find()
+        .populate("class", "name code level section")
+        .populate("subject", "name code level prefix")
+        .populate("session", "name")
+        .populate("term", "name")
+        .populate("teachers", "fullName email")
+        .sort({ createdAt: -1 });
+};
+
+
+export const getClassSubjectsByClassService = async (classId) => {
+
+    const assignments = await ClassSubject.find({
+        class: classId,
+    })
+        .populate("class", "name code level")
+        .populate("subject", "name code level prefix")
+        .populate("session", "name")
+        .populate("term", "name")
+        .populate("teachers", "fullName email")
+        .sort({
+            "subject.code": 1,
+        });
+
+    return assignments;
+};
+
+
+export const updateClassSubjectService = async (id, data) => {
+
+    const assignment = await ClassSubject.findById(id);
+
+    if (!assignment) {
+        throw new Error("Class subject assignment not found.");
+    }
+
+    Object.assign(assignment, data);
+
+    await assignment.save();
+
+    return await assignment.populate([
+        {
+            path: "class",
+            select: "name code level",
+        },
+        {
+            path: "subject",
+            select: "name code level prefix",
+        },
+        {
+            path: "session",
+            select: "name",
+        },
+        {
+            path: "term",
+            select: "name",
+        },
+        {
+            path: "teachers",
+            select: "fullName email",
+        },
+    ]);
+};
