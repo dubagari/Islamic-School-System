@@ -12,7 +12,7 @@ import studentRoutes from "./routes/studentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import academicSessionRoutes from "./routes/academicSessionRoutes.js";
-import termRoutes from "./routes/termRoutes.js";
+import academicTermRoutes from "./routes/academicTermRoutes.js";
 import academicClassRoutes from "./routes/academicClassRoutes.js";
 import academicSectionRoutes from "./routes/academicSectionRoutes.js";
 import subjectRoutes from "./routes/subjectRoutes.js";
@@ -43,13 +43,12 @@ app.use("/api/v1/students", studentRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/password", passwordRoutes);
 app.use("/api/v1/academic-sessions", academicSessionRoutes);
-app.use("/api/v1/terms", termRoutes);
+app.use("/api/v1/academic-terms", academicTermRoutes);
 app.use("/api/v1/academic-classes", academicClassRoutes);
 app.use("/api/v1/academic-sections", academicSectionRoutes);
 app.use("/api/v1/subjects", subjectRoutes);
 app.use("/api/v1/class-subjects", classSubjectRoutes);
 app.use("/api/v1/teachers", teacherRoutes);
-
 
 
 // Server

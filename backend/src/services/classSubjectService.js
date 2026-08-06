@@ -4,7 +4,7 @@ import AcademicClass from "../models/AcademicClass.js";
 import ClassSubject from "../models/ClassSubject.js";
 import Subject from "../models/Subject.js";
 import Session from "../models/AcademicSession.js";
-import Term from "../models/Term.js";
+import Term from "../models/AcademicTerm.js";
 
 export const assignSubjectsToClassService = async (data) => {
 
