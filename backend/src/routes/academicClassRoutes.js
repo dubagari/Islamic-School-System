@@ -1,11 +1,23 @@
 import express from "express";
-import { createAcademicClass, getAcademicClasses } from "../controllers/academicClassController.js";
+
+import {
+    createAcademicClassController,
+    getAllAcademicClassesController,
+    getAcademicClassByIdController,
+    updateAcademicClassController,
+    deleteAcademicClassController,
+} from "../controllers/academicClassController.js";
 
 const router = express.Router();
 
-router.post("/", createAcademicClass);
-router.get("/", getAcademicClasses);
+router.post("/", createAcademicClassController);
 
+router.get("/", getAllAcademicClassesController);
+
+router.get("/:id", getAcademicClassByIdController);
+
+router.put("/:id", updateAcademicClassController);
+
+router.delete("/:id", deleteAcademicClassController);
 
 export default router;
-

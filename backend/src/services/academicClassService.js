@@ -94,9 +94,117 @@ export const createAcademicClassService = async (classData) => {
   });
 };
 
+export const getAllAcademicClassesService = async () => {
+
+    return await AcademicClass.find()
+
+        .populate("section", "name code")
+
+        .sort({
+            section: 1,
+            displayOrder: 1,
+        });
+};
 
 export const getAcademicClassesService = async () => {
     return await AcademicClass.find()
         .populate("section", "name code")
         .sort({ displayOrder: 1 });
+};
+
+export const getAcademicClassByIdService = async (id) => {
+
+    const academicClass = await AcademicClass.findById(id)
+
+        .populate("section", "name code");
+
+    if (!academicClass) {
+        throw new Error("Academic class not found.");
+    }
+
+    return academicClass;
+};
+
+
+export const updateAcademicClassService = async (id, data) => {
+
+    const academicClass = await AcademicClass.findById(id);
+
+    if (!academicClass) {
+        throw new Error("Academic class not found.");
+    }
+
+    if (data.code) {
+
+        const existingCode = await AcademicClass.findOne({
+            code: data.code.toUpperCase(),
+            _id: { $ne: id },
+        });
+
+        if (existingCode) {
+            throw new Error("Academic class code already exists.");
+        }
+
+        data.code = data.code.toUpperCase();
+    }
+
+    if (data.name) {
+
+        const existingName = await AcademicClass.findOne({
+            section: academicClass.section,
+            name: data.name,
+            _id: { $ne: id },
+        });
+
+        if (existingName) {
+            throw new Error("Academic class already exists in this section.");
+        }
+    }
+
+    if (data.level) {
+
+        const existingLevel = await AcademicClass.findOne({
+            section: academicClass.section,
+            level: data.level,
+            _id: { $ne: id },
+        });
+
+        if (existingLevel) {
+            throw new Error("Level already exists in this section.");
+        }
+    }
+
+    if (data.displayOrder) {
+
+        const existingOrder = await AcademicClass.findOne({
+            section: academicClass.section,
+            displayOrder: data.displayOrder,
+            _id: { $ne: id },
+        });
+
+        if (existingOrder) {
+            throw new Error("Display order already exists in this section.");
+        }
+    }
+
+    Object.assign(academicClass, data);
+
+    await academicClass.save();
+
+    return academicClass;
+};
+
+export const deleteAcademicClassService = async (id) => {
+
+    const academicClass = await AcademicClass.findById(id);
+
+    if (!academicClass) {
+        throw new Error("Academic class not found.");
+    }
+
+    academicClass.isActive = false;
+
+    await academicClass.save();
+
+    return academicClass;
 };
