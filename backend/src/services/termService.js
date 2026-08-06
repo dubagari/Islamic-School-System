@@ -1,4 +1,4 @@
-import Session from "../models/Session.js";
+import AcademicSession from "../models/AcademicSession.js";
 import Term from "../models/Term.js";
 
 export const createTermService = async (termData) => {
@@ -12,7 +12,7 @@ export const createTermService = async (termData) => {
     }
 
     // Check if session exists
-    const session = await Session.findById(termData.session);
+    const session = await AcademicSession.findById(termData.session);
 
     if (!session) {
         throw new Error("Academic session not found.");
