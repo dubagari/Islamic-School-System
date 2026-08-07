@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
+import errorMiddleware from "./middleware/errorMiddleware.js";
+
 
 import authRoutes from "./routes/authRoutes.js";
-
-import errorMiddleware from "./middleware/errorMiddleware.js";
+import academicSectionRoutes from "./routes/academicSectionRoutes.js";
 
 
 const app = express();
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v2/auth", authRoutes);
+app.use("/api/v2/academic-sections", academicSectionRoutes);
 
 // ==========================================
 // Global Error Handler
