@@ -1,78 +1,162 @@
 import {
     createAcademicSessionService,
-    getAllAcademicSessionsService,
+    getAcademicSessionsService,
     getAcademicSessionByIdService,
     updateAcademicSessionService,
     deleteAcademicSessionService,
 } from "../services/academicSessionService.js";
 
-export const createAcademicSessionController = async (req, res, next) => {
-    try {
-        const session = await createAcademicSessionService(req.body);
+// ======================================================
+// Create Academic Session
+// ======================================================
 
-        res.status(201).json({
+export const createAcademicSessionController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSession =
+            await createAcademicSessionService(
+                req.body
+            );
+
+        return res.status(201).json({
             success: true,
-            message: "Academic session created successfully.",
-            data: session,
+            message:
+                "Academic session created successfully.",
+            data: academicSession,
         });
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const getAllAcademicSessionsController = async (req, res, next) => {
-    try {
-        const sessions = await getAllAcademicSessionsService();
+// ======================================================
+// Get All Academic Sessions
+// ======================================================
 
-        res.status(200).json({
+export const getAcademicSessionsController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSessions =
+            await getAcademicSessionsService();
+
+        return res.status(200).json({
             success: true,
-            data: sessions,
+            data: academicSessions,
         });
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const getAcademicSessionByIdController = async (req, res, next) => {
-    try {
-        const session = await getAcademicSessionByIdService(req.params.id);
+// ======================================================
+// Get Academic Session By ID
+// ======================================================
 
-        res.status(200).json({
+export const getAcademicSessionByIdController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSession =
+            await getAcademicSessionByIdService(
+                req.params.id
+            );
+
+        return res.status(200).json({
             success: true,
-            data: session,
+            data: academicSession,
         });
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const updateAcademicSessionController = async (req, res, next) => {
-    try {
-        const session = await updateAcademicSessionService(
-            req.params.id,
-            req.body
-        );
+// ======================================================
+// Update Academic Session
+// ======================================================
 
-        res.status(200).json({
+export const updateAcademicSessionController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSession =
+            await updateAcademicSessionService(
+                req.params.id,
+                req.body
+            );
+
+        return res.status(200).json({
             success: true,
-            message: "Academic session updated successfully.",
-            data: session,
+            message:
+                "Academic session updated successfully.",
+            data: academicSession,
         });
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const deleteAcademicSessionController = async (req, res, next) => {
-    try {
-        const session = await deleteAcademicSessionService(req.params.id);
+// ======================================================
+// Delete Academic Session
+// ======================================================
 
-        res.status(200).json({
+export const deleteAcademicSessionController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSession =
+            await deleteAcademicSessionService(
+                req.params.id
+            );
+
+        return res.status(200).json({
             success: true,
-            message: "Academic session deactivated successfully.",
-            data: session,
+            message:
+                "Academic session deleted successfully.",
+            data: academicSession,
         });
+
     } catch (error) {
+
         next(error);
+
     }
+
 };

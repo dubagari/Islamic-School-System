@@ -1,75 +1,199 @@
 import {
     createAcademicTermService,
-    getAllAcademicTermsService,
+    getAcademicTermsService,
     getAcademicTermByIdService,
     updateAcademicTermService,
     deleteAcademicTermService,
 } from "../services/academicTermService.js";
 
-export const createAcademicTermController = async (req, res, next) => {
-    try {
-        const term = await createAcademicTermService(req.body);
 
-        res.status(201).json({
+// ======================================================
+// Create Academic Term
+// ======================================================
+
+export const createAcademicTermController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicTerm =
+            await createAcademicTermService(
+                req.body
+            );
+
+
+        return res.status(201).json({
+
             success: true,
-            message: "Academic term created successfully.",
-            data: term,
+
+            message:
+                "Academic term created successfully.",
+
+            data: academicTerm,
+
         });
+
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const getAllAcademicTermsController = async (req, res, next) => {
-    try {
-        const terms = await getAllAcademicTermsService();
 
-        res.status(200).json({
+
+// ======================================================
+// Get All Academic Terms
+// ======================================================
+
+export const getAcademicTermsController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicTerms =
+            await getAcademicTermsService();
+
+
+        return res.status(200).json({
+
             success: true,
-            data: terms,
+
+            data: academicTerms,
+
         });
+
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const getAcademicTermByIdController = async (req, res, next) => {
-    try {
-        const term = await getAcademicTermByIdService(req.params.id);
 
-        res.status(200).json({
+
+// ======================================================
+// Get Academic Term By ID
+// ======================================================
+
+export const getAcademicTermByIdController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicTerm =
+            await getAcademicTermByIdService(
+                req.params.id
+            );
+
+
+        return res.status(200).json({
+
             success: true,
-            data: term,
+
+            data: academicTerm,
+
         });
+
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const updateAcademicTermController = async (req, res, next) => {
-    try {
-        const term = await updateAcademicTermService(req.params.id, req.body);
 
-        res.status(200).json({
+
+// ======================================================
+// Update Academic Term
+// ======================================================
+
+export const updateAcademicTermController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicTerm =
+            await updateAcademicTermService(
+                req.params.id,
+                req.body
+            );
+
+
+        return res.status(200).json({
+
             success: true,
-            message: "Academic term updated successfully.",
-            data: term,
+
+            message:
+                "Academic term updated successfully.",
+
+            data: academicTerm,
+
         });
+
+
     } catch (error) {
+
         next(error);
+
     }
+
 };
 
-export const deleteAcademicTermController = async (req, res, next) => {
-    try {
-        const term = await deleteAcademicTermService(req.params.id);
 
-        res.status(200).json({
+
+// ======================================================
+// Delete Academic Term
+// ======================================================
+
+export const deleteAcademicTermController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicTerm =
+            await deleteAcademicTermService(
+                req.params.id
+            );
+
+
+        return res.status(200).json({
+
             success: true,
-            message: "Academic term deactivated successfully.",
-            data: term,
+
+            message:
+                "Academic term deleted successfully.",
+
+            data: academicTerm,
+
         });
+
+
     } catch (error) {
+
         next(error);
+
     }
+
 };

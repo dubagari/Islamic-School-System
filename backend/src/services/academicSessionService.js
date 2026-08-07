@@ -1,108 +1,203 @@
 import AcademicSession from "../models/AcademicSession.js";
-import { generateAcademicSessionName } from "../utils/generateAcademicSessionName.js";
 
 
-export const createAcademicSessionService = async (data) => {
 
-    if (new Date(data.startDate) >= new Date(data.endDate)) {
-        throw new Error("End date must be after the start date.");
+const ensureAcademicSessionDoesNotOverlap = async (
+    startDate,
+    endDate,
+    excludeId = null
+) => {
+
+    const filter = {
+        startDate: {
+            $lte: endDate,
+        },
+        endDate: {
+            $gte: startDate,
+        },
+    };
+
+    if (excludeId) {
+        filter._id = {
+            $ne: excludeId,
+        };
     }
 
-    const sessionName = generateAcademicSessionName(
-        data.startDate,
-        data.endDate
-    );
-
-    const existingSession = await AcademicSession.findOne({
-        name: sessionName,
-    });
+    const existingSession =
+        await AcademicSession.findOne(filter);
 
     if (existingSession) {
-        throw new Error("Academic session already exists.");
-    }
-
-    if (data.isCurrent) {
-        await AcademicSession.updateMany(
-            {},
-            { isCurrent: false }
+        throw new Error(
+            "Academic session dates overlap with an existing session."
         );
     }
 
-    return await AcademicSession.create({
-        ...data,
-        name: sessionName,
-    });
 };
 
-export const getAllAcademicSessionsService = async () => {
+// ======================================================
+// Create Academic Session
+// ======================================================
 
-    return await AcademicSession.find()
+export const createAcademicSessionService = async (
+    data
+) => {
 
-        .sort({
-            startDate: -1,
+    const {
+        name,
+        startDate,
+        endDate,
+        isCurrent,
+    } = data;
+
+    const existingSession =
+        await AcademicSession.findOne({
+            name,
         });
 
-};
-
-export const getAcademicSessionByIdService = async (id) => {
-
-    const session = await AcademicSession.findById(id);
-
-    if (!session) {
-        throw new Error("Academic session not found.");
-    }
-
-    return session;
-};
-
-export const updateAcademicSessionService = async (id, data) => {
-
-    const session = await AcademicSession.findById(id);
-
-    if (!session) {
-        throw new Error("Academic session not found.");
-    }
-
-    if (data.startDate || data.endDate) {
-
-        const startDate = data.startDate || session.startDate;
-        const endDate = data.endDate || session.endDate;
-
-        if (new Date(startDate) >= new Date(endDate)) {
-            throw new Error("End date must be after the start date.");
-        }
-
-        data.name = generateAcademicSessionName(
-            startDate,
-            endDate
+    if (existingSession) {
+        throw new Error(
+            "Academic session already exists."
         );
     }
 
-    if (data.isCurrent) {
+    if (new Date(startDate) >= new Date(endDate)) {
+        throw new Error(
+            "End date must be after start date."
+        );
+    }
+
+    await ensureAcademicSessionDoesNotOverlap(
+    startDate,
+    endDate
+);
+    if (isCurrent) {
+
         await AcademicSession.updateMany(
             {},
-            { isCurrent: false }
+            {
+                isCurrent: false,
+            }
+        );
+
+    }
+
+    return await AcademicSession.create(data);
+
+};
+
+// ======================================================
+// Get All Academic Sessions
+// ======================================================
+
+export const getAcademicSessionsService =
+    async () => {
+
+        return await AcademicSession.find()
+            .sort({
+                startDate: -1,
+            });
+
+    };
+
+// ======================================================
+// Get Academic Session By ID
+// ======================================================
+
+export const getAcademicSessionByIdService =
+    async (id) => {
+
+        const academicSession =
+            await AcademicSession.findById(id);
+
+        if (!academicSession) {
+            throw new Error(
+                "Academic session not found."
+            );
+        }
+
+        return academicSession;
+
+    };
+
+// ======================================================
+// Update Academic Session
+// ======================================================
+
+export const updateAcademicSessionService = async (
+    id,
+    data
+) => {
+
+    const academicSession =
+        await AcademicSession.findById(id);
+
+    if (!academicSession) {
+        throw new Error(
+            "Academic session not found."
         );
     }
 
-    Object.assign(session, data);
+    const sessionStartDate =
+        data.startDate || academicSession.startDate;
 
-    await session.save();
+    const sessionEndDate =
+        data.endDate || academicSession.endDate;
 
-    return session;
-};
-
-export const deleteAcademicSessionService = async (id) => {
-
-    const session = await AcademicSession.findById(id);
-
-    if (!session) {
-        throw new Error("Academic session not found.");
+    if (
+        new Date(sessionStartDate) >=
+        new Date(sessionEndDate)
+    ) {
+        throw new Error(
+            "End date must be after start date."
+        );
     }
 
-    session.isActive = false;
+    await ensureAcademicSessionDoesNotOverlap(
+        sessionStartDate,
+        sessionEndDate,
+        id
+    );
 
-    await session.save();
+    if (data.isCurrent) {
 
-    return session;
+        await AcademicSession.updateMany(
+            {},
+            {
+                isCurrent: false,
+            }
+        );
+
+    }
+
+    Object.assign(
+        academicSession,
+        data
+    );
+
+    await academicSession.save();
+
+    return academicSession;
+
 };
+
+// ======================================================
+// Delete Academic Session
+// ======================================================
+
+export const deleteAcademicSessionService =
+    async (id) => {
+
+        const academicSession =
+            await AcademicSession.findById(id);
+
+        if (!academicSession) {
+            throw new Error(
+                "Academic session not found."
+            );
+        }
+
+        await academicSession.deleteOne();
+
+        return academicSession;
+
+    };

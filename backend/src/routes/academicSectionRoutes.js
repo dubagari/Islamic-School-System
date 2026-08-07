@@ -1,22 +1,32 @@
 import express from "express";
+
 import {
-    createAcademicSection,
-    getAllAcademicSectionsController,
+    createAcademicSectionController,
+    getAcademicSectionsController,
     getAcademicSectionByIdController,
     updateAcademicSectionController,
     deleteAcademicSectionController,
 } from "../controllers/academicSectionController.js";
 
+import {
+    protect,
+    authorize,
+} from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.post("/", createAcademicSection);
+// ======================================================
+// Academic Section Routes
+// ======================================================
 
-router.get("/", getAllAcademicSectionsController);
+router.post("/", protect, authorize("admin"), createAcademicSectionController);
 
-router.get("/:id", getAcademicSectionByIdController);
+router.get("/", protect, getAcademicSectionsController);
 
-router.put("/:id", updateAcademicSectionController);
+router.get("/:id", protect, getAcademicSectionByIdController);
 
-router.delete("/:id", deleteAcademicSectionController);
+router.patch("/:id", protect, authorize("admin"), updateAcademicSectionController);
+
+router.delete("/:id", protect, authorize("admin"), deleteAcademicSectionController);
 
 export default router;

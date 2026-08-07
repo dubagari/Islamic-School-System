@@ -2,22 +2,46 @@ import express from "express";
 
 import {
     createAcademicTermController,
-    getAllAcademicTermsController,
+    getAcademicTermsController,
     getAcademicTermByIdController,
     updateAcademicTermController,
     deleteAcademicTermController,
 } from "../controllers/academicTermController.js";
 
+import { protect, authorize,} from "../middleware/authMiddleware.js";
+
+
 const router = express.Router();
 
-router.post("/", createAcademicTermController);
 
-router.get("/", getAllAcademicTermsController);
+// ======================================================
+// Academic Term Routes
+// ======================================================
 
-router.get("/:id", getAcademicTermByIdController);
 
-router.put("/:id", updateAcademicTermController);
+// Create Academic Term
 
-router.delete("/:id", deleteAcademicTermController);
+router.post(    "/", protect, authorize("admin"), createAcademicTermController);
+
+
+// Get All Academic Terms
+
+router.get( "/", protect, getAcademicTermsController);
+
+
+// Get Academic Term By ID
+
+router.get( "/:id", protect, getAcademicTermByIdController);
+
+
+// Update Academic Term
+
+router.patch( "/:id", protect, authorize("admin"), updateAcademicTermController);
+
+
+// Delete Academic Term
+
+router.delete( "/:id", protect, authorize("admin"), deleteAcademicTermController);
+
 
 export default router;

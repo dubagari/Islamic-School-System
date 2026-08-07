@@ -2,22 +2,29 @@ import express from "express";
 
 import {
     createAcademicSessionController,
-    getAllAcademicSessionsController,
+    getAcademicSessionsController,
     getAcademicSessionByIdController,
     updateAcademicSessionController,
     deleteAcademicSessionController,
 } from "../controllers/academicSessionController.js";
 
+import { protect, authorize } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.post("/", createAcademicSessionController);
+// ======================================================
+// Academic Session Routes
+// ======================================================
 
-router.get("/", getAllAcademicSessionsController);
+router.post("/", protect, authorize("admin"), createAcademicSessionController);
 
-router.get("/:id", getAcademicSessionByIdController);
+router.get("/", protect, getAcademicSessionsController);
 
-router.put("/:id", updateAcademicSessionController);
+router.get("/:id", protect, getAcademicSessionByIdController);
 
-router.delete("/:id", deleteAcademicSessionController);
+router.patch("/:id", protect, authorize("admin"), updateAcademicSessionController);
+
+router.delete("/:id", protect, authorize("admin"), deleteAcademicSessionController
+);
 
 export default router;

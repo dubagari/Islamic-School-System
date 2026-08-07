@@ -1,47 +1,58 @@
 import mongoose from "mongoose";
 
 const academicTermSchema = new mongoose.Schema(
-  {
-    session: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Session",
-      required: true,
-    },
+    {
+        name: {
+            type: String,
+            required: true,
+            enum: [
+                "First Term",
+                "Second Term",
+                "Third Term",
+            ],
+        },
 
-    name: {
-      type: String,
-      enum: [
-        "First Term",
-        "Second Term",
-        "Third Term",
-      ],
-      required: true,
-      trim: true,
-    },
+        academicSession: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "AcademicSession",
+            required: true,
+        },
 
-    startDate: {
-      type: Date,
-      required: true,
-    },
+        startDate: {
+            type: Date,
+            required: true,
+        },
 
-    endDate: {
-      type: Date,
-      required: true,
-    },
+        endDate: {
+            type: Date,
+            required: true,
+        },
 
-    isCurrent: {
-      type: Boolean,
-      default: false,
-    },
+        isCurrent: {
+            type: Boolean,
+            default: false,
+        },
 
-    isActive: {
-      type: Boolean,
-      default: true,
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
     },
-  },
-  {
-    timestamps: true,
-  }
+    {
+        timestamps: true,
+    }
 );
 
-export default mongoose.model("AcademicTerm", academicTermSchema);
+academicTermSchema.index(
+    {
+        academicSession: 1,
+        name: 1,
+    },
+    {
+        unique: true,
+    }
+);
+
+const AcademicTerm = mongoose.model("AcademicTerm", academicTermSchema);
+
+export default AcademicTerm;

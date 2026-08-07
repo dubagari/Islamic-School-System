@@ -1,101 +1,162 @@
 import {
     createAcademicSectionService,
-    getAllAcademicSectionsService,
+    getAcademicSectionsService,
     getAcademicSectionByIdService,
     updateAcademicSectionService,
     deleteAcademicSectionService,
 } from "../services/academicSectionService.js";
 
-export const createAcademicSection = async (req, res) => {
+// ======================================================
+// Create Academic Section
+// ======================================================
+
+export const createAcademicSectionController = async (
+    req,
+    res,
+    next
+) => {
 
     try {
 
-        const section = await createAcademicSectionService(req.body);
+        const academicSection =
+            await createAcademicSectionService(
+                req.body
+            );
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
-            message: "Academic section created successfully.",
-            data: section,
+            message:
+                "Academic section created successfully.",
+            data: academicSection,
         });
 
     } catch (error) {
 
-        res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
 
     }
 
 };
 
+// ======================================================
+// Get All Academic Sections
+// ======================================================
 
+export const getAcademicSectionsController = async (
+    req,
+    res,
+    next
+) => {
 
-export const getAllAcademicSectionsController = async (req, res) => {
     try {
-        const sections = await getAllAcademicSectionsService();
 
-        res.status(200).json({
+        const academicSections =
+            await getAcademicSectionsService();
+
+        return res.status(200).json({
             success: true,
-            data: sections,
+            data: academicSections,
         });
+
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+
+        next(error);
+
     }
+
 };
 
-export const getAcademicSectionByIdController = async (req, res) => {
-    try {
-        const section = await getAcademicSectionByIdService(req.params.id);
+// ======================================================
+// Get Academic Section By ID
+// ======================================================
 
-        res.status(200).json({
+export const getAcademicSectionByIdController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSection =
+            await getAcademicSectionByIdService(
+                req.params.id
+            );
+
+        return res.status(200).json({
             success: true,
-            data: section,
+            data: academicSection,
         });
+
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+
+        next(error);
+
     }
+
 };
 
-export const updateAcademicSectionController = async (req, res) => {
-    try {
-        const section = await updateAcademicSectionService(
-            req.params.id,
-            req.body
-        );
+// ======================================================
+// Update Academic Section
+// ======================================================
 
-        res.status(200).json({
+export const updateAcademicSectionController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSection =
+            await updateAcademicSectionService(
+                req.params.id,
+                req.body
+            );
+
+        return res.status(200).json({
             success: true,
-            message: "Academic section updated successfully.",
-            data: section,
+            message:
+                "Academic section updated successfully.",
+            data: academicSection,
         });
+
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+
+        next(error);
+
     }
+
 };
 
-export const deleteAcademicSectionController = async (req, res) => {
-    try {
-        const section = await deleteAcademicSectionService(req.params.id);
+// ======================================================
+// Delete Academic Section
+// ======================================================
 
-        res.status(200).json({
+export const deleteAcademicSectionController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const academicSection =
+            await deleteAcademicSectionService(
+                req.params.id
+            );
+
+        return res.status(200).json({
             success: true,
-            message: "Academic section deactivated successfully.",
-            data: section,
+            message:
+                "Academic section deleted successfully.",
+            data: academicSection,
         });
+
     } catch (error) {
-            res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+
+        next(error);
+
     }
+
 };
