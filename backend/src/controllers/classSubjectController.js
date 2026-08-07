@@ -1,38 +1,55 @@
 import {
     assignSubjectsToClassService,
     getAllClassSubjectsService,
+    getClassSubjectByIdService,
     getClassSubjectsByClassService,
-    removeClassSubjectService,
     updateClassSubjectService,
-
-
+    deleteClassSubjectService,
 } from "../services/classSubjectService.js";
 
-export const assignSubjectsToClass = async (req, res) => {
+// ======================================================
+// Create Controllers
+// ======================================================
+
+export const assignSubjectsToClassController = async (
+    req,
+    res,
+    next
+) => {
+
     try {
 
-        const assignments = await assignSubjectsToClassService(req.body);
+        const assignments =
+            await assignSubjectsToClassService(req.body);
 
         return res.status(201).json({
             success: true,
-            message: "Subjects assigned successfully.",
+            message: "Subjects assigned to class successfully.",
             data: assignments,
         });
 
     } catch (error) {
 
-        return res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
 
     }
+
 };
 
-export const getAllClassSubjects = async (req, res) => {
+// ======================================================
+// Read Controllers
+// ======================================================
+
+export const getAllClassSubjectsController = async (
+    req,
+    res,
+    next
+) => {
+
     try {
 
-        const assignments = await getAllClassSubjectsService();
+        const assignments =
+            await getAllClassSubjectsService();
 
         return res.status(200).json({
             success: true,
@@ -41,76 +58,122 @@ export const getAllClassSubjects = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
 
     }
+
 };
 
-export const getClassSubjectsByClass = async (req, res) => {
+export const getClassSubjectByIdController = async (
+    req,
+    res,
+    next
+) => {
+
     try {
 
-        const assignments = await getClassSubjectsByClassService(
-            req.params.classId
-        );
+        const assignment =
+            await getClassSubjectByIdService(
+                req.params.id
+            );
 
         return res.status(200).json({
             success: true,
-            data: assignments,
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
-};
-
-
-export const updateClassSubject = async (req, res) => {
-    try {
-
-        const assignment = await updateClassSubjectService(req.params.id, req.body);
-
-        res.status(200).json({
-            success: true,
-            message: "Assignment updated successfully.",
             data: assignment,
         });
 
     } catch (error) {
 
-        res.status(400).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
 
     }
+
 };
 
-
-export const removeClassSubject = async (req, res) => {
+export const getClassSubjectsByClassController = async (
+    req,
+    res,
+    next
+) => {
 
     try {
 
-        await removeClassSubjectService(req.params.id);
+        const assignments =
+            await getClassSubjectsByClassService(
+                req.params.academicClassId
+            );
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            message: "Subject removed from class.",
+            data: assignments,
         });
 
     } catch (error) {
 
-        res.status(400).json({
-            success: false,
-            message: error.message,
+        next(error);
+
+    }
+
+};
+
+// ======================================================
+// Update Controllers
+// ======================================================
+
+export const updateClassSubjectController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const assignment =
+            await updateClassSubjectService(
+                req.params.id,
+                req.body
+            );
+
+        return res.status(200).json({
+            success: true,
+            message: "Class subject updated successfully.",
+            data: assignment,
         });
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
+};
+
+// ======================================================
+// Delete Controllers
+// ======================================================
+
+export const deleteClassSubjectController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const assignment =
+            await deleteClassSubjectService(
+                req.params.id
+            );
+
+        return res.status(200).json({
+            success: true,
+            message: "Class subject deleted successfully.",
+            data: assignment,
+        });
+
+    } catch (error) {
+
+        next(error);
 
     }
 

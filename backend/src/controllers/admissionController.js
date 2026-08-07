@@ -59,3 +59,4 @@ export const approveAdmissionApplication = async (req, res) => {
 
     }
 };
+

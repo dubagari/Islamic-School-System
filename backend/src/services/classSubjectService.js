@@ -1,90 +1,179 @@
 import mongoose from "mongoose";
 
 import AcademicClass from "../models/AcademicClass.js";
-import ClassSubject from "../models/ClassSubject.js";
+import AcademicSession from "../models/AcademicSession.js";
+import AcademicTerm from "../models/AcademicTerm.js";
 import Subject from "../models/Subject.js";
-import Session from "../models/AcademicSession.js";
-import Term from "../models/AcademicTerm.js";
+import ClassSubject from "../models/ClassSubject.js";
+
+// ======================================================
+// Private Helper Functions
+// ======================================================
+
+
+const findAcademicClassOrThrow = async (academicClassId) => {
+
+    const academicClass =
+        await AcademicClass.findById(academicClassId);
+
+    if (!academicClass) {
+        throw new Error("Academic class not found.");
+    }
+
+    return academicClass;
+
+};
+
+
+
+const findAcademicSessionOrThrow = async (academicSessionId) => {
+
+    const academicSession =
+        await AcademicSession.findById(academicSessionId);
+
+    if (!academicSession) {
+        throw new Error("Academic session not found.");
+    }
+
+    return academicSession;
+
+};
+
+
+
+const findAcademicTermOrThrow = async (academicTermId) => {
+
+    const academicTerm =
+        await AcademicTerm.findById(academicTermId);
+
+    if (!academicTerm) {
+        throw new Error("Academic term not found.");
+    }
+
+    return academicTerm;
+
+};
+
+
+const findSubjectOrThrow = async (subjectId) => {
+
+    const subject =
+        await Subject.findById(subjectId);
+
+    if (!subject) {
+        throw new Error("Subject not found.");
+    }
+
+    return subject;
+
+};
+
+const validateSubjectBelongsToAcademicClass = (
+    subject,
+    academicClass
+) => {
+
+    if (!subject.section.equals(academicClass.section)) {
+        throw new Error(
+            `${subject.name} belongs to another academic section.`
+        );
+    }
+
+    if (subject.level !== academicClass.level) {
+        throw new Error(
+            `${subject.name} belongs to another academic level.`
+        );
+    }
+
+};
+
+const ensureSubjectAssignmentDoesNotExist = async (
+    academicClassId,
+    subjectId,
+    academicSessionId,
+    academicTermId
+) => {
+
+    const existingAssignment =
+        await ClassSubject.findOne({
+            academicClass: academicClassId,
+            subject: subjectId,
+            academicSession: academicSessionId,
+            academicTerm: academicTermId,
+        });
+
+    if (existingAssignment) {
+        throw new Error(
+            "Subject has already been assigned to this class."
+        );
+    }
+
+};
+
+// ======================================================
+// Create Services
+// ======================================================
 
 export const assignSubjectsToClassService = async (data) => {
 
     const dbSession = await mongoose.startSession();
 
-    dbSession.startTransaction();
-
     try {
 
+        dbSession.startTransaction();
+
         const {
-            class: classId,
-            session,
-            term,
+            academicClass: academicClassId,
+            academicSession: academicSessionId,
+            academicTerm: academicTermId,
             subjects,
         } = data;
 
-        if (!subjects || subjects.length === 0) {
-            throw new Error("Please select at least one subject.");
+        if (!Array.isArray(subjects) || subjects.length === 0) {
+            throw new Error(
+                "Please select at least one subject."
+            );
         }
 
-        const academicClass = await AcademicClass.findById(classId);
+        const academicClass =
+            await findAcademicClassOrThrow(
+                academicClassId
+            );
 
-        if (!academicClass) {
-            throw new Error("Academic class not found.");
-        }
+        await findAcademicSessionOrThrow(
+            academicSessionId
+        );
 
-        const academicSession = await Session.findById(session);
-
-        if (!academicSession) {
-            throw new Error("Academic session not found.");
-        }
-
-        const academicTerm = await Term.findById(term);
-
-        if (!academicTerm) {
-            throw new Error("Academic term not found.");
-        }
+        await findAcademicTermOrThrow(
+            academicTermId
+        );
 
         const createdAssignments = [];
 
         for (const subjectId of subjects) {
 
-            const subject = await Subject.findById(subjectId);
+            const subject =
+                await findSubjectOrThrow(subjectId);
 
-            if (!subject) {
-                throw new Error("One or more selected subjects do not exist.");
-            }
+            validateSubjectBelongsToAcademicClass(
+                subject,
+                academicClass
+            );
 
-            if (!subject.section.equals(academicClass.section)) {
-                throw new Error(
-                    `${subject.name} belongs to another academic section.`
-                );
-            }
-
-            if (subject.level !== academicClass.level) {
-                throw new Error(
-                    `${subject.name} belongs to another academic level.`
-                );
-            }
-
-            const existingAssignment = await ClassSubject.findOne({
-                class: classId,
-                subject: subjectId,
-                session,
-                term,
-            });
-
-            if (existingAssignment) {
-                throw new Error(
-                    `${subject.name} has already been assigned to this class.`
-                );
-            }
+            await ensureSubjectAssignmentDoesNotExist(
+                academicClassId,
+                subjectId,
+                academicSessionId,
+                academicTermId
+            );
 
             const assignment = await ClassSubject.create(
                 [
                     {
-                        class: classId,
+                        academicClass: academicClassId,
                         subject: subjectId,
-                        session,
-                        term,
+                        academicSession: academicSessionId,
+                        academicTerm: academicTermId,
                     },
                 ],
                 {
@@ -93,36 +182,53 @@ export const assignSubjectsToClassService = async (data) => {
             );
 
             createdAssignments.push(assignment[0]);
+
         }
 
         await dbSession.commitTransaction();
 
-        dbSession.endSession();
-
-        return createdAssignments;
+        return await ClassSubject.find({
+            _id: {
+                $in: createdAssignments.map(
+                    assignment => assignment._id
+                ),
+            },
+        })
+            .populate("academicClass", "name code level")
+            .populate("subject", "name code level prefix")
+            .populate("academicSession", "name")
+            .populate("academicTerm", "name")
+            .populate("teachers", "fullName email");
 
     } catch (error) {
 
         await dbSession.abortTransaction();
 
+        throw error;
+
+    } finally {
+
         dbSession.endSession();
 
-        throw error;
     }
+
 };
 
 
+// ======================================================
+// Read Services
+// ======================================================
 export const getAllClassSubjectsService = async () => {
 
     return await ClassSubject.find()
 
-        .populate("class", "name code level")
+        .populate("academicClass", "name code level")
 
-        .populate("subject", "name code level")
+        .populate("subject", "name code level prefix")
 
-        .populate("session", "name")
+        .populate("academicSession", "name")
 
-        .populate("term", "name")
+        .populate("academicTerm", "name")
 
         .populate("teachers", "fullName email")
 
@@ -132,17 +238,42 @@ export const getAllClassSubjectsService = async () => {
 
 };
 
-export const getClassSubjectsByClassService = async (classId) => {
+export const getClassSubjectByIdService = async (id) => {
+
+    const assignment = await ClassSubject.findById(id)
+
+        .populate("academicClass", "name code level")
+
+        .populate("subject", "name code level prefix")
+
+        .populate("academicSession", "name")
+
+        .populate("academicTerm", "name")
+
+        .populate("teachers", "fullName email");
+
+    if (!assignment) {
+        throw new Error("Class subject assignment not found.");
+    }
+
+    return assignment;
+
+};
+
+
+export const getClassSubjectsByClassService = async (
+    academicClassId
+) => {
 
     return await ClassSubject.find({
-        class: classId,
+        academicClass: academicClassId,
     })
 
-        .populate("subject", "name code level")
+        .populate("subject", "name code level prefix")
 
-        .populate("session", "name")
+        .populate("academicSession", "name")
 
-        .populate("term", "name")
+        .populate("academicTerm", "name")
 
         .populate("teachers", "fullName email")
 
@@ -153,31 +284,66 @@ export const getClassSubjectsByClassService = async (classId) => {
 };
 
 
-export const removeClassSubjectService = async (id) => {
+// ======================================================
+// Update Services
+// ======================================================
+
+export const updateClassSubjectService = async (
+    id,
+    data
+) => {
 
     const assignment = await ClassSubject.findById(id);
 
     if (!assignment) {
-        throw new Error("Assignment not found.");
-    }
-
-    await assignment.deleteOne();
-
-    return assignment;
-};
-
-export const updateClassSubjectService = async (id, data) => {
-
-    const assignment = await ClassSubject.findById(id);
-
-    if (!assignment) {
-        throw new Error("Assignment not found.");
+        throw new Error(
+            "Class subject assignment not found."
+        );
     }
 
     Object.assign(assignment, data);
 
     await assignment.save();
 
-    return assignment;
+    return await assignment.populate([
+        {
+            path: "academicClass",
+            select: "name code level",
+        },
+        {
+            path: "subject",
+            select: "name code level prefix",
+        },
+        {
+            path: "academicSession",
+            select: "name",
+        },
+        {
+            path: "academicTerm",
+            select: "name",
+        },
+        {
+            path: "teachers",
+            select: "fullName email",
+        },
+    ]);
+
 };
 
+
+// ======================================================
+// Delete Services
+// ======================================================
+export const deleteClassSubjectService = async (id) => {
+
+    const assignment = await ClassSubject.findById(id);
+
+    if (!assignment) {
+        throw new Error("Class subject assignment not found.");
+    }
+
+    await assignment.deleteOne();
+
+    return assignment;
+
+};

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const termSchema = new mongoose.Schema(
+const academicTermSchema = new mongoose.Schema(
   {
     session: {
       type: mongoose.Schema.Types.ObjectId,
@@ -44,4 +44,4 @@ const termSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Term", termSchema);
+export default mongoose.model("AcademicTerm", academicTermSchema);
