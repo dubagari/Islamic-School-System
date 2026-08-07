@@ -1,89 +1,73 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
-  {
-    fullName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-
-    email: {
-      type: String,
-      lowercase: true,
-      trim: true,
-      default: null,
-
-      validate: {
-        validator: function (value) {
-          if (["admin", "teacher"].includes(this.role)) {
-            return !!value;
-          }
-          return true;
+    {
+        fullName: {
+            type: String,
+            required: true,
+            trim: true,
         },
-        message: "Email is required for administrators and teachers.",
-      },
-    },
 
-    password: {
-      type: String,
-      required: true,
-    },
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+        },
 
-    role: {
-      type: String,
-      enum: ["admin", "teacher", "student", "parent"],
-      required: true,
-    },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+        },
 
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      default: null,
-    },
+        password: {
+            type: String,
+            required: true,
+        },
 
-    teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Teacher",
-      default: null,
-    },
+        role: {
+            type: String,
+            required: true,
+            enum: [
+                "admin",
+                "teacher",
+                "student",
+                "parent",
+            ],
+        },
 
-    parent: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Parent",
-      default: null,
-    },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
 
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+        mustChangePassword: {
+            type: Boolean,
+            default: true,
+        },
 
-    mustChangePassword: {
-      type: Boolean,
-      default: true,
-    },
+        lastLogin: {
+            type: Date,
+        },
 
-    passwordChangedAt: {
-      type: Date,
-      default: null,
-    },
+        teacher: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Teacher",
+        },
 
-    lastLogin: {
-      type: Date,
-      default: null,
+        student: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Student",
+        },
     },
-  },
-  {
-    timestamps: true,
-  }
+    {
+        timestamps: true,
+    }
 );
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;

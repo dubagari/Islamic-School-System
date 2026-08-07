@@ -1,16 +1,29 @@
-import { loginService } from "../services/authService.js";
+import {
+    loginService,
+    changePasswordService,
+    getProfileService,
+} from "../services/authService.js";
 
-export const login = async (req, res) => {
+export const loginController = async (
+    req,
+    res,
+    next
+) => {
+
     try {
 
-        const { identifier, password } = req.body;
-
-        const result = await loginService(
+        const {
             identifier,
-            password
-        );
+            password,
+        } = req.body;
 
-        res.status(200).json({
+        const result =
+            await loginService(
+                identifier,
+                password
+            );
+
+        return res.status(200).json({
             success: true,
             message: "Login successful.",
             data: result,
@@ -18,10 +31,71 @@ export const login = async (req, res) => {
 
     } catch (error) {
 
-        res.status(401).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
 
     }
+
+};
+
+
+
+export const changePasswordController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const {
+            currentPassword,
+            newPassword,
+        } = req.body;
+
+        await changePasswordService(
+            req.user.id,
+            currentPassword,
+            newPassword
+        );
+
+        return res.status(200).json({
+            success: true,
+            message:
+                "Password changed successfully.",
+        });
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
+};
+
+
+
+export const getProfileController = async (
+    req,
+    res,
+    next
+) => {
+
+    try {
+
+        const profile =
+            await getProfileService(
+                req.user.id
+            );
+
+        return res.status(200).json({
+            success: true,
+            data: profile,
+        });
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
 };
