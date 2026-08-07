@@ -11,6 +11,8 @@ import academicSessionRoutes from "./routes/academicSessionRoutes.js";
 
 import academicTermRoutes from "./routes/academicTermRoutes.js";
 
+import subjectRoutes from "./routes/subjectRoutes.js";
+
 
 const app = express();
 
@@ -42,6 +44,8 @@ app.use("/api/v2/academic-sections", academicSectionRoutes);
 app.use("/api/v2/academic-sessions", academicSessionRoutes);
 
 app.use("/api/v2/academic-terms", academicTermRoutes);
+
+app.use("/api/v2/subjects", subjectRoutes);
 
 
 // ==========================================
