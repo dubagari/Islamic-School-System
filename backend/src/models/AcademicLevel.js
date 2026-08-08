@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const subjectSchema = new mongoose.Schema(
+const academicLevelSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -8,11 +8,10 @@ const subjectSchema = new mongoose.Schema(
             trim: true,
         },
 
-        prefix: {
-            type: String,
+        levelNumber: {
+            type: Number,
             required: true,
-            uppercase: true,
-            trim: true,
+            min: 1,
         },
 
         section: {
@@ -24,7 +23,6 @@ const subjectSchema = new mongoose.Schema(
         description: {
             type: String,
             trim: true,
-            default: "",
         },
 
         isActive: {
@@ -37,7 +35,8 @@ const subjectSchema = new mongoose.Schema(
     }
 );
 
-subjectSchema.index(
+// Prevent duplicate levels within the same section
+academicLevelSchema.index(
     {
         name: 1,
         section: 1,
@@ -47,9 +46,10 @@ subjectSchema.index(
     }
 );
 
-subjectSchema.index(
+// Prevent duplicate level numbers within the same section
+academicLevelSchema.index(
     {
-        prefix: 1,
+        levelNumber: 1,
         section: 1,
     },
     {
@@ -57,9 +57,9 @@ subjectSchema.index(
     }
 );
 
-const Subject = mongoose.model(
-    "Subject",
-    subjectSchema
+const AcademicLevel = mongoose.model(
+    "AcademicLevel",
+    academicLevelSchema
 );
 
-export default Subject;
+export default AcademicLevel;

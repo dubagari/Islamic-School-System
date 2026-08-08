@@ -1,4 +1,4 @@
-import AcademicTerm from "../models/AcademicTerm.js";
+import AcademicSemester from "../models/AcademicSemester.js";
 import AcademicSession from "../models/AcademicSession.js";
 
 
@@ -30,7 +30,7 @@ const findAcademicSessionOrThrow = async (
 
 // Check term dates are inside session dates
 
-const validateTermDatesWithinSession = (
+const validateSemesterDatesWithinSession = (
     startDate,
     endDate,
     academicSession
@@ -41,7 +41,7 @@ const validateTermDatesWithinSession = (
         new Date(academicSession.startDate)
     ) {
         throw new Error(
-            "Term start date cannot be before academic session start date."
+            "Semester start date cannot be before academic session start date."
         );
     }
 
@@ -51,7 +51,7 @@ const validateTermDatesWithinSession = (
         new Date(academicSession.endDate)
     ) {
         throw new Error(
-            "Term end date cannot be after academic session end date."
+            "Semester end date cannot be after academic session end date."
         );
     }
 
@@ -61,7 +61,7 @@ const validateTermDatesWithinSession = (
         new Date(endDate)
     ) {
         throw new Error(
-            "Term end date must be after start date."
+            "Semester end date must be after start date."
         );
     }
 
@@ -71,7 +71,7 @@ const validateTermDatesWithinSession = (
 
 // Prevent overlapping terms in same session
 
-const ensureTermDoesNotOverlap = async (
+const ensureSemesterDoesNotOverlap   = async (
     academicSessionId,
     startDate,
     endDate,
@@ -105,7 +105,7 @@ const ensureTermDoesNotOverlap = async (
 
 
     const existingTerm =
-        await AcademicTerm.findOne(
+        await AcademicSemester.findOne(
             filter
         );
 
@@ -113,7 +113,7 @@ const ensureTermDoesNotOverlap = async (
     if (existingTerm) {
 
         throw new Error(
-            "Academic term dates overlap with an existing term."
+            "Academic semester dates overlap with an existing semester."
         );
 
     }
@@ -123,11 +123,11 @@ const ensureTermDoesNotOverlap = async (
 
 
 // ======================================================
-// Create Academic Term
+// Create Academic Semester
 // ======================================================
 
 
-export const createAcademicTermService =
+export const createAcademicSemesterService =
 async (data) => {
 
 
@@ -148,7 +148,7 @@ async (data) => {
 
 
 
-    validateTermDatesWithinSession(
+    validateSemesterDatesWithinSession(
         startDate,
         endDate,
         session
@@ -156,7 +156,7 @@ async (data) => {
 
 
 
-    await ensureTermDoesNotOverlap(
+    await ensureSemesterDoesNotOverlap(
         academicSession,
         startDate,
         endDate
@@ -166,7 +166,7 @@ async (data) => {
 
     if (isCurrent) {
 
-        await AcademicTerm.updateMany(
+        await AcademicSemester.updateMany(
             {},
             {
                 isCurrent: false,
@@ -177,7 +177,7 @@ async (data) => {
 
 
 
-    return await AcademicTerm.create(
+    return await AcademicSemester.create(
         data
     );
 
@@ -190,11 +190,11 @@ async (data) => {
 // ======================================================
 
 
-export const getAcademicTermsService =
+export const getAcademicSemestersService =
 async () => {
 
 
-    return await AcademicTerm.find()
+    return await AcademicSemester.find()
 
         .populate(
             "academicSession",
@@ -210,16 +210,16 @@ async () => {
 
 
 // ======================================================
-// Get Academic Term By ID
+// Get Academic Semester By ID
 // ======================================================
 
 
-export const getAcademicTermByIdService =
+export const getAcademicSemesterByIdService =
 async (id) => {
 
 
-    const academicTerm =
-        await AcademicTerm.findById(id)
+    const academicSemester=
+        await AcademicSemester.findById(id)
 
         .populate(
             "academicSession",
@@ -227,16 +227,16 @@ async (id) => {
         );
 
 
-    if (!academicTerm) {
+    if (!academicSemester) {
 
         throw new Error(
-            "Academic term not found."
+            "Academic semester not found."
         );
 
     }
 
 
-    return academicTerm;
+    return academicSemester;
 
 };
 
@@ -247,23 +247,23 @@ async (id) => {
 // ======================================================
 
 
-export const updateAcademicTermService =
+export const updateAcademicSemesterService =
 async (
     id,
     data
 ) => {
 
 
-    const academicTerm =
-        await AcademicTerm.findById(
+    const academicSemester =
+        await AcademicSemester.findById(
             id
         );
 
 
-    if (!academicTerm) {
+    if (!academicSemester) {
 
         throw new Error(
-            "Academic term not found."
+            "Academic semester not found."
         );
 
     }
@@ -272,7 +272,7 @@ async (
 
     const academicSessionId =
         data.academicSession ||
-        academicTerm.academicSession;
+        academicSemester.academicSession;
 
 
 
@@ -283,30 +283,30 @@ async (
 
 
 
-    const termStartDate =
+    const semesterStartDate =
         data.startDate ||
-        academicTerm.startDate;
+        academicSemester.startDate;
 
 
 
-    const termEndDate =
+    const semesterEndDate =
         data.endDate ||
-        academicTerm.endDate;
+        academicSemester.endDate;
 
 
 
-    validateTermDatesWithinSession(
-        termStartDate,
-        termEndDate,
+    validateSemesterDatesWithinSession(
+        semesterStartDate,
+        semesterEndDate,
         session
     );
 
 
 
-    await ensureTermDoesNotOverlap(
+    await ensureSemesterDoesNotOverlap(
         academicSessionId,
-        termStartDate,
-        termEndDate,
+        semesterStartDate,
+        semesterEndDate,
         id
     );
 
@@ -314,7 +314,7 @@ async (
 
     if (data.isCurrent) {
 
-        await AcademicTerm.updateMany(
+        await AcademicSemester.updateMany(
             {
                 _id: {
                     $ne: id,
@@ -330,15 +330,15 @@ async (
 
 
     Object.assign(
-        academicTerm,
+        academicSemester,
         data
     );
 
 
-    await academicTerm.save();
+    await academicSemester.save();
 
 
-    return academicTerm;
+    return academicSemester;
 
 };
 
@@ -349,28 +349,28 @@ async (
 // ======================================================
 
 
-export const deleteAcademicTermService =
+export const deleteAcademicSemesterService =
 async (id) => {
 
 
-    const academicTerm =
-        await AcademicTerm.findById(
+    const academicSemester =
+        await AcademicSemester.findById(
             id
         );
 
 
-    if (!academicTerm) {
+    if (!academicSemester) {
 
         throw new Error(
-            "Academic term not found."
+            "Academic semester not found."
         );
 
     }
 
 
-    await academicTerm.deleteOne();
+    await academicSemester.deleteOne();
 
 
-    return academicTerm;
+    return academicSemester;
 
 };
