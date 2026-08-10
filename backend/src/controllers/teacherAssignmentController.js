@@ -1,30 +1,30 @@
 
 import {
-    createTeacherService,
-    getTeachersService,
-    getTeacherByIdService,
-    getTeacherByNumberService,
-    updateTeacherService,
-    deleteTeacherService,
-} from "../services/teacherService.js";
+    createTeacherAssignmentService,
+    getTeacherAssignmentsService,
+    getTeacherAssignmentsByTeacherService,
+    getTeacherAssignmentByIdService,
+    updateTeacherAssignmentService,
+    deleteTeacherAssignmentService,
+} from "../services/teacherAssignmentService.js";
 
 // ======================================================
-// Create Teacher
+// Create Teacher Assignment
 // ======================================================
 
-export const createTeacherController =
+export const createTeacherAssignmentController =
     async (req, res, next) => {
         try {
-            const result =
-                await createTeacherService(
+            const assignment =
+                await createTeacherAssignmentService(
                     req.body
                 );
 
             res.status(201).json({
                 success: true,
                 message:
-                    "Teacher created successfully.",
-                data: result,
+                    "Teacher assigned successfully.",
+                data: assignment,
             });
         } catch (error) {
             next(error);
@@ -32,18 +32,18 @@ export const createTeacherController =
     };
 
 // ======================================================
-// Get All Teachers
+// Get All Teacher Assignments
 // ======================================================
 
-export const getTeachersController =
+export const getTeacherAssignmentsController =
     async (req, res, next) => {
         try {
-            const teachers =
-                await getTeachersService();
+            const assignments =
+                await getTeacherAssignmentsService();
 
             res.status(200).json({
                 success: true,
-                data: teachers,
+                data: assignments,
             });
         } catch (error) {
             next(error);
@@ -51,23 +51,47 @@ export const getTeachersController =
     };
 
 // ======================================================
-// Get Teacher By ID
+// Get Assignments By Teacher
 // ======================================================
 
-export const getTeacherByIdController =
+export const getTeacherAssignmentsByTeacherController =
+    async (req, res, next) => {
+        try {
+            const { teacher } =
+                req.params;
+
+            const assignments =
+                await getTeacherAssignmentsByTeacherService(
+                    teacher
+                );
+
+            res.status(200).json({
+                success: true,
+                data: assignments,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+// ======================================================
+// Get Assignment By ID
+// ======================================================
+
+export const getTeacherAssignmentByIdController =
     async (req, res, next) => {
         try {
             const { id } =
                 req.params;
 
-            const teacher =
-                await getTeacherByIdService(
+            const assignment =
+                await getTeacherAssignmentByIdService(
                     id
                 );
 
             res.status(200).json({
                 success: true,
-                data: teacher,
+                data: assignment,
             });
         } catch (error) {
             next(error);
@@ -75,41 +99,17 @@ export const getTeacherByIdController =
     };
 
 // ======================================================
-// Get Teacher By Teacher Number
+// Update Teacher Assignment
 // ======================================================
 
-export const getTeacherByNumberController =
-    async (req, res, next) => {
-        try {
-            const { teacherNumber } =
-                req.params;
-
-            const teacher =
-                await getTeacherByNumberService(
-                    teacherNumber
-                );
-
-            res.status(200).json({
-                success: true,
-                data: teacher,
-            });
-        } catch (error) {
-            next(error);
-        }
-    };
-
-// ======================================================
-// Update Teacher
-// ======================================================
-
-export const updateTeacherController =
+export const updateTeacherAssignmentController =
     async (req, res, next) => {
         try {
             const { id } =
                 req.params;
 
-            const teacher =
-                await updateTeacherService(
+            const assignment =
+                await updateTeacherAssignmentService(
                     id,
                     req.body
                 );
@@ -117,8 +117,8 @@ export const updateTeacherController =
             res.status(200).json({
                 success: true,
                 message:
-                    "Teacher updated successfully.",
-                data: teacher,
+                    "Teacher assignment updated successfully.",
+                data: assignment,
             });
         } catch (error) {
             next(error);
@@ -126,25 +126,25 @@ export const updateTeacherController =
     };
 
 // ======================================================
-// Delete Teacher
+// Delete Teacher Assignment
 // ======================================================
 
-export const deleteTeacherController =
+export const deleteTeacherAssignmentController =
     async (req, res, next) => {
         try {
             const { id } =
                 req.params;
 
-            const teacher =
-                await deleteTeacherService(
+            const assignment =
+                await deleteTeacherAssignmentService(
                     id
                 );
 
             res.status(200).json({
                 success: true,
                 message:
-                    "Teacher deleted successfully.",
-                data: teacher,
+                    "Teacher assignment deleted successfully.",
+                data: assignment,
             });
         } catch (error) {
             next(error);

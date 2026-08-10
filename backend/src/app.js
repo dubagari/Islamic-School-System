@@ -18,6 +18,19 @@ import academicClassRoutes from "./routes/academicClassRoutes.js";
 
 import classSubjectRoutes from "./routes/classSubjectRoutes.js";
 
+import teacherAssignmentRoutes from "./routes/teacherAssignmentRoutes.js";
+
+import teacherRoutes from "./routes/teacherRoutes.js";
+
+import admissionApplicationRoutes from "./routes/admissionApplicationRoutes.js";
+
+import studentRegistrationRoutes from "./routes/studentRegistrationRoutes.js";
+
+import admissionPaymentRoutes from "./routes/admissionPaymentRoutes.js";
+
+import studentPasswordRoutes from "./routes/studentPasswordRoutes.js";
+
+
 const app = express();
 
 // ==========================================
@@ -56,6 +69,24 @@ app.use("/api/v2/academic-levels", academicLevelRoutes);
 app.use("/api/v2/academic-classes", academicClassRoutes);
 
 app.use("/api/v2/class-subjects", classSubjectRoutes);
+
+app.use("/api/v2/teacher-assignments", teacherAssignmentRoutes);
+
+app.use("/api/v2/teachers", teacherRoutes)
+
+app.use("/api/v2/admission-applications", admissionApplicationRoutes);
+
+app.use("/api/v2/student-registration", studentRegistrationRoutes);
+
+app.use("/api/v2/admission-payments", admissionPaymentRoutes);
+
+app.use("/api/v2/student-passwords",studentPasswordRoutes);
+
+
+
+
+
+
 
 // ==========================================
 // Global Error Handler

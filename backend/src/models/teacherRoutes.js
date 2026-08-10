@@ -17,23 +17,40 @@ const router = express.Router();
 // ======================================================
 
 // Create teacher
-router.post("/", createTeacherController);
+router.post(
+    "/",
+    createTeacherController
+);
 
 // Get all teachers
-router.get("/", getTeachersController);
+router.get(
+    "/",
+    getTeachersController
+);
 
 // Get teacher by teacher number
 // Keep this BEFORE /:id
-router.get("/number/:teacherNumber", getTeacherByNumberController);
+router.get(
+    "/number/:teacherNumber",
+    getTeacherByNumberController
+);
 
 // Get teacher by ID
-router.get("/:id", getTeacherByIdController);
+router.get(
+    "/:id",
+    getTeacherByIdController
+);
 
 // Update teacher
-router.put("/:id", updateTeacherController);
+router.put(
+    "/:id",
+    updateTeacherController
+);
 
 // Delete teacher
-router.delete("/:id", deleteTeacherController);
+router.delete(
+    "/:id",
+    deleteTeacherController
+);
 
 export default router;
-
