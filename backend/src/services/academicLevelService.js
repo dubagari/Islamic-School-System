@@ -1,5 +1,6 @@
-import Subject from "../models/Subject.js";
+import AcademicLevel from "../models/AcademicLevel.js";
 import AcademicSection from "../models/AcademicSection.js";
+
 
 // ======================================================
 // Private Helper Functions
@@ -24,17 +25,16 @@ const findAcademicSectionOrThrow = async (
 
 };
 
-const ensureSubjectDoesNotExist = async (
+
+const ensureAcademicLevelDoesNotExist = async (
     name,
     section,
-    level,
     excludeId = null
 ) => {
 
     const filter = {
         name,
         section,
-        level,
     };
 
     if (excludeId) {
@@ -45,22 +45,25 @@ const ensureSubjectDoesNotExist = async (
 
     }
 
-    const existingSubject =
-        await Subject.findOne(filter);
+    const existingLevel =
+        await AcademicLevel.findOne(filter);
 
-    if (existingSubject) {
+    if (existingLevel) {
+
         throw new Error(
-            "Subject already exists for this section and level."
+            "Academic level already exists in this section."
         );
+
     }
 
 };
 
+
 // ======================================================
-// Create Subject
+// Create Academic Level
 // ======================================================
 
-export const createSubjectService = async (
+export const createAcademicLevelService = async (
     data
 ) => {
 
@@ -68,23 +71,25 @@ export const createSubjectService = async (
         data.section
     );
 
-    await ensureSubjectDoesNotExist(
+    await ensureAcademicLevelDoesNotExist(
         data.name,
-        data.section,
-        data.level
+        data.section
     );
 
-    return await Subject.create(data);
+    return await AcademicLevel.create(
+        data
+    );
 
 };
 
+
 // ======================================================
-// Get All Subjects
+// Get All Academic Levels
 // ======================================================
 
-export const getSubjectsService = async () => {
+export const getAcademicLevelsService = async () => {
 
-    return await Subject.find()
+    return await AcademicLevel.find()
 
         .populate(
             "section",
@@ -97,103 +102,107 @@ export const getSubjectsService = async () => {
 
 };
 
+
 // ======================================================
-// Get Subject By ID
+// Get Academic Level By ID
 // ======================================================
 
-export const getSubjectByIdService = async (
+export const getAcademicLevelByIdService = async (
     id
 ) => {
 
-    const subject =
-        await Subject.findById(id)
+    const academicLevel =
+        await AcademicLevel.findById(id)
 
             .populate(
                 "section",
                 "name code"
             );
 
-    if (!subject) {
+    if (!academicLevel) {
+
         throw new Error(
-            "Subject not found."
+            "Academic level not found."
         );
+
     }
 
-    return subject;
+    return academicLevel;
 
 };
 
+
 // ======================================================
-// Update Subject
+// Update Academic Level
 // ======================================================
 
-export const updateSubjectService = async (
+export const updateAcademicLevelService = async (
     id,
     data
 ) => {
 
-    const subject =
-        await Subject.findById(id);
+    const academicLevel =
+        await AcademicLevel.findById(id);
 
-    if (!subject) {
+    if (!academicLevel) {
+
         throw new Error(
-            "Subject not found."
+            "Academic level not found."
         );
+
     }
-
-    const section =
-        data.section ||
-        subject.section;
-
-    const level =
-        data.level ||
-        subject.level;
 
     const name =
         data.name ||
-        subject.name;
+        academicLevel.name;
+
+    const section =
+        data.section ||
+        academicLevel.section;
 
     await findAcademicSectionOrThrow(
         section
     );
 
-    await ensureSubjectDoesNotExist(
+    await ensureAcademicLevelDoesNotExist(
         name,
         section,
-        level,
         id
     );
 
     Object.assign(
-        subject,
+        academicLevel,
         data
     );
 
-    await subject.save();
+    await academicLevel.save();
 
-    return subject;
+    return academicLevel;
 
 };
 
+
 // ======================================================
-// Delete Subject
+// Delete Academic Level
 // ======================================================
 
-export const deleteSubjectService = async (
+export const deleteAcademicLevelService = async (
     id
 ) => {
 
-    const subject =
-        await Subject.findById(id);
+    const academicLevel =
+        await AcademicLevel.findById(id);
 
-    if (!subject) {
+    if (!academicLevel) {
+
         throw new Error(
-            "Subject not found."
+            "Academic level not found."
         );
+
     }
 
-    await subject.deleteOne();
+    await academicLevel.deleteOne();
 
-    return subject;
+    return academicLevel;
 
 };

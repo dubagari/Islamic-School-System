@@ -1,17 +1,17 @@
 import {
-    createAcademicTermService,
-    getAcademicTermsService,
-    getAcademicTermByIdService,
-    updateAcademicTermService,
-    deleteAcademicTermService,
-} from "../services/academicTermService.js";
+    createAcademicLevelService,
+    getAcademicLevelsService,
+    getAcademicLevelByIdService,
+    updateAcademicLevelService,
+    deleteAcademicLevelService,
+} from "../services/academicLevelService.js";
 
 
 // ======================================================
-// Create Academic Term
+// Create Academic Level
 // ======================================================
 
-export const createAcademicTermController = async (
+export const createAcademicLevelController = async (
     req,
     res,
     next
@@ -19,23 +19,17 @@ export const createAcademicTermController = async (
 
     try {
 
-        const academicTerm =
-            await createAcademicTermService(
+        const academicLevel =
+            await createAcademicLevelService(
                 req.body
             );
 
-
         return res.status(201).json({
-
             success: true,
-
             message:
-                "Academic term created successfully.",
-
-            data: academicTerm,
-
+                "Academic level created successfully.",
+            data: academicLevel,
         });
-
 
     } catch (error) {
 
@@ -46,12 +40,11 @@ export const createAcademicTermController = async (
 };
 
 
-
 // ======================================================
-// Get All Academic Terms
+// Get All Academic Levels
 // ======================================================
 
-export const getAcademicTermsController = async (
+export const getAcademicLevelsController = async (
     req,
     res,
     next
@@ -59,18 +52,13 @@ export const getAcademicTermsController = async (
 
     try {
 
-        const academicTerms =
-            await getAcademicTermsService();
-
+        const academicLevels =
+            await getAcademicLevelsService();
 
         return res.status(200).json({
-
             success: true,
-
-            data: academicTerms,
-
+            data: academicLevels,
         });
-
 
     } catch (error) {
 
@@ -81,12 +69,11 @@ export const getAcademicTermsController = async (
 };
 
 
-
 // ======================================================
-// Get Academic Term By ID
+// Get Academic Level By ID
 // ======================================================
 
-export const getAcademicTermByIdController = async (
+export const getAcademicLevelByIdController = async (
     req,
     res,
     next
@@ -94,20 +81,15 @@ export const getAcademicTermByIdController = async (
 
     try {
 
-        const academicTerm =
-            await getAcademicTermByIdService(
+        const academicLevel =
+            await getAcademicLevelByIdService(
                 req.params.id
             );
 
-
         return res.status(200).json({
-
             success: true,
-
-            data: academicTerm,
-
+            data: academicLevel,
         });
-
 
     } catch (error) {
 
@@ -118,12 +100,11 @@ export const getAcademicTermByIdController = async (
 };
 
 
-
 // ======================================================
-// Update Academic Term
+// Update Academic Level
 // ======================================================
 
-export const updateAcademicTermController = async (
+export const updateAcademicLevelController = async (
     req,
     res,
     next
@@ -131,24 +112,18 @@ export const updateAcademicTermController = async (
 
     try {
 
-        const academicTerm =
-            await updateAcademicTermService(
+        const academicLevel =
+            await updateAcademicLevelService(
                 req.params.id,
                 req.body
             );
 
-
         return res.status(200).json({
-
             success: true,
-
             message:
-                "Academic term updated successfully.",
-
-            data: academicTerm,
-
+                "Academic level updated successfully.",
+            data: academicLevel,
         });
-
 
     } catch (error) {
 
@@ -159,12 +134,11 @@ export const updateAcademicTermController = async (
 };
 
 
-
 // ======================================================
-// Delete Academic Term
+// Delete Academic Level
 // ======================================================
 
-export const deleteAcademicTermController = async (
+export const deleteAcademicLevelController = async (
     req,
     res,
     next
@@ -172,23 +146,17 @@ export const deleteAcademicTermController = async (
 
     try {
 
-        const academicTerm =
-            await deleteAcademicTermService(
+        const academicLevel =
+            await deleteAcademicLevelService(
                 req.params.id
             );
 
-
         return res.status(200).json({
-
             success: true,
-
             message:
-                "Academic term deleted successfully.",
-
-            data: academicTerm,
-
+                "Academic level deleted successfully.",
+            data: academicLevel,
         });
-
 
     } catch (error) {
 

@@ -1,14 +1,13 @@
 import mongoose from "mongoose";
 
-const academicTermSchema = new mongoose.Schema(
+const academicSemesterSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: true,
             enum: [
-                "First Term",
-                "Second Term",
-                "Third Term",
+                "First Semester",
+                "Second Semester",
             ],
         },
 
@@ -43,7 +42,7 @@ const academicTermSchema = new mongoose.Schema(
     }
 );
 
-academicTermSchema.index(
+academicSemesterSchema.index(
     {
         academicSession: 1,
         name: 1,
@@ -53,6 +52,6 @@ academicTermSchema.index(
     }
 );
 
-const AcademicTerm = mongoose.model("AcademicTerm", academicTermSchema);
+const AcademicSemester = mongoose.model("AcademicSemester", academicSemesterSchema);
 
-export default AcademicTerm;
+export default AcademicSemester;

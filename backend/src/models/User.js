@@ -8,18 +8,16 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
+        email: {
+            type: String,
+            trim: true,
+            lowercase: true,
+        },
+
         username: {
             type: String,
             required: true,
             unique: true,
-            trim: true,
-        },
-
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
             trim: true,
         },
 
@@ -30,18 +28,24 @@ const userSchema = new mongoose.Schema(
 
         role: {
             type: String,
-            required: true,
             enum: [
                 "admin",
                 "teacher",
                 "student",
-                "parent",
             ],
+            required: true,
         },
 
-        isActive: {
-            type: Boolean,
-            default: true,
+        teacher: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Teacher",
+            default: null,
+        },
+
+        student: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Student",
+            default: null,
         },
 
         mustChangePassword: {
@@ -49,25 +53,25 @@ const userSchema = new mongoose.Schema(
             default: true,
         },
 
-        lastLogin: {
-            type: Date,
-        },
+        isActive: {
+    type: Boolean,
+    default: true,
+},
 
-        teacher: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Teacher",
-        },
+lastLogin: {
+    type: Date,
+    default: null,
+},
 
-        student: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Student",
-        },
     },
     {
         timestamps: true,
     }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(
+    "User",
+    userSchema
+);
 
 export default User;

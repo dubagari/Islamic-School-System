@@ -1,18 +1,17 @@
-
 import {
-    createSubjectService,
-    getSubjectsService,
-    getSubjectByIdService,
-    updateSubjectService,
-    deleteSubjectService,
-} from "../services/subjectService.js";
+    createAcademicSemesterService,
+    getAcademicSemestersService,
+    getAcademicSemesterByIdService,
+    updateAcademicSemesterService,  
+    deleteAcademicSemesterService,
+} from "../services/academicSemesterService.js";
 
 
 // ======================================================
-// Create Subject
+// Create Academic Semester
 // ======================================================
 
-export const createSubjectController = async (
+export const createAcademicSemesterController = async (
     req,
     res,
     next
@@ -20,17 +19,23 @@ export const createSubjectController = async (
 
     try {
 
-        const subject =
-            await createSubjectService(
+        const academicSemester =
+            await createAcademicSemesterService(
                 req.body
             );
 
+
         return res.status(201).json({
+
             success: true,
+
             message:
-                "Subject created successfully.",
-            data: subject,
+                "Academic semester created successfully.",
+
+            data: academicSemester,
+
         });
+
 
     } catch (error) {
 
@@ -41,11 +46,12 @@ export const createSubjectController = async (
 };
 
 
+
 // ======================================================
-// Get All Subjects
+// Get All Academic Semesters
 // ======================================================
 
-export const getSubjectsController = async (
+export const getAcademicSemestersController = async (
     req,
     res,
     next
@@ -53,13 +59,18 @@ export const getSubjectsController = async (
 
     try {
 
-        const subjects =
-            await getSubjectsService();
+        const academicSemesters =
+            await getAcademicSemestersService();
+
 
         return res.status(200).json({
+
             success: true,
-            data: subjects,
+
+            data: academicSemesters,
+
         });
+
 
     } catch (error) {
 
@@ -70,11 +81,12 @@ export const getSubjectsController = async (
 };
 
 
+
 // ======================================================
-// Get Subject By ID
+// Get Academic Semester By ID
 // ======================================================
 
-export const getSubjectByIdController = async (
+export const getAcademicSemesterByIdController = async (
     req,
     res,
     next
@@ -82,15 +94,20 @@ export const getSubjectByIdController = async (
 
     try {
 
-        const subject =
-            await getSubjectByIdService(
+        const academicSemester =
+            await getAcademicSemesterByIdService(
                 req.params.id
             );
 
+
         return res.status(200).json({
+
             success: true,
-            data: subject,
+
+            data: academicSemester,
+
         });
+
 
     } catch (error) {
 
@@ -101,11 +118,12 @@ export const getSubjectByIdController = async (
 };
 
 
+
 // ======================================================
-// Update Subject
+// Update Academic Semester
 // ======================================================
 
-export const updateSubjectController = async (
+export const updateAcademicSemesterController = async (
     req,
     res,
     next
@@ -113,18 +131,24 @@ export const updateSubjectController = async (
 
     try {
 
-        const subject =
-            await updateSubjectService(
+        const academicSemester =
+            await updateAcademicSemesterService(
                 req.params.id,
                 req.body
             );
 
+
         return res.status(200).json({
+
             success: true,
+
             message:
-                "Subject updated successfully.",
-            data: subject,
+                "Academic semester updated successfully.",
+
+            data: academicSemester,
+
         });
+
 
     } catch (error) {
 
@@ -135,11 +159,12 @@ export const updateSubjectController = async (
 };
 
 
+
 // ======================================================
-// Delete Subject
+// Delete Academic Semester
 // ======================================================
 
-export const deleteSubjectController = async (
+export const deleteAcademicSemesterController = async (
     req,
     res,
     next
@@ -147,17 +172,23 @@ export const deleteSubjectController = async (
 
     try {
 
-        const subject =
-            await deleteSubjectService(
+        const academicSemester =
+            await deleteAcademicSemesterService(
                 req.params.id
             );
 
+
         return res.status(200).json({
+
             success: true,
+
             message:
-                "Subject deleted successfully.",
-            data: subject,
+                "Academic semester deleted successfully.",
+
+            data: academicSemester, 
+
         });
+
 
     } catch (error) {
 
