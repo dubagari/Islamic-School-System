@@ -7,8 +7,9 @@ import {
     getAcademicClassByIdController,
     updateAcademicClassController,
     deleteAcademicClassController,
+    assignStudentToAcademicClassController,
 } from "../controllers/academicClassController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { authorize, protect } from "../middleware/authMiddleware.js";
 
 
 
@@ -26,6 +27,13 @@ router.get("/", protect, getAcademicClassesController);
 
 // Get Academic Classes By Academic Level
 router.get("/level/:academicLevel", protect, getAcademicClassesByLevelController);
+
+// ======================================================
+// Assign Student To Academic Class
+// Admin
+// ======================================================
+
+router.patch("/assign-student", protect, authorize("admin"), assignStudentToAcademicClassController);
 
 // Get Academic Class By ID
 router.get("/:id", protect, getAcademicClassByIdController);

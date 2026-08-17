@@ -1,6 +1,7 @@
 import AcademicClass from "../models/AcademicClass.js";
 import AcademicLevel from "../models/AcademicLevel.js";
 import User from "../models/User.js";
+import Student from "../models/Student.js";
 
 // ======================================================
 // Create Academic Class
@@ -127,8 +128,7 @@ export const getAcademicClassesByLevelService =
 // Get Academic Class By ID
 // ======================================================
 
-export const getAcademicClassByIdService =
-    async (id) => {
+export const getAcademicClassByIdService =    async (id) => {
         const academicClass =
             await AcademicClass.findById(id)
                 .populate(
@@ -153,15 +153,11 @@ export const getAcademicClassByIdService =
 // Update Academic Class
 // ======================================================
 
-export const updateAcademicClassService =
-    async (id, data) => {
-        const academicClass =
-            await AcademicClass.findById(id);
+export const updateAcademicClassService =    async (id, data) => {
+        const academicClass = await AcademicClass.findById(id);
 
         if (!academicClass) {
-            throw new Error(
-                "Academic class not found."
-            );
+            throw new Error("Academic class not found.");
         }
 
         const newAcademicLevel =
@@ -234,10 +230,8 @@ export const updateAcademicClassService =
 // Delete Academic Class
 // ======================================================
 
-export const deleteAcademicClassService =
-    async (id) => {
-        const academicClass =
-            await AcademicClass.findById(id);
+export const deleteAcademicClassService =    async (id) => {
+        const academicClass = await AcademicClass.findById(id);
 
         if (!academicClass) {
             throw new Error(
@@ -248,4 +242,126 @@ export const deleteAcademicClassService =
         await academicClass.deleteOne();
 
         return academicClass;
+    };
+
+
+    // ======================================================
+// Assign Student To Academic Class
+// Admin
+// ======================================================
+
+export const assignStudentToAcademicClassService =    async (studentId, academicClassId) => {
+
+        // --------------------------------------------------
+        // 1. Find student
+        // --------------------------------------------------
+
+        const student =
+            await Student.findById(studentId);
+
+        if (!student) {
+            throw new Error(
+                "Student not found."
+            );
+        }
+
+        // --------------------------------------------------
+        // 2. Student must be active
+        // --------------------------------------------------
+
+        if (!student.isActive) {
+            throw new Error(
+                "Cannot assign an inactive student."
+            );
+        }
+
+        if (student.status !== "Active") {
+            throw new Error(
+                "Student must have Active status."
+            );
+        }
+
+        // --------------------------------------------------
+        // 3. Find academic class
+        // --------------------------------------------------
+
+        const academicClass =
+            await AcademicClass.findById(
+                academicClassId
+            );
+
+        if (!academicClass) {
+            throw new Error(
+                "Academic class not found."
+            );
+        }
+
+        // --------------------------------------------------
+        // 4. Class must be active
+        // --------------------------------------------------
+
+        if (!academicClass.isActive) {
+            throw new Error(
+                "Cannot assign student to an inactive class."
+            );
+        }
+
+        // --------------------------------------------------
+        // 5. Check if student is already in this class
+        // --------------------------------------------------
+
+        if (
+            student.academicClass &&
+            student.academicClass.toString() ===
+                academicClass._id.toString()
+        ) {
+            throw new Error(
+                "Student is already assigned to this class."
+            );
+        }
+
+        // --------------------------------------------------
+        // 6. Check class capacity
+        // --------------------------------------------------
+
+        const studentsInClass =
+            await Student.countDocuments({
+                academicClass:
+                    academicClass._id,
+                isActive: true,
+                status: "Active",
+            });
+
+        if (
+            studentsInClass >=
+            academicClass.capacity
+        ) {
+            throw new Error(
+                "Academic class has reached its capacity."
+            );
+        }
+
+        // --------------------------------------------------
+        // 7. Assign student
+        // --------------------------------------------------
+
+        student.academicClass =
+            academicClass._id;
+
+        await student.save();
+
+        // --------------------------------------------------
+        // 8. Return populated student
+        // --------------------------------------------------
+
+        return await Student.findById(
+            student._id
+        )
+            .populate(
+                "academicClass"
+            )
+            .populate(
+                "user",
+                "-password"
+            );
     };

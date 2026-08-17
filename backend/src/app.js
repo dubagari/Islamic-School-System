@@ -30,6 +30,11 @@ import admissionPaymentRoutes from "./routes/admissionPaymentRoutes.js";
 
 import studentPasswordRoutes from "./routes/studentPasswordRoutes.js";
 
+import studentRoutes from "./routes/studentRoutes.js";
+
+
+
+
 
 const app = express();
 
@@ -81,6 +86,8 @@ app.use("/api/v2/student-registration", studentRegistrationRoutes);
 app.use("/api/v2/admission-payments", admissionPaymentRoutes);
 
 app.use("/api/v2/student-passwords",studentPasswordRoutes);
+
+app.use("/api/v2/students",studentRoutes);
 
 
 

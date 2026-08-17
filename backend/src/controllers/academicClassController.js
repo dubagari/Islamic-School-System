@@ -5,19 +5,16 @@ import {
     getAcademicClassByIdService,
     updateAcademicClassService,
     deleteAcademicClassService,
+    assignStudentToAcademicClassService,
 } from "../services/academicClassService.js";
 
 // ======================================================
 // Create Academic Class
 // ======================================================
 
-export const createAcademicClassController =
-    async (req, res, next) => {
+export const createAcademicClassController =    async (req, res, next) => {
         try {
-            const academicClass =
-                await createAcademicClassService(
-                    req.body
-                );
+            const academicClass = await createAcademicClassService(req.body);
 
             res.status(201).json({
                 success: true,
@@ -34,11 +31,9 @@ export const createAcademicClassController =
 // Get All Academic Classes
 // ======================================================
 
-export const getAcademicClassesController =
-    async (req, res, next) => {
+export const getAcademicClassesController =    async (req, res, next) => {
         try {
-            const academicClasses =
-                await getAcademicClassesService();
+            const academicClasses = await getAcademicClassesService();
 
             res.status(200).json({
                 success: true,
@@ -53,11 +48,9 @@ export const getAcademicClassesController =
 // Get Academic Classes By Academic Level
 // ======================================================
 
-export const getAcademicClassesByLevelController =
-    async (req, res, next) => {
+export const getAcademicClassesByLevelController =    async (req, res, next) => {
         try {
-            const { academicLevel } =
-                req.params;
+            const { academicLevel } = req.params;
 
             const academicClasses =
                 await getAcademicClassesByLevelService(
@@ -77,8 +70,7 @@ export const getAcademicClassesByLevelController =
 // Get Academic Class By ID
 // ======================================================
 
-export const getAcademicClassByIdController =
-    async (req, res, next) => {
+export const getAcademicClassByIdController =    async (req, res, next) => {
         try {
             const { id } = req.params;
 
@@ -100,8 +92,7 @@ export const getAcademicClassByIdController =
 // Update Academic Class
 // ======================================================
 
-export const updateAcademicClassController =
-    async (req, res, next) => {
+export const updateAcademicClassController =    async (req, res, next) => {
         try {
             const { id } = req.params;
 
@@ -126,8 +117,7 @@ export const updateAcademicClassController =
 // Delete Academic Class
 // ======================================================
 
-export const deleteAcademicClassController =
-    async (req, res, next) => {
+export const deleteAcademicClassController =    async (req, res, next) => {
         try {
             const { id } = req.params;
 
@@ -144,5 +134,44 @@ export const deleteAcademicClassController =
             });
         } catch (error) {
             next(error);
+        }
+    };
+
+    // ======================================================
+// Assign Student To Academic Class
+// Admin
+// ======================================================
+
+export const assignStudentToAcademicClassController =    async (req, res, next) => {
+
+        try {
+
+            const {
+                studentId,
+                academicClassId,
+            } = req.body;
+
+            if (
+                !studentId ||
+                !academicClassId
+            ) {
+                throw new Error(
+                    "studentId and academicClassId are required."
+                );
+            }
+
+            const student = await assignStudentToAcademicClassService(studentId, academicClassId);
+
+            res.status(200).json({
+                success: true,
+                message:
+                    "Student assigned to academic class successfully.",
+                data: student,
+            });
+
+        } catch (error) {
+
+            next(error);
+
         }
     };
