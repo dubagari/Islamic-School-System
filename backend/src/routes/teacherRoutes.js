@@ -1,4 +1,3 @@
-
 import express from "express";
 
 import {
@@ -8,32 +7,62 @@ import {
     getTeacherByNumberController,
     updateTeacherController,
     deleteTeacherController,
+    getTeacherProfileController,
+    getTeacherDashboardController,
 } from "../controllers/teacherController.js";
+
+import {    protect,    authorize,} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // ======================================================
-// Teacher Routes
+// Admin - Create Teacher
 // ======================================================
 
-// Create teacher
-router.post("/", createTeacherController);
+router.post("/", protect, authorize("admin"), createTeacherController);
 
-// Get all teachers
-router.get("/", getTeachersController);
 
-// Get teacher by teacher number
-// Keep this BEFORE /:id
-router.get("/number/:teacherNumber", getTeacherByNumberController);
+// ======================================================
+// Teacher - Get Own Profile
+// ======================================================
 
-// Get teacher by ID
-router.get("/:id", getTeacherByIdController);
+router.get("/profile", protect, authorize("teacher"), getTeacherProfileController);
 
-// Update teacher
-router.put("/:id", updateTeacherController);
 
-// Delete teacher
-router.delete("/:id", deleteTeacherController);
+// ======================================================
+// Teacher - Dashboard
+// ======================================================
+
+router.get("/dashboard", protect, authorize("teacher"), getTeacherDashboardController);
+
+// ======================================================
+// Admin - Get All Teachers
+// ======================================================
+
+router.get("/", protect, authorize("admin"), getTeachersController);
+
+// ======================================================
+// Admin - Get Teacher By Number
+// ======================================================
+
+router.get("/number/:teacherNumber", protect, authorize("admin"), getTeacherByNumberController);
+
+// ======================================================
+// Admin - Get Teacher By ID
+// ======================================================
+
+router.get("/:id", protect, authorize("admin"), getTeacherByIdController);
+
+// ======================================================
+// Admin - Update Teacher
+// ======================================================
+
+router.put("/:id", protect, authorize("admin"), updateTeacherController);
+
+// ======================================================
+// Admin - Delete Teacher
+// ======================================================
+
+router.delete("/:id", protect, authorize("admin"), deleteTeacherController);
 
 export default router;
-
