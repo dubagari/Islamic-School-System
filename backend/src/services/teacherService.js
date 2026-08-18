@@ -37,6 +37,7 @@ export const createTeacherService = async (data) => {
         qualification,
         specialization,
         employmentDate,
+        employmentType
     } = data;
 
     // ==================================================
@@ -104,6 +105,7 @@ export const createTeacherService = async (data) => {
             lastName,
             gender,
             dateOfBirth,
+            employmentType,
             email,
             phone,
             address,
@@ -194,8 +196,7 @@ export const getTeachersService = async () => {
 // Get Teacher By ID
 // ======================================================
 
-export const getTeacherByIdService =
-    async (id) => {
+export const getTeacherByIdService =    async (id) => {
         const teacher =
             await Teacher.findById(id)
                 .populate(
@@ -216,8 +217,7 @@ export const getTeacherByIdService =
 // Get Teacher By Teacher Number
 // ======================================================
 
-export const getTeacherByNumberService =
-    async (teacherNumber) => {
+export const getTeacherByNumberService =    async (teacherNumber) => {
         const teacher =
             await Teacher.findOne({
                 teacherNumber:
@@ -240,8 +240,7 @@ export const getTeacherByNumberService =
 // Update Teacher
 // ======================================================
 
-export const updateTeacherService =
-    async (id, data) => {
+export const updateTeacherService =    async (id, data) => {
         const teacher =
             await Teacher.findById(id);
 
@@ -360,8 +359,7 @@ export const updateTeacherService =
 // Delete Teacher
 // ======================================================
 
-export const deleteTeacherService =
-    async (id) => {
+export const deleteTeacherService =    async (id) => {
         const teacher =
             await Teacher.findById(id);
 
@@ -389,3 +387,154 @@ export const deleteTeacherService =
 
         return teacher;
     };
+
+
+    // ======================================================
+// Get Own Teacher Profile
+// Teacher
+// ======================================================
+
+export const getTeacherProfileService = async (userId) => {
+    // --------------------------------------------------
+    // 1. Find the logged-in user
+    // --------------------------------------------------
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw new Error(
+            "User account not found."
+        );
+    }
+
+    // --------------------------------------------------
+    // 2. Make sure this is a teacher account
+    // --------------------------------------------------
+
+    if (user.role !== "teacher") {
+        throw new Error(
+            "This account is not a teacher account."
+        );
+    }
+
+    // --------------------------------------------------
+    // 3. Make sure user is linked to a teacher
+    // --------------------------------------------------
+
+    if (!user.teacher) {
+        throw new Error(
+            "Teacher profile is not linked to this account."
+        );
+    }
+
+    // --------------------------------------------------
+    // 4. Find the actual Teacher document
+    // --------------------------------------------------
+
+    const teacher =
+        await Teacher.findById(user.teacher)
+            .populate(
+                "user",
+                "-password"
+            );
+
+    if (!teacher) {
+        throw new Error(
+            "Teacher profile not found."
+        );
+    }
+
+    // --------------------------------------------------
+    // 5. Return teacher profile
+    // --------------------------------------------------
+
+    return teacher;
+};
+
+// ======================================================
+// Get Teacher Dashboard
+// Teacher
+// ======================================================
+
+export const getTeacherDashboardService = async (userId) => {
+    // --------------------------------------------------
+    // 1. Find logged-in user
+    // --------------------------------------------------
+
+    const user = await User.findById(userId)
+        .select("-password");
+
+    if (!user) {
+        throw new Error(
+            "User account not found."
+        );
+    }
+
+    // --------------------------------------------------
+    // 2. Verify teacher account
+    // --------------------------------------------------
+
+    if (user.role !== "teacher") {
+        throw new Error(
+            "This account is not a teacher account."
+        );
+    }
+
+    // --------------------------------------------------
+    // 3. Verify teacher link
+    // --------------------------------------------------
+
+    if (!user.teacher) {
+        throw new Error(
+            "Teacher profile is not linked to this account."
+        );
+    }
+
+    // --------------------------------------------------
+    // 4. Get teacher
+    // --------------------------------------------------
+
+    const teacher =
+        await Teacher.findById(
+            user.teacher
+        );
+
+    if (!teacher) {
+        throw new Error(
+            "Teacher profile not found."
+        );
+    }
+
+    // --------------------------------------------------
+    // 5. Return dashboard
+    // --------------------------------------------------
+
+    return {
+        teacher: {
+            id: teacher._id,
+            teacherNumber:
+                teacher.teacherNumber,
+            fullName:
+                teacher.fullName,
+            specialization:
+                teacher.specialization,
+            employmentType:
+                teacher.employmentType,
+            status:
+                teacher.status,
+            isActive:
+                teacher.isActive,
+        },
+
+        account: {
+            username:
+                user.username,
+            email:
+                user.email,
+            role:
+                user.role,
+            mustChangePassword:
+                user.mustChangePassword,
+        },
+    };
+};

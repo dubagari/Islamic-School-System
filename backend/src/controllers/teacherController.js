@@ -6,14 +6,15 @@ import {
     getTeacherByNumberService,
     updateTeacherService,
     deleteTeacherService,
+    getTeacherProfileService,
+    getTeacherDashboardService,
 } from "../services/teacherService.js";
 
 // ======================================================
 // Create Teacher
 // ======================================================
 
-export const createTeacherController =
-    async (req, res, next) => {
+export const createTeacherController =    async (req, res, next) => {
         try {
             const result =
                 await createTeacherService(
@@ -35,8 +36,7 @@ export const createTeacherController =
 // Get All Teachers
 // ======================================================
 
-export const getTeachersController =
-    async (req, res, next) => {
+export const getTeachersController =    async (req, res, next) => {
         try {
             const teachers =
                 await getTeachersService();
@@ -54,8 +54,7 @@ export const getTeachersController =
 // Get Teacher By ID
 // ======================================================
 
-export const getTeacherByIdController =
-    async (req, res, next) => {
+export const getTeacherByIdController =    async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -78,8 +77,7 @@ export const getTeacherByIdController =
 // Get Teacher By Teacher Number
 // ======================================================
 
-export const getTeacherByNumberController =
-    async (req, res, next) => {
+export const getTeacherByNumberController =    async (req, res, next) => {
         try {
             const { teacherNumber } =
                 req.params;
@@ -102,8 +100,7 @@ export const getTeacherByNumberController =
 // Update Teacher
 // ======================================================
 
-export const updateTeacherController =
-    async (req, res, next) => {
+export const updateTeacherController =    async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -129,8 +126,7 @@ export const updateTeacherController =
 // Delete Teacher
 // ======================================================
 
-export const deleteTeacherController =
-    async (req, res, next) => {
+export const deleteTeacherController =    async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -142,8 +138,7 @@ export const deleteTeacherController =
 
             res.status(200).json({
                 success: true,
-                message:
-                    "Teacher deleted successfully.",
+                message: "Teacher deleted successfully.",
                 data: teacher,
             });
         } catch (error) {
@@ -151,3 +146,49 @@ export const deleteTeacherController =
         }
     };
 
+// ======================================================
+// Get Own Teacher Profile
+// Teacher
+// ======================================================
+
+export const getTeacherProfileController =    async (req, res, next) => {
+        try {
+            console.log("TEACHER PROFILE CONTROLLER:", req.user._id);
+
+            const teacher = await getTeacherProfileService(req.user._id);
+
+            console.log("TEACHER PROFILE RESULT:", teacher);
+
+            res.status(200).json({
+                success: true,
+                message:
+                    "Teacher profile retrieved successfully.",
+                data: teacher,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+// ======================================================
+// Get Teacher Dashboard
+// Teacher
+// ======================================================
+
+export const getTeacherDashboardController =    async (req, res, next) => {
+        try {
+            const dashboard =
+                await getTeacherDashboardService(
+                    req.user._id
+                );
+
+            res.status(200).json({
+                success: true,
+                message:
+                    "Teacher dashboard retrieved successfully.",
+                data: dashboard,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
