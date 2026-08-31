@@ -416,3 +416,45 @@ export const deleteTeacherAssignmentService =
 
         return assignment;
     };
+// ======================================================
+// Get My Teacher Assignments
+// Teacher
+// ======================================================
+
+export const getMyTeacherAssignmentsService =  async (teacherUserId) => {
+
+        const assignments =
+            await TeacherAssignment.find({
+                teacher: teacherUserId,
+                isActive: true,
+            })
+                .populate({
+                    path: "classSubject",
+                    populate: [
+                        {
+                            path: "academicClass",
+                            populate: {
+                                path: "academicLevel",
+                                select: "name levelNumber section",
+                            },
+                        },
+                        {
+                            path: "subject",
+                            select: "name prefix",
+                        },
+                        {
+                            path: "academicSemester",
+                            select: "name startDate endDate",
+                        },
+                    ],
+                })
+                .populate(
+                    "assignedBy",
+                    "fullName username email role"
+                )
+                .sort({
+                    assignedDate: -1,
+                });
+
+        return assignments;
+    };

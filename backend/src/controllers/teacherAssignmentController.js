@@ -6,17 +6,20 @@ import {
     getTeacherAssignmentByIdService,
     updateTeacherAssignmentService,
     deleteTeacherAssignmentService,
+    getMyTeacherAssignmentsService,
+    
 } from "../services/teacherAssignmentService.js";
 
 // ======================================================
 // Create Teacher Assignment
 // ======================================================
 
-export const createTeacherAssignmentController =
-    async (req, res, next) => {
+export const createTeacherAssignmentController =    async (req, res, next) => {
         try {
+
+           
             const assignment =
-                await createTeacherAssignmentService(
+                           await createTeacherAssignmentService(
                     req.body
                 );
 
@@ -35,9 +38,9 @@ export const createTeacherAssignmentController =
 // Get All Teacher Assignments
 // ======================================================
 
-export const getTeacherAssignmentsController =
-    async (req, res, next) => {
+export const getTeacherAssignmentsController =    async (req, res, next) => {
         try {
+            
             const assignments =
                 await getTeacherAssignmentsService();
 
@@ -54,8 +57,7 @@ export const getTeacherAssignmentsController =
 // Get Assignments By Teacher
 // ======================================================
 
-export const getTeacherAssignmentsByTeacherController =
-    async (req, res, next) => {
+export const getTeacherAssignmentsByTeacherController =    async (req, res, next) => {
         try {
             const { teacher } =
                 req.params;
@@ -78,8 +80,7 @@ export const getTeacherAssignmentsByTeacherController =
 // Get Assignment By ID
 // ======================================================
 
-export const getTeacherAssignmentByIdController =
-    async (req, res, next) => {
+export const getTeacherAssignmentByIdController = async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -102,8 +103,7 @@ export const getTeacherAssignmentByIdController =
 // Update Teacher Assignment
 // ======================================================
 
-export const updateTeacherAssignmentController =
-    async (req, res, next) => {
+export const updateTeacherAssignmentController =    async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -129,8 +129,7 @@ export const updateTeacherAssignmentController =
 // Delete Teacher Assignment
 // ======================================================
 
-export const deleteTeacherAssignmentController =
-    async (req, res, next) => {
+export const deleteTeacherAssignmentController =  async (req, res, next) => {
         try {
             const { id } =
                 req.params;
@@ -145,6 +144,27 @@ export const deleteTeacherAssignmentController =
                 message:
                     "Teacher assignment deleted successfully.",
                 data: assignment,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+// ======================================================
+// Get My Teacher Assignments
+// Teacher
+// ======================================================
+
+export const getMyTeacherAssignmentsController =    async (req, res, next) => {
+        try {
+
+            const assignments = await getMyTeacherAssignmentsService(req.user._id);
+
+            res.status(200).json({
+                success: true,
+                message:
+                    "Teacher assignments retrieved successfully.",
+                data: assignments,
             });
         } catch (error) {
             next(error);
