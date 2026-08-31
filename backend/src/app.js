@@ -32,6 +32,8 @@ import studentPasswordRoutes from "./routes/studentPasswordRoutes.js";
 
 import studentRoutes from "./routes/studentRoutes.js";
 
+import studentEnrollmentRoutes from "./routes/studentEnrollmentRoutes.js";
+
 
 
 
@@ -88,6 +90,8 @@ app.use("/api/v2/admission-payments", admissionPaymentRoutes);
 app.use("/api/v2/student-passwords",studentPasswordRoutes);
 
 app.use("/api/v2/students",studentRoutes);
+
+app.use("/api/v2/student-enrollments",studentEnrollmentRoutes);
 
 
 
