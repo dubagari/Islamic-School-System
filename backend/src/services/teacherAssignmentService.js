@@ -458,3 +458,31 @@ export const getMyTeacherAssignmentsService =  async (teacherUserId) => {
 
         return assignments;
     };
+
+    // ======================================================
+// Get My Classes / Subjects
+// Teacher
+// ======================================================
+
+export const getMyTeacherClassesService = async (teacherUserId) => {
+    const assignments =
+        await getMyTeacherAssignmentsService(
+            teacherUserId
+        );
+
+    return assignments.map((assignment) => ({
+        assignmentId: assignment._id,
+
+        class: assignment.classSubject.academicClass,
+
+        subject: assignment.classSubject.subject,
+
+        semester: assignment.classSubject.academicSemester,
+
+        courseCode: assignment.classSubject.courseCode,
+
+        description: assignment.classSubject.description,
+
+        assignedDate: assignment.assignedDate,
+    }));
+};

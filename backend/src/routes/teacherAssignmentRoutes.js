@@ -9,6 +9,7 @@ import {
     updateTeacherAssignmentController,
     deleteTeacherAssignmentController,
     getMyTeacherAssignmentsController,
+    getMyTeacherClassesController,
 } from "../controllers/teacherAssignmentController.js";
 import { authorize, protect } from "../middleware/authMiddleware.js";
 
@@ -33,6 +34,12 @@ router.get("/teacher/:teacher", getTeacherAssignmentsByTeacherController);
 // ======================================================
 
 router.get("/my-assignments", protect, authorize("teacher"), getMyTeacherAssignmentsController);
+
+// ======================================================
+// Teacher - Get My Classes / Subjects
+// ======================================================
+
+router.get("/my-classes",protect,authorize("teacher"), getMyTeacherClassesController);
 
 // Get assignment by ID
 router.get("/:id", getTeacherAssignmentByIdController);

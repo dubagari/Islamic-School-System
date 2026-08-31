@@ -7,6 +7,7 @@ import {
     updateTeacherAssignmentService,
     deleteTeacherAssignmentService,
     getMyTeacherAssignmentsService,
+    getMyTeacherClassesService,
     
 } from "../services/teacherAssignmentService.js";
 
@@ -171,3 +172,25 @@ export const getMyTeacherAssignmentsController =    async (req, res, next) => {
         }
     };
 
+// ======================================================
+// Get My Classes / Subjects
+// Teacher
+// ======================================================
+
+export const getMyTeacherClassesController = async (req, res, next) => {
+    try {
+        const classes =
+            await getMyTeacherClassesService(
+                req.user._id
+            );
+
+        res.status(200).json({
+            success: true,
+            message:
+                "Teacher classes retrieved successfully.",
+            data: classes,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
