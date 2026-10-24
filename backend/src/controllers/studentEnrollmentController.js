@@ -15,8 +15,6 @@ import {
 
 export const createStudentEnrollmentController =
     async (req, res, next) => {
-
-        console.log("ENROLLMENT BODY:", req.body);
         try {
             const enrollment =
                 await createStudentEnrollmentService(
@@ -42,14 +40,17 @@ export const createStudentEnrollmentController =
 export const getAllStudentEnrollmentsController =
     async (req, res, next) => {
         try {
-            const enrollments =
-                await getAllStudentEnrollmentsService();
+            const result =
+                await getAllStudentEnrollmentsService(
+                    req.validatedQuery || req.query
+                );
 
             res.status(200).json({
                 success: true,
                 message:
                     "Student enrollments retrieved successfully.",
-                data: enrollments,
+                data: result.data,
+                pagination: result.pagination,
             });
         } catch (error) {
             next(error);
@@ -175,11 +176,11 @@ export const updateStudentEnrollmentController =
 export const deactivateStudentEnrollmentController =
     async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const { id, enrollmentId } = req.params;
 
             const enrollment =
                 await deactivateStudentEnrollmentService(
-                    id
+                    enrollmentId || id
                 );
 
             res.status(200).json({

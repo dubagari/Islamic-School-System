@@ -1,4 +1,3 @@
-
 import express from "express";
 
 import {
@@ -11,48 +10,97 @@ import {
     updateAdmissionApplicationController,
 } from "../controllers/admissionApplicationController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    admissionApplicationQuerySchema,
+    createAdmissionApplicationSchema,
+    rejectAdmissionApplicationSchema,
+    updateAdmissionApplicationSchema,
+} from "../validators/admissionValidators.js";
+
 const router = express.Router();
 
 // ======================================================
-// Create Admission Application
+// Public - Submit Application
 // ======================================================
 
-router.post("/", createAdmissionApplicationController);
+router.post(
+    "/",
+    validate(createAdmissionApplicationSchema),
+    createAdmissionApplicationController
+);
 
 // ======================================================
-// Get All Admission Applications
+// Public - Check Application Status By Number
 // ======================================================
 
-router.get("/", getAdmissionApplicationsController);
+router.get(
+    "/number/:applicationNumber",
+    getAdmissionApplicationByNumberController
+);
 
 // ======================================================
-// Get Application By Application Number
+// Admin - List Applications
 // ======================================================
 
-router.get("/number/:applicationNumber", getAdmissionApplicationByNumberController);
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(admissionApplicationQuerySchema, "query"),
+    getAdmissionApplicationsController
+);
 
 // ======================================================
-// Get Application By ID
+// Admin - Get Application By ID
 // ======================================================
 
-router.get("/:id", getAdmissionApplicationByIdController);
+router.get(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getAdmissionApplicationByIdController
+);
 
 // ======================================================
-// Update Application
+// Admin - Update Application
 // ======================================================
 
-router.patch("/:id", updateAdmissionApplicationController);
+router.patch(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAdmissionApplicationSchema),
+    updateAdmissionApplicationController
+);
 
 // ======================================================
-// Approve Application
+// Admin - Approve Application
 // ======================================================
 
-router.patch("/:id/approve", approveAdmissionApplicationController);
+router.patch(
+    "/:id/approve",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    approveAdmissionApplicationController
+);
 
 // ======================================================
-// Reject Application
+// Admin - Reject Application
 // ======================================================
 
-router.patch("/:id/reject", rejectAdmissionApplicationController);
+router.patch(
+    "/:id/reject",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(rejectAdmissionApplicationSchema),
+    rejectAdmissionApplicationController
+);
 
 export default router;

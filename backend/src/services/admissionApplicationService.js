@@ -1,5 +1,10 @@
 import AdmissionApplication from "../models/AdmissionApplication.js";
 import Counter from "../models/Counter.js";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
+import { buildSearchFilter } from "../utils/search.js";
 
 // ======================================================
 // Generate Application Number
@@ -19,7 +24,7 @@ const generateApplicationNumber = async () => {
             },
         },
         {
-            new: true,
+            returnDocument: "after",
             upsert: true,
         }
     );
@@ -121,11 +126,42 @@ export const createAdmissionApplicationService =
 // ======================================================
 
 export const getAdmissionApplicationsService =
-    async () => {
-        return await AdmissionApplication.find()
-            .sort({
-                createdAt: -1,
-            });
+    async (query = {}) => {
+        const { page, limit, skip } = getPagination(query);
+
+        const filter = {
+            ...buildSearchFilter(query.search, [
+                "applicationNumber",
+                "firstName",
+                "middleName",
+                "lastName",
+                "phone",
+                "email",
+                "parentName",
+                "parentPhone",
+            ]),
+        };
+
+        if (query.status) {
+            filter.status = query.status;
+        }
+
+        if (query.paymentStatus) {
+            filter.paymentStatus = query.paymentStatus;
+        }
+
+        const [applications, total] = await Promise.all([
+            AdmissionApplication.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            AdmissionApplication.countDocuments(filter),
+        ]);
+
+        return paginatedResult(applications, total, {
+            page,
+            limit,
+        });
     };
 
 // ======================================================

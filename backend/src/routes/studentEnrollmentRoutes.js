@@ -10,69 +10,112 @@ import {
     deactivateStudentEnrollmentController,
 } from "../controllers/studentEnrollmentController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam, paginationQuery } from "../validators/common.js";
 import {
-    protect,
-    authorize,
-} from "../middleware/authMiddleware.js";
+    createStudentEnrollmentSchema,
+    updateStudentEnrollmentSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
 // ======================================================
-// Admin - Create Student Enrollment
+// Admin - Create Enrollment
 // ======================================================
 
-router.post("/",protect,authorize("admin"),createStudentEnrollmentController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createStudentEnrollmentSchema),
+    createStudentEnrollmentController
+);
 
 // ======================================================
-// Admin - Get All Student Enrollments
+// Admin - List Enrollments
 // ======================================================
 
-router.get("/",protect,authorize("admin"),getAllStudentEnrollmentsController);
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(paginationQuery, "query"),
+    getAllStudentEnrollmentsController
+);
 
 // ======================================================
-// Admin - Get Student Enrollment History
+// Admin - Student Enrollment History
 // IMPORTANT: Keep these before /:enrollmentId
 // ======================================================
 
-router.get("/student/:studentId/current",protect,authorize("admin"),getCurrentStudentEnrollmentController);
+router.get(
+    "/student/:studentId/current",
+    protect,
+    authorize("admin"),
+    validate(idParam("studentId"), "params"),
+    getCurrentStudentEnrollmentController
+);
+
+router.get(
+    "/student/:studentId/history",
+    protect,
+    authorize("admin"),
+    validate(idParam("studentId"), "params"),
+    getStudentEnrollmentHistoryController
+);
+
+router.get(
+    "/student/:studentId",
+    protect,
+    authorize("admin"),
+    validate(idParam("studentId"), "params"),
+    getStudentEnrollmentHistoryController
+);
 
 // ======================================================
 // Admin - Get Enrollment By ID
 // ======================================================
 
-router.get("/student/:studentId",protect,authorize("admin"),getStudentEnrollmentHistoryController);
-
-// ======================================================
-// Admin - Get Current Student Enrollment
-// ======================================================
-
-// ======================================================
-// Get Student Enrollment History
-// Admin
-// ======================================================
-
-router.get("/student/:studentId/history",protect,authorize("admin"),getStudentEnrollmentHistoryController);
-
-router.get("/:enrollmentId",protect,authorize("admin"),getStudentEnrollmentByIdController);
-
-
-// ======================================================
-// Deactivate Student Enrollment
-// Admin
-// ======================================================
-
-router.put("/:id/deactivate",protect,authorize("admin"),deactivateStudentEnrollmentController);
+router.get(
+    "/:enrollmentId",
+    protect,
+    authorize("admin"),
+    validate(idParam("enrollmentId"), "params"),
+    getStudentEnrollmentByIdController
+);
 
 // ======================================================
 // Admin - Update Enrollment
 // ======================================================
- 
-router.put("/:enrollmentId",protect,authorize("admin"),updateStudentEnrollmentController);
+
+router.put(
+    "/:enrollmentId",
+    protect,
+    authorize("admin"),
+    validate(idParam("enrollmentId"), "params"),
+    validate(updateStudentEnrollmentSchema),
+    updateStudentEnrollmentController
+);
 
 // ======================================================
 // Admin - Deactivate Enrollment
 // ======================================================
 
-router.delete("/:enrollmentId",protect,authorize("admin"),deactivateStudentEnrollmentController);
+router.put(
+    "/:enrollmentId/deactivate",
+    protect,
+    authorize("admin"),
+    validate(idParam("enrollmentId"), "params"),
+    deactivateStudentEnrollmentController
+);
+
+router.delete(
+    "/:enrollmentId",
+    protect,
+    authorize("admin"),
+    validate(idParam("enrollmentId"), "params"),
+    deactivateStudentEnrollmentController
+);
 
 export default router;

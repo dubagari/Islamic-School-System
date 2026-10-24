@@ -13,14 +13,17 @@ import {
 
 export const getAllStudentsController =    async (req, res, next) => {
         try {
-            const students =
-                await getAllStudentsService();
+            const result =
+                await getAllStudentsService(
+                    req.validatedQuery || req.query
+                );
 
             res.status(200).json({
                 success: true,
                 message:
                     "Students retrieved successfully.",
-                data: students,
+                data: result.data,
+                pagination: result.pagination,
             });
         } catch (error) {
             next(error);
@@ -60,20 +63,10 @@ export const getStudentByIdController =    async (req, res, next) => {
 
 export const getStudentProfileController =    async (req, res, next) => {
         try {
-            console.log(
-                "STUDENT PROFILE CONTROLLER:",
-                req.user._id
-            );
-
             const student =
-                await getStudentProfileService( 
+                await getStudentProfileService(
                     req.user._id
                 );
-
-            console.log(
-                "STUDENT PROFILE RESULT:",
-                student
-            );
 
             res.status(200).json({
                 success: true,

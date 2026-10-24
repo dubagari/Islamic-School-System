@@ -2,6 +2,10 @@ import StudentEnrollment from "../models/StudentEnrollment.js";
 import Student from "../models/Student.js";
 import AcademicSession from "../models/AcademicSession.js";
 import AcademicClass from "../models/AcademicClass.js";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
 
 // ======================================================
 // Create Student Enrollment
@@ -121,22 +125,44 @@ export const createStudentEnrollmentService = async (data) => {
 // ======================================================
 
 export const getAllStudentEnrollmentsService =
-    async () => {
+    async (query = {}) => {
+        const { page, limit, skip } = getPagination(query);
 
-        return await StudentEnrollment.find()
-            .populate(
-                "student",
-                "-__v"
-            )
-            .populate(
-                "academicSession"
-            )
-            .populate(
-                "academicClass"
-            )
-            .sort({
-                createdAt: -1,
-            });
+        const filter = {};
+
+        if (query.student) {
+            filter.student = query.student;
+        }
+
+        if (query.academicSession) {
+            filter.academicSession = query.academicSession;
+        }
+
+        if (query.academicClass) {
+            filter.academicClass = query.academicClass;
+        }
+
+        if (query.status) {
+            filter.status = query.status;
+        }
+
+        if (query.isActive !== undefined) {
+            filter.isActive =
+                query.isActive === true || query.isActive === "true";
+        }
+
+        const [enrollments, total] = await Promise.all([
+            StudentEnrollment.find(filter)
+                .populate("student", "-__v")
+                .populate("academicSession")
+                .populate("academicClass")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            StudentEnrollment.countDocuments(filter),
+        ]);
+
+        return paginatedResult(enrollments, total, { page, limit });
     };
 
 // ======================================================

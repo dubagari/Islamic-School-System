@@ -296,6 +296,9 @@ export const updateTeacherAssignmentService =
             );
         }
 
+        // Assigned-by is always the authenticated admin
+        delete data.assignedBy;
+
         // --------------------------------------------------
         // If teacher is being changed
         // --------------------------------------------------

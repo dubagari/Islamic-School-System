@@ -38,12 +38,15 @@ export const createAdmissionApplicationController =
 export const getAdmissionApplicationsController =
     async (req, res, next) => {
         try {
-            const applications =
-                await getAdmissionApplicationsService();
+            const result =
+                await getAdmissionApplicationsService(
+                    req.validatedQuery || req.query
+                );
 
             res.status(200).json({
                 success: true,
-                data: applications,
+                data: result.data,
+                pagination: result.pagination,
             });
         } catch (error) {
             next(error);

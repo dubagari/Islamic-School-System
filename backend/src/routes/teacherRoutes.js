@@ -11,58 +11,84 @@ import {
     getTeacherDashboardController,
 } from "../controllers/teacherController.js";
 
-import {    protect,    authorize,} from "../middleware/authMiddleware.js";
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam, paginationQuery } from "../validators/common.js";
+import {
+    createTeacherSchema,
+    updateTeacherSchema,
+} from "../validators/teacherValidators.js";
 
 const router = express.Router();
 
 // ======================================================
-// Admin - Create Teacher
+// Teacher - Self Service
 // ======================================================
 
-router.post("/", protect, authorize("admin"), createTeacherController);
+router.get(
+    "/profile",
+    protect,
+    authorize("teacher"),
+    getTeacherProfileController
+);
 
-
-// ======================================================
-// Teacher - Get Own Profile
-// ======================================================
-
-router.get("/profile", protect, authorize("teacher"), getTeacherProfileController);
-
-
-// ======================================================
-// Teacher - Dashboard
-// ======================================================
-
-router.get("/dashboard", protect, authorize("teacher"), getTeacherDashboardController);
+router.get(
+    "/dashboard",
+    protect,
+    authorize("teacher"),
+    getTeacherDashboardController
+);
 
 // ======================================================
-// Admin - Get All Teachers
+// Admin - Teacher Management
 // ======================================================
 
-router.get("/", protect, authorize("admin"), getTeachersController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createTeacherSchema),
+    createTeacherController
+);
 
-// ======================================================
-// Admin - Get Teacher By Number
-// ======================================================
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(paginationQuery, "query"),
+    getTeachersController
+);
 
-router.get("/number/:teacherNumber", protect, authorize("admin"), getTeacherByNumberController);
+router.get(
+    "/number/:teacherNumber",
+    protect,
+    authorize("admin"),
+    getTeacherByNumberController
+);
 
-// ======================================================
-// Admin - Get Teacher By ID
-// ======================================================
+router.get(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getTeacherByIdController
+);
 
-router.get("/:id", protect, authorize("admin"), getTeacherByIdController);
+router.put(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateTeacherSchema),
+    updateTeacherController
+);
 
-// ======================================================
-// Admin - Update Teacher
-// ======================================================
-
-router.put("/:id", protect, authorize("admin"), updateTeacherController);
-
-// ======================================================
-// Admin - Delete Teacher
-// ======================================================
-
-router.delete("/:id", protect, authorize("admin"), deleteTeacherController);
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteTeacherController
+);
 
 export default router;

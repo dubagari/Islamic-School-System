@@ -8,10 +8,13 @@ import {
     deleteSubjectController,
 } from "../controllers/subjectController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
 import {
-    protect,
-    authorize,
-} from "../middleware/authMiddleware.js";
+    createSubjectSchema,
+    updateSubjectSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
@@ -19,19 +22,38 @@ const router = express.Router();
 // Subject Routes
 // ======================================================
 
-// Create Subject
-router.post("/", protect,authorize("admin"),createSubjectController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createSubjectSchema),
+    createSubjectController
+);
 
-// Get All Subjects
 router.get("/", protect, getSubjectsController);
 
-// Get Subject By ID
-router.get("/:id", protect, getSubjectByIdController);
+router.get(
+    "/:id",
+    protect,
+    validate(idParam("id"), "params"),
+    getSubjectByIdController
+);
 
-// Update Subject
-router.patch("/:id",protect,authorize("admin"),updateSubjectController);
+router.patch(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateSubjectSchema),
+    updateSubjectController
+);
 
-// Delete Subject
-router.delete("/:id",protect,authorize("admin"),deleteSubjectController);
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteSubjectController
+);
 
 export default router;

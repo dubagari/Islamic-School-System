@@ -8,40 +8,52 @@ import {
     deleteAcademicSemesterController,
 } from "../controllers/AcademicSemesterController.js";
 
-import { protect, authorize,} from "../middleware/authMiddleware.js";
-
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    createAcademicSemesterSchema,
+    updateAcademicSemesterSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
-
 
 // ======================================================
 // Academic Semester Routes
 // ======================================================
 
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createAcademicSemesterSchema),
+    createAcademicSemesterController
+);
 
-// Create Academic Semester
+router.get("/", protect, getAcademicSemestersController);
 
-router.post(    "/", protect, authorize("admin"), createAcademicSemesterController);
+router.get(
+    "/:id",
+    protect,
+    validate(idParam("id"), "params"),
+    getAcademicSemesterByIdController
+);
 
+router.patch(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAcademicSemesterSchema),
+    updateAcademicSemesterController
+);
 
-// Get All Academic Semesters
-
-router.get( "/", protect, getAcademicSemestersController);
-
-
-// Get Academic Semester By ID
-
-router.get( "/:id", protect, getAcademicSemesterByIdController);
-
-
-// Update Academic Semester
-
-router.patch( "/:id", protect, authorize("admin"), updateAcademicSemesterController);
-
-
-// Delete Academic Semester
-
-router.delete( "/:id", protect, authorize("admin"), deleteAcademicSemesterController);
-
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteAcademicSemesterController
+);
 
 export default router;
