@@ -6,7 +6,7 @@ import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/pages/AboutPage";
 import { Spinner } from "@/components/PageLoader";
 import { InputField } from "@/components/Fields";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, assetUrl } from "@/lib/api";
 
 type ApplicationRecord = {
   applicationNumber: string;
@@ -19,6 +19,7 @@ type ApplicationRecord = {
   parentName?: string;
   parentPhone?: string;
   reason?: string;
+  photoUrl?: string;
 };
 
 const statusStyles: Record<string, string> = {
@@ -106,9 +107,18 @@ export function ApplicationStatusPage() {
         {record && (
           <article role="status" className="mt-8 overflow-hidden rounded-card border border-ink-100 bg-white shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 bg-forest-50/50 px-5 py-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-ink-500">Application number</p>
-                <p className="font-mono text-lg font-bold text-ink-900 select-all">{record.applicationNumber}</p>
+              <div className="flex items-center gap-4">
+                {record.photoUrl && (
+                  <img
+                    src={assetUrl(record.photoUrl)}
+                    alt={`Passport photo of applicant ${record.firstName}`}
+                    className="size-14 rounded-lg border border-ink-200 object-cover"
+                  />
+                )}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-ink-500">Application number</p>
+                  <p className="font-mono text-lg font-bold text-ink-900 select-all">{record.applicationNumber}</p>
+                </div>
               </div>
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ring-1 ring-inset ${statusStyles[record.status] ?? "bg-ink-100 text-ink-800 ring-ink-200"}`}

@@ -115,26 +115,7 @@ export const school = {
     officeHours: "Sun – Thu, 8:00 AM – 4:00 PM",
     mapNote: "Campus map and directions are available from the school office.",
   },
-  news: [
-    {
-      title: "Eleven students complete the memorization of the Qur'an",
-      date: "2026-07-26",
-      text: "The school held its annual Takhtif celebration, honoring the students who completed the mushaf this year. Parents, teachers, and the community gathered for the du'a and certificate ceremony.",
-      tag: "Journal",
-    },
-    {
-      title: "Admissions open for the new academic session",
-      date: "2026-08-10",
-      text: "Applications for Kindergarten through the senior track are now open both online and at the front office. Places are offered on a rolling basis until capacity.",
-      tag: "Admissions",
-    },
-    {
-      title: "Parent-teacher tajweed clinic",
-      date: "2026-08-30",
-      text: "A morning workshop for parents on reciting with accuracy. An opportunity to learn tajweed rules alongside your children and strengthen the home connection.",
-      tag: "Community",
-    },
-  ],
+  news: [],
   stats: [
     { value: "100+", label: "Students enrolled" },
     { value: "60+", label: "Students memorizing the Qur'an" },

@@ -601,6 +601,38 @@ export const getAnnouncementsService = async (
     };
 };
 
+export const getPublicAnnouncementsService = async (
+    query = {}
+) => {
+    const limit = Math.min(
+        Number(query.limit) || 10,
+        24
+    );
+
+    const now = new Date();
+
+    const filter = {
+        isPublished: true,
+        audience: "all",
+        publishAt: { $lte: now },
+        $or: [
+            { expiresAt: null },
+            { expiresAt: { $gt: now } },
+        ],
+    };
+
+    const announcements = await Announcement.find(filter)
+        .select("title content priority publishAt createdAt")
+        .sort({ publishAt: -1 })
+        .limit(limit);
+
+    return {
+        announcements,
+        total: announcements.length,
+        limit,
+    };
+};
+
 export const getAnnouncementByIdService = async (
     announcementId,
     user

@@ -5,6 +5,7 @@ import {
     markAnnouncementReadService,
     updateAnnouncementService,
     deleteAnnouncementService,
+    getPublicAnnouncementsService,
     sendMessageService,
     getMessagesService,
     getConversationService,
@@ -174,6 +175,29 @@ export const getAnnouncementUnreadCountController =
             next(error);
         }
     };
+
+export const getPublicAnnouncementsController = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const result =
+            await getPublicAnnouncementsService(
+                req.query
+            );
+
+        res.status(200).json({
+            success: true,
+            message:
+                "Public announcements retrieved successfully.",
+            data: result.announcements,
+            total: result.total,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 // ======================================================
 // Messages

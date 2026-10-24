@@ -26,6 +26,11 @@ import {
   type StudentRegistrationResult,
 } from "@/features/admissions/api";
 
+const API_ASSET_BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:5000/api/v2").replace(
+  /\/api\/v2\/?$/,
+  ""
+);
+
 export function AdmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
 
@@ -169,6 +174,13 @@ export function AdmissionDetailPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Applicant details">
+          {application.photoUrl ? (
+            <img
+              src={`${API_ASSET_BASE}${application.photoUrl}`}
+              alt={`Passport photo of ${application.firstName}`}
+              className="mb-4 h-28 w-24 rounded-lg border border-ink-200 object-cover"
+            />
+          ) : null}
           <dl className="divide-y divide-ink-100 text-sm">
             <DetailRow label="Application #" value={application.applicationNumber} mono />
             <DetailRow

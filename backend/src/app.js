@@ -9,6 +9,8 @@ import { apiLimiter } from "./middleware/rateLimiters.js";
 import AppError from "./utils/AppError.js";
 
 import authRoutes from "./routes/authRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import { UPLOADS_ROOT } from "./utils/uploads.js";
 
 import academicSectionRoutes from "./routes/academicSectionRoutes.js";
 import academicSessionRoutes from "./routes/academicSessionRoutes.js";
@@ -95,6 +97,8 @@ app.use(auditLogger);
 // ==========================================
 // Health Check
 // ==========================================
+app.use("/uploads", express.static(UPLOADS_ROOT));
+app.use("/api/v2/uploads", uploadRoutes);
 
 app.get("/health", (req, res) => {
     res.status(200).json({

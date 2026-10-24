@@ -41,3 +41,41 @@ export class PayloadError extends Error {
     this.status = status;
   }
 }
+
+export type UploadPayload = {
+  photoUrl: string;
+};
+
+export type PublicAnnouncement = {
+  _id: string;
+  title: string;
+  content: string;
+  priority: "Low" | "Normal" | "High" | "Urgent";
+  publishAt: string;
+  createdAt: string;
+};
+
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, { method: "POST", body: formData });
+  let body: ApiEnvelope<T> & { success: boolean };
+  try {
+    body = await response.json();
+  } catch {
+    throw new PayloadError("Upload failed. Please try again.", response.status);
+  }
+  if (!response.ok || !body.success) {
+    throw new PayloadError(body.message ?? "Upload failed. Please try again.", response.status);
+  }
+  return body.data as T;
+}
+
+export function assetUrl(path: string): string {
+  return `${API_BASE_URL.replace(/\/api\/v2\/?$/, "")}${path}`;
+}
+
+export async function fetchPublicAnnouncements(limit = 12): Promise<PublicAnnouncement[]> {
+  return apiFetch<PublicAnnouncement[]>(`/announcements/public?limit=${limit}`);
+}
+
+export const ACCEPTED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;

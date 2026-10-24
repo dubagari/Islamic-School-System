@@ -97,6 +97,12 @@ const admissionApplicationSchema = new mongoose.Schema(
             default: "",
         },
 
+        photoUrl: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+
         // ======================================================
         // Admission
         // ======================================================

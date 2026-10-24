@@ -58,6 +58,7 @@ export const createAdmissionApplicationService =
             relationship,
             currentLevel,
             previousMadrasa,
+            photoUrl,
         } = data;
 
         // ----------------------------------------------
@@ -106,10 +107,11 @@ export const createAdmissionApplicationService =
                 parentPhone,
                 parentEmail,
                 relationship,
-                currentLevel,
-                previousMadrasa,
+            currentLevel,
+            previousMadrasa,
+            photoUrl,
 
-                applicationNumber,
+            applicationNumber,
 
                 status: "Pending",
                 statusReason: "",

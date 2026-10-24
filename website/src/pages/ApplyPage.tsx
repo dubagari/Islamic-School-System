@@ -1,12 +1,12 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, ImageUp, Send, Trash2 } from "lucide-react";
 
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/pages/AboutPage";
 import { Spinner } from "@/components/PageLoader";
 import { school } from "@/content/site";
-import { apiErrorMessage, apiFetch } from "@/lib/api";
+import { apiErrorMessage, apiFetch, apiUpload, ACCEPTED_PHOTO_TYPES, MAX_PHOTO_BYTES, type UploadPayload } from "@/lib/api";
 import { Fieldset, InputField, SelectField, TextareaField } from "@/components/Fields";
 
 type ApplicationForm = {
@@ -49,11 +49,36 @@ export function ApplyPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [applicationNumber, setApplicationNumber] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const set = (key: keyof ApplicationForm) =>
     (event: { target: { value: string } }) => {
       setForm((prev) => ({ ...prev, [key]: event.target.value }));
     };
+
+  const clearPhoto = () => {
+    setPhoto(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
+      setError("Passport photo must be a JPG, PNG or WEBP image.");
+      return;
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      setError("Passport photo must be smaller than 2MB.");
+      return;
+    }
+    setError(null);
+    setPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
 
   const validate = (): boolean => {
     const errors: Record<string, string> = {};
@@ -80,6 +105,14 @@ export function ApplyPage() {
 
     setSubmitting(true);
     try {
+      let photoUrl: string | undefined;
+      if (photo) {
+        const uploadForm = new FormData();
+        uploadForm.append("photo", photo);
+        const uploaded = await apiUpload<UploadPayload>("/uploads/photo", uploadForm);
+        photoUrl = uploaded.photoUrl;
+      }
+
       const data = await apiFetch<{ applicationNumber?: string; id?: string }>("/admission-applications", {
         method: "POST",
         body: JSON.stringify({
@@ -97,6 +130,7 @@ export function ApplyPage() {
           relationship: form.relationship.trim(),
           currentLevel: form.currentLevel.trim(),
           previousMadrasa: form.previousMadrasa.trim() || undefined,
+          photoUrl,
         }),
       });
       setApplicationNumber(data.applicationNumber ?? "");
@@ -139,6 +173,7 @@ export function ApplyPage() {
                 onClick={() => {
                   setForm(initialForm);
                   setApplicationNumber(null);
+                  clearPhoto();
                 }}
                 className="rounded-lg border border-ink-200 px-5 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:border-primary-600"
               >
@@ -200,6 +235,45 @@ export function ApplyPage() {
                 onChange={set("previousMadrasa")}
                 hint="Leave empty if this is the child's first school."
               />
+            </div>
+            <div className="sm:col-span-3">
+              <span className="block text-sm font-medium text-ink-800">Passport photo (optional)</span>
+              {photoPreview && photo ? (
+                <div className="mt-2 flex items-center gap-4">
+                  <img
+                    src={photoPreview}
+                    alt={`Selected passport photo of ${form.firstName || "the applicant"}`}
+                    className="size-20 rounded-lg border border-ink-200 object-cover"
+                  />
+                  <div className="text-xs text-ink-600">
+                    <p className="font-semibold text-ink-800">{photo.name}</p>
+                    <p>{(photo.size / 1024).toFixed(0)} KB — JPG, PNG or WEBP, up to 2MB</p>
+                    <button
+                      type="button"
+                      onClick={clearPhoto}
+                      className="mt-2 inline-flex items-center gap-1 rounded-lg border border-ink-200 px-3 py-1.5 font-semibold text-ink-700 transition-colors hover:border-red-300 hover:text-red-700"
+                    >
+                      <Trash2 className="size-3.5" aria-hidden />
+                      Remove photo
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <label
+                  className="mt-2 flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-ink-300 bg-ink-50/60 px-6 py-6 text-center transition-colors hover:border-primary-600"
+                >
+                  <ImageUp className="size-6 text-ink-500" aria-hidden />
+                  <span className="text-sm font-semibold text-ink-800">Choose passport photo</span>
+                  <span className="text-xs text-ink-500">JPG, PNG or WEBP — up to 2MB</span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    onChange={handlePhotoChange}
+                  />
+                </label>
+              )}
             </div>
           </Fieldset>
 

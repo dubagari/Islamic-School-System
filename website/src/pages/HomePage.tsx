@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, GraduationCap, HeartHandshake, Megaphone } from "lucide-react";
 
 import { PageShell, SectionHeading } from "@/components/PageShell";
 import { school } from "@/content/site";
+import { fetchPublicAnnouncements, type PublicAnnouncement } from "@/lib/api";
 
 const whyIcon: Record<string, typeof BookOpen> = {
   book: BookOpen,
@@ -12,6 +14,22 @@ const whyIcon: Record<string, typeof BookOpen> = {
 
 export function HomePage() {
   const Icon = whyIcon;
+  const [announcements, setAnnouncements] = useState<PublicAnnouncement[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchPublicAnnouncements(3)
+      .then((items) => {
+        if (!cancelled) setAnnouncements(items);
+      })
+      .catch(() => {
+        if (!cancelled) setAnnouncements([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <PageShell>
       {/* Hero */}
@@ -149,21 +167,31 @@ export function HomePage() {
           </Link>
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {school.news.slice(0, 3).map((item) => (
-            <article key={item.title} className="flex flex-col rounded-card border border-ink-100 bg-white p-6 shadow-card">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-forest-50 px-2.5 py-0.5 text-[11px] font-semibold text-forest-800 ring-1 ring-inset ring-forest-200">
-                  <Megaphone className="size-3" aria-hidden />
-                  {item.tag}
-                </span>
-                <time className="text-[11px] text-ink-400" dateTime={item.date}>
-                  {new Date(item.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                </time>
-              </div>
-              <h3 className="mt-3 text-sm font-bold text-ink-900">{item.title}</h3>
-              <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-ink-600">{item.text}</p>
-            </article>
-          ))}
+          {announcements === null
+            ? [0, 1, 2].map((index) => (
+                <div key={index} className="animate-pulse rounded-card border border-ink-100 bg-white p-6 shadow-card" aria-hidden>
+                  <div className="h-4 w-24 rounded-full bg-ink-100" />
+                  <div className="mt-4 h-4 w-3/4 rounded bg-ink-100" />
+                  <div className="mt-2 h-3 w-full rounded bg-ink-50" />
+                </div>
+              ))
+            : announcements.length === 0
+              ? null
+              : announcements.slice(0, 3).map((item) => (
+                  <article key={item.title} className="flex flex-col rounded-card border border-ink-100 bg-white p-6 shadow-card">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-forest-50 px-2.5 py-0.5 text-[11px] font-semibold text-forest-800 ring-1 ring-inset ring-forest-200">
+                        <Megaphone className="size-3" aria-hidden />
+                        {item.priority}
+                      </span>
+                      <time className="text-[11px] text-ink-400" dateTime={item.publishAt}>
+                        {new Date(item.publishAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                      </time>
+                    </div>
+                    <h3 className="mt-3 text-sm font-bold text-ink-900">{item.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-ink-600">{item.content}</p>
+                  </article>
+                ))}
         </div>
       </section>
 

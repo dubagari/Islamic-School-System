@@ -21,6 +21,12 @@ const baseApplication = {
     relationship: z.string().trim().min(1, "Relationship is required.").max(100),
     currentLevel: z.string().trim().min(1, "Current level is required.").max(100),
     previousMadrasa: z.string().trim().max(200).optional(),
+    photoUrl: z
+        .string()
+        .trim()
+        .max(500)
+        .optional()
+        .or(z.literal("")),
 };
 
 export const createAdmissionApplicationSchema = z.object(baseApplication);

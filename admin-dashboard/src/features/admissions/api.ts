@@ -24,6 +24,7 @@ export type AdmissionApplication = {
   relationship: string;
   currentLevel: string;
   previousMadrasa?: string | null;
+  photoUrl?: string | null;
   applicationNumber?: string;
   status: AdmissionApplicationStatus;
   statusReason?: string;
@@ -62,6 +63,7 @@ export type CreateAdmissionApplicationPayload = {
   relationship: string;
   currentLevel: string;
   previousMadrasa?: string;
+  photoUrl?: string;
 };
 
 export type RegisteredStudent = {

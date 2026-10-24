@@ -17,9 +17,17 @@ import {
     announcementQuerySchema,
     createAnnouncementSchema,
     updateAnnouncementSchema,
+    publicAnnouncementQuerySchema,
 } from "../validators/communicationValidators.js";
+import { getPublicAnnouncementsController } from "../controllers/communicationController.js";
 
 const router = express.Router();
+
+router.get(
+    "/public",
+    validate(publicAnnouncementQuerySchema, "query"),
+    getPublicAnnouncementsController
+);
 
 router.use(protect);
 

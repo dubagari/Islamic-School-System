@@ -81,6 +81,12 @@ export const announcementQuerySchema = z
     })
     .passthrough();
 
+export const publicAnnouncementQuerySchema = z
+    .object({
+        limit: z.coerce.number().int().min(1).max(24).optional(),
+    })
+    .passthrough();
+
 // ======================================================
 // Messages
 // ======================================================
