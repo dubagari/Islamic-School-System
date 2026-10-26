@@ -40,12 +40,14 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <span
-            className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary-700 font-arabic text-2xl text-gold-300 ring-1 ring-gold-500/40 shadow-card"
+          <img
+            src="/logo.png"
+            alt=""
+            className="mx-auto mb-4 size-14 rounded-full shadow-card"
+            width={56}
+            height={56}
             aria-hidden
-          >
-            ض
-          </span>
+          />
           <h1 className="text-xl font-bold tracking-tight text-white">
             Darul Ulum
           </h1>
@@ -76,7 +78,7 @@ export function LoginPage() {
           <div className="space-y-4">
             <label className="block">
               <span className="mb-1.5 block text-xs font-medium text-forest-100">
-                Username or email
+                Application Number 
               </span>
               <input
                 type="text"
@@ -86,7 +88,7 @@ export function LoginPage() {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full rounded-lg border border-forest-700 bg-forest-800 px-3 py-2 text-sm text-white placeholder:text-forest-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/40"
-                placeholder="e.g. admin"
+                placeholder="e.g. app-4853-2024"
               />
             </label>
 

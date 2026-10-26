@@ -29,12 +29,14 @@ export function Header() {
       </a>
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2.5" aria-label={`${school.name} — home`}>
-          <span
-            className="flex size-9 items-center justify-center rounded-full bg-gold-500/15 font-arabic text-lg leading-none text-gold-400 ring-1 ring-gold-500/30"
+          <img
+            src="/logo.png"
+            alt=""
+            className="size-9 shrink-0 rounded-full"
+            width={36}
+            height={36}
             aria-hidden
-          >
-            {school.mark}
-          </span>
+          />
           <span className="min-w-0">
             <span className="block truncate text-sm font-bold tracking-wide">{school.shortName}</span>
             <span className="block font-arabic text-[10px] leading-none text-forest-300">

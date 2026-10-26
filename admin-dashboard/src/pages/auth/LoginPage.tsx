@@ -40,12 +40,14 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <span
-            className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary-700 font-arabic text-2xl text-gold-300 ring-1 ring-gold-500/40 shadow-card"
+          <img
+            src="/logo.png"
+            alt=""
+            className="mx-auto mb-4 size-14 rounded-full shadow-card"
+            width={56}
+            height={56}
             aria-hidden
-          >
-            ض
-          </span>
+          />
           <h1 className="text-xl font-bold tracking-tight text-white">
             Darul Ulum
           </h1>

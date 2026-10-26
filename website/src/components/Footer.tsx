@@ -10,12 +10,14 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
-            <span
-              className="flex size-9 items-center justify-center rounded-full bg-gold-500/15 font-arabic text-lg leading-none text-gold-400 ring-1 ring-gold-500/30"
+            <img
+              src="/logo.png"
+              alt=""
+              className="size-9 shrink-0 rounded-full"
+              width={36}
+              height={36}
               aria-hidden
-            >
-              {school.mark}
-            </span>
+            />
             <div>
               <p className="text-sm font-bold text-white">{school.shortName}</p>
               <p className="font-arabic text-xs text-forest-300">{school.nameArabic}</p>

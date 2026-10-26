@@ -52,12 +52,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         className="flex items-center gap-3 border-b border-forest-800 px-4 py-4"
         aria-label="Darul Ulum home"
       >
-        <span
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-500/15 font-arabic text-lg leading-none text-gold-400 ring-1 ring-gold-500/30"
+        <img
+          src="/logo.png"
+          alt=""
+          className="size-9 shrink-0 rounded-full"
+          width={36}
+          height={36}
           aria-hidden
-        >
-          ض
-        </span>
+        />
         <span className="min-w-0">
           <span className="block truncate text-sm font-bold tracking-wide text-white">
             Darul Ulum

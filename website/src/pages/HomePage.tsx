@@ -69,9 +69,13 @@ export function HomePage() {
           <div className="relative mx-auto hidden w-full max-w-sm items-center justify-center lg:flex">
             <div className="relative flex size-72 items-center justify-center rounded-full bg-forest-900/60 ring-1 ring-gold-500/20">
               <div className="absolute inset-3 rounded-full ring-1 ring-gold-500/10" aria-hidden />
-              <span className="font-arabic text-8xl leading-none text-gold-400" dir="rtl">
-                ض
-              </span>
+              <img
+                src="/logo.png"
+                alt={`${school.name} logo`}
+                className="size-52 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+                width={208}
+                height={208}
+              />
             </div>
           </div>
         </div>
