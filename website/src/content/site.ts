@@ -25,7 +25,7 @@ export const school = {
     "To be the leading madrasa where sacred and modern knowledge meet under the light of the Qur'an and Sunnah.",
   principalWelcome:
     "Assalamu alaykum. At Darul Ulum your child will be taught with love: the Qur'an by tongue and heart, the sciences by curiosity and discipline, and character by living example. Our teachers see themselves not merely as instructors, but as guardians of another person's child. We ask Allah to make your children from His righteous servants.",
-  principalName: "Principal's Name",
+  principalName: "Sheikh Muhd Auwal",
   principalTitle: "Head of Madrasa",
   values: [
     { title: "Taqwa", titleArabic: "تقوى", text: "Worshipped hearts before educated tongues — every lesson begins and ends with the carriage of taqwa." },
