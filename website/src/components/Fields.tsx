@@ -73,6 +73,8 @@ export function InputField({
   placeholder,
   autoComplete,
   name,
+  min,
+  max,
 }: BaseFieldProps & {
   id?: string;
   type?: string;
@@ -82,6 +84,8 @@ export function InputField({
   placeholder?: string;
   autoComplete?: string;
   name?: string;
+  min?: string;
+  max?: string;
 }) {
   const inputId = id ?? `field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
   return (
@@ -95,6 +99,8 @@ export function InputField({
         maxLength={maxLength}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        min={min}
+        max={max}
         required={required}
         spellCheck={type !== "email"}
         aria-invalid={error ? true : undefined}
