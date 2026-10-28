@@ -330,12 +330,18 @@ Base path: `/api/v2/admission-applications`
 | Method | Path | Access | Description |
 | --- | --- | --- | --- |
 | `POST` | `/` | Public | Submit an application |
-| `GET` | `/number/:applicationNumber` | Public | Check an application by number |
+| `GET` | `/number/:applicationNumber?phone=...` | Public | Check an application by number |
+| `GET` | `/number/:applicationNumber/pdf?phone=...` | Public | Download the application PDF |
 | `GET` | `/` | Admin | List applications |
 | `GET` | `/:id` | Admin | Get an application |
+| `GET` | `/:id/pdf` | Admin | Download the application PDF |
 | `PATCH` | `/:id` | Admin | Update an application |
 | `PATCH` | `/:id/approve` | Admin | Approve an application |
 | `PATCH` | `/:id/reject` | Admin | Reject an application |
+
+Public lookup and PDF routes require a `phone` query parameter. It must match
+the applicant or parent phone number on the application (compared by last 10
+digits), otherwise the API returns `404`.
 
 Create body:
 
@@ -395,7 +401,21 @@ Base path: `/api/v2/student-registration` — Admin only.
 Registration creates the student profile, registration number, and student user
 account. A registration number cannot be issued before payment confirmation.
 
-### 5.4 Student Password Reset
+### 5.4 Admission Photo Upload
+
+Base path: `/api/v2/uploads`
+
+| Method | Path | Access | Description |
+| --- | --- | --- | --- |
+| `POST` | `/photo` | Public | Upload an applicant passport photo |
+
+Send `multipart/form-data` with a single `photo` field (JPG, PNG, or WEBP, max
+2MB). In production the file is stored on Cloudinary and the response contains
+the secure `photoUrl` to pass to the application create endpoint. In
+development, if Cloudinary is not configured, the file is stored locally under
+`/uploads/admissions`.
+
+### 5.5 Student Password Reset
 
 Base path: `/api/v2/student-passwords` — Admin only.
 

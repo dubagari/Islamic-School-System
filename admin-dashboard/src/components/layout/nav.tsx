@@ -100,81 +100,8 @@ export const adminNav: NavGroup[] = [
   },
 ];
 
-export const teacherNav: NavGroup[] = [
-  {
-    label: "Teaching",
-    items: [
-      { label: "My Classes", path: "/my-classes", icon: Building2 },
-      { label: "Attendance", path: "/attendance", icon: ClipboardCheck },
-      { label: "Assessments", path: "/assessments", icon: BookOpen },
-      { label: "Results", path: "/results", icon: FileText },
-    ],
-  },
-  {
-    label: "Communication",
-    items: [
-      { label: "Announcements", path: "/announcements", icon: Megaphone },
-      { label: "Messages", path: "/messages", icon: MessageSquare },
-      { label: "Notifications", path: "/notifications", icon: Bell },
-    ],
-  },
-];
-
-export const studentNav: NavGroup[] = [
-  {
-    label: "My Learning",
-    items: [
-      { label: "Dashboard", path: "/", icon: LayoutDashboard },
-      { label: "My Results", path: "/results", icon: FileText },
-      { label: "My Attendance", path: "/attendance", icon: ClipboardCheck },
-    ],
-  },
-  {
-    label: "Fees",
-    items: [{ label: "My Invoices", path: "/fees/invoices", icon: DollarSign }],
-  },
-  {
-    label: "School",
-    items: [
-      { label: "Announcements", path: "/announcements", icon: Megaphone },
-      { label: "Messages", path: "/messages", icon: MessageSquare },
-      { label: "Notifications", path: "/notifications", icon: Bell },
-    ],
-  },
-];
-
-export const parentNav: NavGroup[] = [
-  {
-    label: "Home",
-    items: [{ label: "Overview", path: "/", icon: LayoutDashboard }],
-  },
-  {
-    label: "School",
-    items: [{ label: "Notices", path: "/announcements", icon: Megaphone }],
-  },
-  {
-    label: "Communication",
-    items: [
-      { label: "Messages", path: "/messages", icon: MessageSquare },
-      { label: "Notifications", path: "/notifications", icon: Bell },
-    ],
-  },
-];
-
-export function navForRole(role: string | undefined): NavGroup[] {
-  switch (role) {
-    case "admin":
-      return adminNav;
-    case "teacher":
-      return teacherNav;
-      
-    case "student":
-      return studentNav;
-    case "parent":
-      return parentNav;
-    default:
-      return [];
-  }
+export function navForRole(): NavGroup[] {
+  return adminNav;
 }
 
 export function isActivePath(pathname: string, itemPath: string): boolean {

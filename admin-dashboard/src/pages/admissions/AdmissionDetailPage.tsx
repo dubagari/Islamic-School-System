@@ -5,6 +5,7 @@ import {
   CircleCheck,
   CircleX,
   Copy,
+  FileDown,
   Link as LinkIcon,
   Wallet,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import { FieldError, TextareaField } from "@/components/ui/Fields";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PageLoader } from "@/components/ui/PageLoader";
 import {
+  downloadAdmissionPdf,
   useApproveAdmissionMutation,
   useGetAdmissionQuery,
   useRegisterStudentMutation,
@@ -25,11 +27,7 @@ import {
   toFieldErrors,
   type StudentRegistrationResult,
 } from "@/features/admissions/api";
-
-const API_ASSET_BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:5000/api/v2").replace(
-  /\/api\/v2\/?$/,
-  ""
-);
+import { assetUrl } from "@/app/api";
 
 export function AdmissionDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +48,7 @@ export function AdmissionDetailPage() {
   const [pageError, setPageError] = useState<string | null>(null);
   const [registration, setRegistration] =
     useState<StudentRegistrationResult | null>(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const application = data?.data;
 
@@ -89,6 +88,26 @@ export function AdmissionDetailPage() {
       setRegistration(result.data);
     } catch (error) {
       setPageError(toFieldErrors(error).message);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!application) return;
+    setDownloadingPdf(true);
+    setPageError(null);
+    try {
+      await downloadAdmissionPdf(
+        application._id,
+        application.applicationNumber,
+      );
+    } catch (error) {
+      setPageError(
+        error instanceof Error
+          ? error.message
+          : "Could not download the application PDF.",
+      );
+    } finally {
+      setDownloadingPdf(false);
     }
   };
 
@@ -176,7 +195,7 @@ export function AdmissionDetailPage() {
         <Card title="Applicant details">
           {application.photoUrl ? (
             <img
-              src={`${API_ASSET_BASE}${application.photoUrl}`}
+              src={assetUrl(application.photoUrl)}
               alt={`Passport photo of ${application.firstName}`}
               className="mb-4 h-28 w-24 rounded-lg border border-ink-200 object-cover"
             />
@@ -271,6 +290,15 @@ export function AdmissionDetailPage() {
 
       <Card title="Actions" className="mt-4">
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            icon={<FileDown className="size-4" aria-hidden />}
+            onClick={() => void handleDownloadPdf()}
+            loading={downloadingPdf}
+          >
+            Download PDF
+          </Button>
+
           {canDecide && (
             <>
               <Button

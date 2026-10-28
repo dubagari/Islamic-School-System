@@ -97,7 +97,17 @@ app.use(auditLogger);
 // ==========================================
 // Health Check
 // ==========================================
-app.use("/uploads", express.static(UPLOADS_ROOT));
+app.use(
+    "/uploads",
+    express.static(UPLOADS_ROOT, {
+        setHeaders: (res) => {
+            res.setHeader(
+                "Cross-Origin-Resource-Policy",
+                "cross-origin"
+            );
+        },
+    })
+);
 app.use("/api/v2/uploads", uploadRoutes);
 
 app.get("/health", (req, res) => {

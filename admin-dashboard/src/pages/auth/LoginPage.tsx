@@ -5,23 +5,37 @@ import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useLoginMutation } from "@/app/api";
 import { Button } from "@/components/ui/Button";
 
+const SCHOOL_PORTAL_URL =
+  (import.meta.env.VITE_SCHOOL_PORTAL_URL as string | undefined) ??
+  "http://localhost:5174";
+
 export function LoginPage() {
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showPortalLink, setShowPortalLink] = useState(false);
   const [error, setError] = useState("");
   const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+    setShowPortalLink(false);
 
     try {
       const result = await login({
         identifier: identifier.trim(),
         password,
       }).unwrap();
+
+      if (result.data?.user?.role !== "admin") {
+        setError(
+          "This dashboard is for administrators only. Please sign in through the school portal.",
+        );
+        setShowPortalLink(true);
+        return;
+      }
 
       navigate(
         result.data?.user?.mustChangePassword ? "/change-password" : "/",
@@ -134,6 +148,15 @@ export function LoginPage() {
             </Button>
           </div>
         </form>
+
+        {showPortalLink && (
+          <a
+            href={SCHOOL_PORTAL_URL}
+            className="mt-4 block rounded-lg border border-gold-500/40 bg-gold-500/10 px-4 py-2.5 text-center text-sm font-semibold text-gold-300 transition-colors hover:bg-gold-500/20"
+          >
+            Go to school portal →
+          </a>
+        )}
 
         <p className="mt-6 text-center text-[11px] leading-relaxed text-forest-400">
           Access is provided by the school administration.

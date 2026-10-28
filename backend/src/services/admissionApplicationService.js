@@ -1,5 +1,6 @@
 import AdmissionApplication from "../models/AdmissionApplication.js";
 import Counter from "../models/Counter.js";
+import { notFound } from "../utils/AppError.js";
 import {
     getPagination,
     paginatedResult,
@@ -188,16 +189,35 @@ export const getAdmissionApplicationByIdService =
 // Get Application By Application Number
 // ======================================================
 
+const normalizePhone = (value) =>
+    String(value || "").replace(/\D/g, "").slice(-10);
+
+const phoneMatchesApplication = (application, phone) => {
+    const expected = normalizePhone(phone);
+
+    if (!expected) {
+        return false;
+    }
+
+    return (
+        normalizePhone(application.phone) === expected ||
+        normalizePhone(application.parentPhone) === expected
+    );
+};
+
 export const getAdmissionApplicationByNumberService =
-    async (applicationNumber) => {
+    async (applicationNumber, phone) => {
         const application =
             await AdmissionApplication.findOne({
                 applicationNumber,
             });
 
-        if (!application) {
-            throw new Error(
-                "Admission application not found."
+        if (
+            !application ||
+            !phoneMatchesApplication(application, phone)
+        ) {
+            throw notFound(
+                "Application not found or phone number does not match."
             );
         }
 

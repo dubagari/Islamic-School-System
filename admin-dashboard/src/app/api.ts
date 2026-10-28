@@ -1,12 +1,29 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  type BaseQueryFn,
+  type FetchArgs,
+  type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 
 import type { ApiErrorPayload, Pagination, User } from "@/types";
-import { logout, setCredentials } from "@/features/auth/authSlice";
+import {
+  logout,
+  setCredentials,
+  updatePasswordFlags,
+} from "@/features/auth/authSlice";
 import type { LoginResponse } from "@/features/auth/authSlice";
 
-const API_BASE_URL =
+export const API_BASE_URL =
   (import.meta.env.VITE_API_URL as string | undefined) ??
-  "http://localhost:5000/api/v2";
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api/v2"
+    : "https://islamic-school-system.onrender.com/api/v2");
+
+export function assetUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_BASE_URL.replace(/\/api\/v2\/?$/, "")}${path}`;
+}
 
 export type ApiEnvelope<T> = {
   success: boolean;
@@ -71,30 +88,56 @@ export async function apiRequest<T>(
   return payload;
 }
 
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: API_BASE_URL,
+  credentials: "omit",
+  prepareHeaders: (headers) => {
+    let token: string | null = null;
+
+    try {
+      const parsed = JSON.parse(
+        localStorage.getItem("dums.auth") ?? "",
+      ) as { token?: string } | null;
+      token = parsed?.token ?? null;
+    } catch {
+      token = null;
+    }
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  },
+});
+
+const baseQuery: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+
+  if (result.error && result.error.status === "PARSING_ERROR") {
+    return {
+      error: {
+        status: "CUSTOM_ERROR",
+        error: "The API returned a non-JSON response.",
+        data: {
+          success: false,
+          message:
+            "The API returned an unexpected HTML response. Make sure the backend is running and up to date.",
+        },
+      },
+    };
+  }
+
+  return result;
+};
+
 export const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
-    credentials: "omit",
-    prepareHeaders: (headers) => {
-      let token: string | null = null;
-
-      try {
-        const parsed = JSON.parse(
-          localStorage.getItem("dums.auth") ?? "",
-        ) as { token?: string } | null;
-        token = parsed?.token ?? null;
-      } catch {
-        token = null;
-      }
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery,
   extractRehydrationInfo: (action, { reducerPath }) => {
     if (action.type === "HYDRATE") {
       return (action.payload as Record<string, unknown>)[reducerPath] as never;
@@ -143,9 +186,16 @@ export const baseApi = createApi({
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          const user = data.data.user as User;
+
+          if (user.role !== "admin") {
+            dispatch(logout());
+            return;
+          }
+
           dispatch(
             setCredentials({
-              user: data.data.user as User,
+              user,
               token: data.data.token,
             }),
           );
@@ -164,6 +214,25 @@ export const baseApi = createApi({
         method: "PATCH",
         body,
       }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(updatePasswordFlags(false));
+          dispatch(
+            baseApi.util.updateQueryData(
+              "selfProfile",
+              undefined,
+              (draft) => {
+                if (draft.data) {
+                  draft.data.mustChangePassword = false;
+                }
+              },
+            ),
+          );
+        } catch {
+          // handled by component
+        }
+      },
     }),
     logout: build.mutation<ApiEnvelope<Record<string, unknown>>, void>({
       queryFn: () => ({ data: { success: true, message: "Logged out", data: {} } }),

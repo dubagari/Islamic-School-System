@@ -1,14 +1,10 @@
 import express from "express";
 import multer from "multer";
-import fs from "fs";
-import path from "path";
 
-import {
-    ensureUploadsDir,
-    UPLOADS_ROOT,
-    EXTENSIONS_BY_MIME,
-    buildPhotoFileName,
-} from "../utils/uploads.js";
+import { uploadLimiter } from "../middleware/rateLimiters.js";
+import { uploadAdmissionPhoto } from "../services/uploadService.js";
+import { badRequest } from "../utils/AppError.js";
+import { EXTENSIONS_BY_MIME } from "../utils/uploads.js";
 
 const router = express.Router();
 
@@ -22,7 +18,7 @@ const upload = multer({
             cb(null, true);
         } else {
             cb(
-                new Error(
+                badRequest(
                     "Only JPG, PNG or WEBP images are allowed."
                 )
             );
@@ -32,33 +28,41 @@ const upload = multer({
 
 router.post(
     "/photo",
+    uploadLimiter,
     upload.single("photo"),
-    (req, res, next) => {
+    async (req, res, next) => {
         try {
             if (!req.file) {
                 return next(
-                    new Error("No photo file was provided.")
+                    badRequest("No photo file was provided.")
                 );
             }
 
-            const dir = ensureUploadsDir("admissions");
-            const fileName = buildPhotoFileName(
+            const uploaded = await uploadAdmissionPhoto(
+                req.file.buffer,
                 req.file.mimetype
-            );
-
-            fs.writeFileSync(
-                path.join(dir, fileName),
-                req.file.buffer
             );
 
             res.status(201).json({
                 success: true,
                 message: "Photo uploaded successfully.",
                 data: {
-                    photoUrl: `/uploads/admissions/${fileName}`,
+                    photoUrl: uploaded.photoUrl,
+                    publicId: uploaded.publicId,
+                    storage: uploaded.storage,
                 },
             });
         } catch (error) {
+            if (error instanceof multer.MulterError) {
+                return next(
+                    badRequest(
+                        error.code === "LIMIT_FILE_SIZE"
+                            ? "Photo must be smaller than 2MB."
+                            : error.message
+                    )
+                );
+            }
+
             next(error);
         }
     }

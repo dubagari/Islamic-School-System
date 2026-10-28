@@ -41,8 +41,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [location.pathname]);
 
   const role = user?.role ?? "admin";
-  const nav = navForRole(role);
-  const groups = nav;
+  const groups = navForRole();
 
   const sidebar = (
     <div className="flex h-full flex-col bg-forest-900 text-white">

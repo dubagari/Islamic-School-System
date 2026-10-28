@@ -34,6 +34,20 @@ export const loginLimiter = rateLimit({
 });
 
 // ======================================================
+// Upload Limiter
+// ======================================================
+
+export const uploadLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 30,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+    message: jsonMessage(
+        "Too many uploads. Please try again later."
+    ),
+});
+
+// ======================================================
 // Payment Limiter
 // ======================================================
 

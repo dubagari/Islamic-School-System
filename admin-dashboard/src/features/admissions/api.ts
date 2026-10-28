@@ -1,4 +1,4 @@
-import { baseApi, type ApiEnvelope } from "@/app/api";
+import { API_BASE_URL, baseApi, type ApiEnvelope } from "@/app/api";
 import type { ApiErrorPayload } from "@/types";
 
 // ======================================================
@@ -129,6 +129,57 @@ export function toFieldErrors(error: unknown): {
 export function formatNaira(amount: number | null | undefined): string {
   if (amount === null || amount === undefined) return "—";
   return `₦${amount.toLocaleString()}`;
+}
+
+export async function downloadAdmissionPdf(
+  id: string,
+  applicationNumber?: string,
+): Promise<void> {
+  let token: string | null = null;
+
+  try {
+    const parsed = JSON.parse(
+      localStorage.getItem("dums.auth") ?? "",
+    ) as { token?: string } | null;
+    token = parsed?.token ?? null;
+  } catch {
+    token = null;
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/admission-applications/${id}/pdf`,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    },
+  );
+
+  if (!response.ok) {
+    let message = "Could not download the application PDF.";
+
+    try {
+      const payload = (await response.json()) as { message?: string };
+      if (payload?.message) message = payload.message;
+    } catch {
+      // non-JSON error response
+    }
+
+    throw new Error(message);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeNumber = String(applicationNumber || id).replace(
+    /[^A-Za-z0-9]+/g,
+    "-",
+  );
+
+  link.href = url;
+  link.download = `admission-${safeNumber}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 // ======================================================

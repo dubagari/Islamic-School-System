@@ -1,12 +1,12 @@
 import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { AlertCircle, CheckCircle2, Clock, Copy, ImageUp, Mail, Phone, Send, Trash2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, Copy, FileDown, ImageUp, Mail, Phone, Send, Trash2 } from "lucide-react";
 
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/pages/AboutPage";
 import { Spinner } from "@/components/PageLoader";
 import { school } from "@/content/site";
-import { apiErrorMessage, apiFetch, apiUpload, ACCEPTED_PHOTO_TYPES, MAX_PHOTO_BYTES, type UploadPayload } from "@/lib/api";
+import { apiErrorMessage, apiFetch, apiUpload, applicationPdfUrl, ACCEPTED_PHOTO_TYPES, MAX_PHOTO_BYTES, type UploadPayload } from "@/lib/api";
 import { InputField, SelectField, TextareaField } from "@/components/Fields";
 import { cn } from "@/lib/cn";
 
@@ -101,6 +101,7 @@ export function ApplyPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [applicationNumber, setApplicationNumber] = useState<string | null>(null);
+  const [submittedPhone, setSubmittedPhone] = useState("");
   const [copied, setCopied] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -191,6 +192,7 @@ export function ApplyPage() {
         }),
       });
       setApplicationNumber(data.applicationNumber ?? "");
+      setSubmittedPhone(form.phone.trim());
     } catch (err) {
       setError(apiErrorMessage(err, "Could not submit the application. Please try again."));
     } finally {
@@ -254,11 +256,19 @@ export function ApplyPage() {
                 >
                   Check status now
                 </Link>
+                <a
+                  href={applicationPdfUrl(applicationNumber, submittedPhone)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-gold-500/50 bg-gold-500/10 px-5 py-2.5 text-sm font-bold text-ink-800 transition-colors hover:border-gold-600"
+                >
+                  <FileDown className="size-4" aria-hidden />
+                  Download PDF
+                </a>
                 <button
                   type="button"
                   onClick={() => {
                     setForm(initialForm);
                     setApplicationNumber(null);
+                    setSubmittedPhone("");
                     clearPhoto();
                   }}
                   className="rounded-lg border border-ink-200 px-5 py-2.5 text-sm font-semibold text-ink-800 transition-colors hover:border-primary-600"

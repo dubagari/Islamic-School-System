@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { BadgeCheck, CircleX, Plus } from "lucide-react";
 
+import { assetUrl } from "@/app/api";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -137,11 +138,14 @@ export function AdmissionsListPage() {
           .filter(Boolean)
           .join(" "),
       render: (item) => (
-        <span className="font-medium text-ink-900">
-          {[item.firstName, item.middleName, item.lastName]
-            .filter(Boolean)
-            .join(" ")}
-        </span>
+        <div className="flex items-center gap-2.5">
+          <ApplicantAvatar application={item} />
+          <span className="font-medium text-ink-900">
+            {[item.firstName, item.middleName, item.lastName]
+              .filter(Boolean)
+              .join(" ")}
+          </span>
+        </div>
       ),
     },
     { key: "gender", header: "Gender", render: (item) => item.gender },
@@ -326,11 +330,14 @@ export function AdmissionsListPage() {
                 </span>
                 <StatusBadge status={item.status} />
               </div>
-              <p className="font-medium text-ink-900">
-                {[item.firstName, item.middleName, item.lastName]
-                  .filter(Boolean)
-                  .join(" ")}
-              </p>
+              <div className="flex items-center gap-2.5">
+                <ApplicantAvatar application={item} className="size-10" />
+                <p className="font-medium text-ink-900">
+                  {[item.firstName, item.middleName, item.lastName]
+                    .filter(Boolean)
+                    .join(" ")}
+                </p>
+              </div>
               <p className="text-xs text-ink-500">
                 {item.currentLevel} · {item.gender} · submitted{" "}
                 {new Date(item.createdAt).toLocaleDateString()}
@@ -583,6 +590,43 @@ export function AdmissionsListPage() {
 // ======================================================
 // Sub-components
 // ======================================================
+
+function ApplicantAvatar({
+  application,
+  className = "size-8",
+}: {
+  application: AdmissionApplication;
+  className?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  const initials =
+    [application.firstName, application.lastName]
+      .filter(Boolean)
+      .map((part) => part.charAt(0))
+      .join("")
+      .toUpperCase() || "?";
+
+  if (!application.photoUrl || failed) {
+    return (
+      <span
+        aria-hidden
+        className={`flex shrink-0 items-center justify-center rounded-full bg-forest-100 text-[10px] font-bold text-forest-800 ${className}`}
+      >
+        {initials}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      src={assetUrl(application.photoUrl)}
+      alt={`Passport photo of ${application.firstName} ${application.lastName}`}
+      className={`shrink-0 rounded-full border border-ink-200 object-cover ${className}`}
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 function RowActions({
   application,

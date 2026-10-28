@@ -39,6 +39,16 @@ export const rejectAdmissionApplicationSchema = z.object({
     reason: z.string().trim().max(500).optional(),
 });
 
+export const admissionLookupQuerySchema = z
+    .object({
+        phone: z
+            .string()
+            .trim()
+            .min(1, "Phone number is required.")
+            .max(30),
+    })
+    .passthrough();
+
 export const admissionApplicationQuerySchema = z
     .object({
         page: z.coerce.number().int().min(1).optional(),

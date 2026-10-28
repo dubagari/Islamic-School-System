@@ -1,3 +1,4 @@
+import { buildAdmissionApplicationPdf } from "../services/admissionPdfService.js";
 import {
     createAdmissionApplicationService,
     getAdmissionApplicationsService,
@@ -7,6 +8,21 @@ import {
     rejectAdmissionApplicationService,
     updateAdmissionApplicationService,
 } from "../services/admissionApplicationService.js";
+
+const sendApplicationPdf = (res, application, pdf) => {
+    const safeNumber = String(
+        application.applicationNumber || "application"
+    ).replace(/[^A-Za-z0-9]+/g, "-");
+
+    res.set({
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="admission-${safeNumber}.pdf"`,
+        "Content-Length": pdf.length,
+        "Cache-Control": "no-store",
+    });
+
+    res.send(pdf);
+};
 
 // ======================================================
 // Create Admission Application
@@ -86,15 +102,71 @@ export const getAdmissionApplicationByNumberController =
             const { applicationNumber } =
                 req.params;
 
+            const phone =
+                req.validatedQuery?.phone;
+
             const application =
                 await getAdmissionApplicationByNumberService(
-                    applicationNumber
+                    applicationNumber,
+                    phone
                 );
 
             res.status(200).json({
                 success: true,
                 data: application,
             });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+// ======================================================
+// Get Application PDF By Number (Public)
+// ======================================================
+
+export const getAdmissionApplicationByNumberPdfController =
+    async (req, res, next) => {
+        try {
+            const { applicationNumber } = req.params;
+            const phone = req.validatedQuery?.phone;
+
+            const application =
+                await getAdmissionApplicationByNumberService(
+                    applicationNumber,
+                    phone
+                );
+
+            const pdf =
+                await buildAdmissionApplicationPdf(
+                    application
+                );
+
+            sendApplicationPdf(res, application, pdf);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+// ======================================================
+// Get Application PDF By ID (Admin)
+// ======================================================
+
+export const getAdmissionApplicationByIdPdfController =
+    async (req, res, next) => {
+        try {
+            const { id } = req.params;
+
+            const application =
+                await getAdmissionApplicationByIdService(
+                    id
+                );
+
+            const pdf =
+                await buildAdmissionApplicationPdf(
+                    application
+                );
+
+            sendApplicationPdf(res, application, pdf);
         } catch (error) {
             next(error);
         }

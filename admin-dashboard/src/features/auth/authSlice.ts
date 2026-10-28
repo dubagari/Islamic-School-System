@@ -28,10 +28,14 @@ function readStoredAuth(): AuthState {
       parsed &&
       typeof parsed === "object" &&
       "user" in parsed &&
-      "token" in parsed
+      "token" in parsed &&
+      parsed.user?.role === "admin"
     ) {
       return parsed;
     }
+
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem("dums.token");
 
     return { user: null, token: null };
   } catch {

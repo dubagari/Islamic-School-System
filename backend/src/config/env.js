@@ -12,6 +12,20 @@ export const validateEnv = () => {
         (name) => !process.env[name]
     );
 
+    if (process.env.NODE_ENV === "production") {
+        const cloudinaryVariables = [
+            "CLOUDINARY_CLOUD_NAME",
+            "CLOUDINARY_API_KEY",
+            "CLOUDINARY_API_SECRET",
+        ];
+
+        missing.push(
+            ...cloudinaryVariables.filter(
+                (name) => !process.env[name]
+            )
+        );
+    }
+
     if (missing.length > 0) {
         throw new Error(
             `Missing required environment variables: ${missing.join(", ")}. ` +
@@ -54,5 +68,12 @@ export const env = {
 
     get paystackSecretKey() {
         return process.env.PAYSTACK_SECRET_KEY || "";
+    },
+
+    get cloudinaryFolder() {
+        return (
+            process.env.CLOUDINARY_FOLDER ||
+            "darul-ulum/admissions"
+        );
     },
 };

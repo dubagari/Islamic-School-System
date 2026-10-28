@@ -5,6 +5,8 @@ import {
     getAdmissionApplicationsController,
     getAdmissionApplicationByIdController,
     getAdmissionApplicationByNumberController,
+    getAdmissionApplicationByNumberPdfController,
+    getAdmissionApplicationByIdPdfController,
     approveAdmissionApplicationController,
     rejectAdmissionApplicationController,
     updateAdmissionApplicationController,
@@ -15,6 +17,7 @@ import validate from "../middleware/validate.js";
 import { idParam } from "../validators/common.js";
 import {
     admissionApplicationQuerySchema,
+    admissionLookupQuerySchema,
     createAdmissionApplicationSchema,
     rejectAdmissionApplicationSchema,
     updateAdmissionApplicationSchema,
@@ -38,7 +41,14 @@ router.post(
 
 router.get(
     "/number/:applicationNumber",
+    validate(admissionLookupQuerySchema, "query"),
     getAdmissionApplicationByNumberController
+);
+
+router.get(
+    "/number/:applicationNumber/pdf",
+    validate(admissionLookupQuerySchema, "query"),
+    getAdmissionApplicationByNumberPdfController
 );
 
 // ======================================================
@@ -51,6 +61,18 @@ router.get(
     authorize("admin"),
     validate(admissionApplicationQuerySchema, "query"),
     getAdmissionApplicationsController
+);
+
+// ======================================================
+// Admin - Download Application PDF
+// ======================================================
+
+router.get(
+    "/:id/pdf",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getAdmissionApplicationByIdPdfController
 );
 
 // ======================================================
