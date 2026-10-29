@@ -89,9 +89,9 @@ export function Header() {
                 {(
                   [
                     ["Student portal", portalLinks.portal],
-                    ["Teacher portal", portalLinks.portalTeacher],
-                    ["Parent portal", portalLinks.portalParent],
-                    ["Administration", portalLinks.admin],
+                    // ["Teacher portal", portalLinks.portalTeacher],
+                    // ["Parent portal", portalLinks.portalParent],
+                    // ["Administration", portalLinks.admin],
                   ] as const
                 ).map(([label, href]) => (
                   <a
@@ -159,9 +159,9 @@ export function Header() {
               <a href={portalLinks.portal} className="rounded-lg border border-forest-700 px-3 py-2 text-center text-forest-100">
                 Student portal
               </a>
-              <a href={portalLinks.portalParent} className="rounded-lg border border-forest-700 px-3 py-2 text-center text-forest-100">
+              {/* <a href={portalLinks.portalParent} className="rounded-lg border border-forest-700 px-3 py-2 text-center text-forest-100">
                 Parent portal
-              </a>
+              </a> */}
               <a href={portalLinks.portalTeacher} className="rounded-lg border border-forest-700 px-3 py-2 text-center text-forest-100">
                 Teacher portal
               </a>

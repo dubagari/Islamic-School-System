@@ -29,6 +29,7 @@ const notificationSchema = new mongoose.Schema(
                 "fee",
                 "result",
                 "attendance",
+                "exam",
                 "system",
             ],
             default: "system",

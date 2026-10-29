@@ -71,6 +71,8 @@ export const adminNav: NavGroup[] = [
       { label: "Teacher Attendance", path: "/attendance/teachers", icon: CalendarRange },
       { label: "Assessments", path: "/assessments", icon: BookOpen },
       { label: "Results", path: "/results", icon: FileText },
+      { label: "CBT Exams", path: "/cbt/exams", icon: ClipboardList },
+      { label: "Question Bank", path: "/cbt/questions", icon: BookOpen },
     ],
   },
   {

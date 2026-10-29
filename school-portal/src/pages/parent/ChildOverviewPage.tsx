@@ -5,6 +5,7 @@ import {
   CalendarCheck,
   ClipboardList,
   FileText,
+  MonitorCheck,
   Users,
   Wallet,
 } from "lucide-react";
@@ -327,6 +328,30 @@ export function ChildOverviewPage() {
               </div>
             )}
           />
+        </Card>
+
+        <Card
+          title="CBT exams"
+          description="Computer-based test attempts and released results"
+          actions={
+            <Button
+              size="sm"
+              variant="outline"
+              iconRight={
+                <MonitorCheck className="size-3.5" aria-hidden />
+              }
+              onClick={() =>
+                void navigate(`/parent/children/${studentId}/cbt`)
+              }
+            >
+              View CBT
+            </Button>
+          }
+        >
+          <p className="text-sm text-ink-600">
+            See how your child performed in timed CBT exams. Scores appear
+            once the teacher releases results.
+          </p>
         </Card>
       </StatGrid>
 

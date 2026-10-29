@@ -160,6 +160,7 @@ export const baseApi = createApi({
     "Assignment",
     "Assessments",
     "Assessment",
+    "CBT",
     "AssessmentScore",
     "Scores",
     "Results",

@@ -27,17 +27,24 @@ const ClassAttendancePage = lazyNamed(() => import("@/pages/teacher/ClassAttenda
 const MyAttendancePage = lazyNamed(() => import("@/pages/teacher/MyAttendancePage"), "MyAttendancePage");
 const TeacherAssessmentsPage = lazyNamed(() => import("@/pages/teacher/TeacherAssessmentsPage"), "TeacherAssessmentsPage");
 const TeacherResultsPage = lazyNamed(() => import("@/pages/teacher/TeacherResultsPage"), "TeacherResultsPage");
+const TeacherCbtPage = lazyNamed(() => import("@/pages/teacher/TeacherCbtPage"), "TeacherCbtPage");
+const TeacherCbtExamPage = lazyNamed(() => import("@/pages/teacher/TeacherCbtExamPage"), "TeacherCbtExamPage");
 
 const StudentDashboardPage = lazyNamed(() => import("@/pages/student/StudentDashboardPage"), "StudentDashboardPage");
 const StudentResultsPage = lazyNamed(() => import("@/pages/student/StudentResultsPage"), "StudentResultsPage");
 const StudentAttendancePage = lazyNamed(() => import("@/pages/student/StudentAttendancePage"), "StudentAttendancePage");
 const StudentFeesPage = lazyNamed(() => import("@/pages/student/StudentFeesPage"), "StudentFeesPage");
+const StudentCbtPage = lazyNamed(() => import("@/pages/student/StudentCbtPage"), "StudentCbtPage");
+const CbtAttemptPage = lazyNamed(() => import("@/pages/student/CbtAttemptPage"), "CbtAttemptPage");
+const CbtResultPage = lazyNamed(() => import("@/pages/student/CbtResultPage"), "CbtResultPage");
 
 const ParentDashboardPage = lazyNamed(() => import("@/pages/parent/ParentDashboardPage"), "ParentDashboardPage");
 const ChildOverviewPage = lazyNamed(() => import("@/pages/parent/ChildOverviewPage"), "ChildOverviewPage");
 const ChildAttendancePage = lazyNamed(() => import("@/pages/parent/ChildAttendancePage"), "ChildAttendancePage");
 const ChildResultsPage = lazyNamed(() => import("@/pages/parent/ChildResultsPage"), "ChildResultsPage");
 const ChildFeesPage = lazyNamed(() => import("@/pages/parent/ChildFeesPage"), "ChildFeesPage");
+const ChildCbtPage = lazyNamed(() => import("@/pages/parent/ChildCbtPage"), "ChildCbtPage");
+const ChildCbtResultPage = lazyNamed(() => import("@/pages/parent/ChildCbtResultPage"), "ChildCbtResultPage");
 
 const AnnouncementsPage = lazyNamed(() => import("@/pages/shared/AnnouncementsPage"), "AnnouncementsPage");
 const MessagesPage = lazyNamed(() => import("@/pages/shared/MessagesPage"), "MessagesPage");
@@ -160,6 +167,22 @@ export default function App() {
             </RequireRole>
           }
         />
+        <Route
+          path="/teacher/cbt"
+          element={
+            <RequireRole allow={["teacher"]}>
+              <TeacherCbtPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/teacher/cbt/:id"
+          element={
+            <RequireRole allow={["teacher"]}>
+              <TeacherCbtExamPage />
+            </RequireRole>
+          }
+        />
 
         {/* Student */}
         <Route
@@ -191,6 +214,30 @@ export default function App() {
           element={
             <RequireRole allow={["student"]}>
               <StudentFeesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/student/cbt"
+          element={
+            <RequireRole allow={["student"]}>
+              <StudentCbtPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/student/cbt/attempts/:attemptId"
+          element={
+            <RequireRole allow={["student"]}>
+              <CbtAttemptPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/student/cbt/results/:attemptId"
+          element={
+            <RequireRole allow={["student"]}>
+              <CbtResultPage />
             </RequireRole>
           }
         />
@@ -233,6 +280,22 @@ export default function App() {
           element={
             <RequireRole allow={["parent"]}>
               <ChildFeesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/parent/children/:studentId/cbt"
+          element={
+            <RequireRole allow={["parent"]}>
+              <ChildCbtPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/parent/children/:studentId/cbt/results/:attemptId"
+          element={
+            <RequireRole allow={["parent"]}>
+              <ChildCbtResultPage />
             </RequireRole>
           }
         />

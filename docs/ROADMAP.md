@@ -165,6 +165,29 @@
 
 ---
 
+# Phase 13: Computer-Based Testing
+
+- [x] CBT question bank (admin and teacher)
+- [x] Exam setup, availability window, and duration
+- [x] Question attachment, marks, and ordering
+- [x] Question and option shuffling
+- [x] Server-enforced timer with auto-submit
+- [x] Save/resume active attempts
+- [x] Automatic grading and pass mark
+- [x] Attempt limits (`maxAttempts`) and admin voiding
+- [x] Configurable result visibility and answer review
+- [x] Optional linked assessment score (`source: "CBT"`)
+- [x] Exam and result notifications
+- [x] Admin dashboard authoring and attempt monitoring
+- [x] Teacher CBT authoring for assigned subjects
+- [x] Student exam runner and results
+- [x] Parent view of child CBT attempts and results
+- [ ] Question bank bulk import/export
+- [ ] Rich-text or image-based questions
+- [ ] Question categories/tags and blueprint-based random selection
+
+---
+
 # Backend Delivery Notes
 
 - API documentation: `docs/API_REFERENCE.md`

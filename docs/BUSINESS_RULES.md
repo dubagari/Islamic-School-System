@@ -209,6 +209,66 @@ building screens, reports, and automations.
 
 ---
 
+## 6A. Computer-Based Testing (CBT)
+
+### Question bank
+
+- Questions belong to a subject and are reusable across exams.
+- Supported types are `MultipleChoice` and `TrueFalse`; multiple-choice
+  questions have 2-6 options and exactly one correct answer.
+- Teachers may manage questions only for subjects they are assigned to.
+- A question used by an exam cannot be deleted; deactivate it instead.
+
+### Exams
+
+- An exam belongs to a class subject, and its semester is inherited from that
+  class subject.
+- `durationMinutes` must be between 1 and 480. `passMark` is a percentage from
+  0 to 100. `maxAttempts` is 1-5.
+- Only published and active exams are visible to students, and only inside the
+  exam availability window.
+- Exam questions are copied into exam-specific records, so editing the bank
+  later does not alter a live exam.
+- Attaching, detaching, reordering, or changing marks is blocked after the first
+  non-voided attempt.
+- Deleting an exam is blocked after the first non-voided attempt.
+- A linked assessment must belong to the same class subject and semester as the
+  exam.
+
+### Attempts and grading
+
+- A student may have only one `InProgress` attempt per exam at a time.
+- Starting again while an attempt is active resumes it and returns saved
+  answers.
+- A student may retake an exam until the number of non-voided attempts reaches
+  `maxAttempts`.
+- An attempt expires at the earlier of its start time plus the exam duration and
+  the exam end time. Expired attempts auto-submit.
+- Answer saves are validated against the question's options; expired or
+  already-submitted attempts reject further saves.
+- Grading is automatic on submission: unanswered questions score zero, correct
+  answers earn the question's marks, and `percentage = round(score / totalMarks
+  * 100)`.
+- `passed` is true when the percentage is greater than or equal to `passMark`.
+- Result visibility is controlled by `resultVisibility`:
+  - `Immediate`: visible as soon as the attempt is submitted.
+  - `AfterPublish`: visible only after results are published.
+  - `Hidden`: never shown to students or parents.
+- Detailed answer review requires `allowReview` and a visible result; staff can
+  always review.
+- When linked to an assessment, a submitted attempt writes an `AssessmentScore`
+  with `source: "CBT"`. A manually entered score is never overwritten; the
+  attempt records `linkedScoreStatus: "SkippedManualScore"`.
+- Only admins may void an attempt. Voiding removes its answers and any linked
+  CBT score, and frees that attempt slot.
+
+### Notifications
+
+- Publishing an exam notifies eligible students.
+- Releasing results notifies affected students and linked parents.
+
+---
+
 ## 7. Finance
 
 ### Fee structures

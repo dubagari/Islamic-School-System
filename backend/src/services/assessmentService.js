@@ -582,6 +582,9 @@ export const bulkUpsertScoresService = async (
                         score: record.score,
                         remarks: record.remarks || "",
                         recordedBy: user._id,
+                        source: "Manual",
+                        cbtExam: null,
+                        cbtAttempt: null,
                     },
                 },
                 upsert: true,
@@ -685,6 +688,9 @@ export const updateScoreService = async (
     }
 
     score.recordedBy = user._id;
+    score.source = "Manual";
+    score.cbtExam = null;
+    score.cbtAttempt = null;
 
     await score.save();
 

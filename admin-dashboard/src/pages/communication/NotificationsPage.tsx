@@ -48,6 +48,7 @@ const NOTIFICATION_TYPES: NotificationType[] = [
   "fee",
   "result",
   "attendance",
+  "exam",
   "system",
 ];
 
@@ -63,6 +64,8 @@ function typeTone(type: string): BadgeTone {
       return "success";
     case "attendance":
       return "warning";
+    case "exam":
+      return "info";
     default:
       return "neutral";
   }

@@ -186,8 +186,13 @@ Errors use `AppError` and helpers: `badRequest`, `unauthorized`, `forbidden`,
 | `Attendance` | Daily student attendance per class |
 | `TeacherAttendance` | Daily teacher attendance |
 | `Assessment` | Assessment definition and weight |
-| `AssessmentScore` | Student score for an assessment |
+| `AssessmentScore` | Student score for an assessment (manual or CBT-sourced) |
 | `Result` | Computed weighted result per class subject and semester |
+| `CbtQuestion` | Reusable question bank entry for a subject |
+| `CbtExam` | Timed CBT exam for a class subject |
+| `CbtExamQuestion` | Exam-specific question snapshot, order, and marks |
+| `CbtAttempt` | Student attempt with timer, shuffled order, and result |
+| `CbtAttemptAnswer` | Saved answer per question with grading outcome |
 
 ### Finance
 
@@ -284,6 +289,17 @@ Assessments carry `maxScore`, `weight`, and `type`. Scores are normalized to
 percentages. Result computation is an upsert by student, class subject, and
 semester. Publication state is preserved when recomputing. Students and parents
 are gated to published results.
+
+### Computer-based testing
+
+The CBT module follows the same route → controller → service layering. Exam
+questions are snapshotted into `CbtExamQuestion` so bank edits do not alter live
+exams. Attempts store the shuffled question/option order; the timer is derived
+from server timestamps (`startedAt`, `expiresAt`) and enforced on every read and
+write. Submission grades answers, updates the attempt, and optionally upserts a
+linked `AssessmentScore` with `source: "CBT"`. Manual assessment scores are
+never overwritten. Result visibility is computed centrally from
+`resultVisibility`, `resultsPublished`, and `allowReview`.
 
 ### Finance
 

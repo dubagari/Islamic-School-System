@@ -97,6 +97,38 @@ export const assertTeacherClassSubjectAccess = async (
 };
 
 // ======================================================
+// Teacher Access To A Subject (Question Bank)
+// ======================================================
+
+export const assertTeacherSubjectAccess = async (
+    teacherUserId,
+    subjectId
+) => {
+    const classSubjectIds = await ClassSubject.find({
+        subject: subjectId,
+        isActive: true,
+    }).distinct("_id");
+
+    if (classSubjectIds.length === 0) {
+        throw notFound("Subject not found.");
+    }
+
+    const assignment = await TeacherAssignment.exists({
+        teacher: teacherUserId,
+        classSubject: { $in: classSubjectIds },
+        isActive: true,
+    });
+
+    if (!assignment) {
+        throw forbidden(
+            "You are not assigned to this subject."
+        );
+    }
+
+    return true;
+};
+
+// ======================================================
 // Student Lookup For A User
 // ======================================================
 

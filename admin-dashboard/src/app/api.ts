@@ -162,6 +162,7 @@ export const baseApi = createApi({
     "Attendance",
     "TeacherAttendance",
     "Assessments",
+    "CBT",
     "Scores",
     "Results",
     "FeeStructures",

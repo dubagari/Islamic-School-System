@@ -125,6 +125,7 @@ export const notificationQuerySchema = z
                 "fee",
                 "result",
                 "attendance",
+                "exam",
                 "system",
             ])
             .optional(),
@@ -143,6 +144,7 @@ export const broadcastNotificationSchema = z.object({
             "fee",
             "result",
             "attendance",
+            "exam",
             "system",
         ])
         .optional(),

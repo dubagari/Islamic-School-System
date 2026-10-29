@@ -57,11 +57,6 @@ export const school = {
   ],
   levels: [
     "Kindergarten",
-    "Primary 1",
-    "Primary 2",
-    "Primary 3",
-    "Primary 4",
-    "Primary 5",
     "Nisful Tamheedi",
     "Thanawiyya",
   ],

@@ -269,6 +269,36 @@
       "key": "parentPasswordValue",
       "value": "Parent123@",
       "type": "string"
+    },
+    {
+      "key": "cbtQuestionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtExamId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtExamQuestionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtAttemptId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtStartAt",
+      "value": "2026-10-29T08:00:00.000Z",
+      "type": "string"
+    },
+    {
+      "key": "cbtEndAt",
+      "value": "2026-10-29T10:00:00.000Z",
+      "type": "string"
     }
   ],
   "item": [
@@ -3771,6 +3801,485 @@
                   "key": "academicSession",
                   "value": "{{academicSessionId}}"
                 }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06a. Computer-Based Testing",
+      "item": [
+        {
+          "name": "Create CBT Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "questions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"{{subjectId}}\",\n  \"questionText\": \"What is the first pillar of Islam?\",\n  \"type\": \"MultipleChoice\",\n  \"options\": [\n    { \"key\": \"A\", \"text\": \"Shahadah\" },\n    { \"key\": \"B\", \"text\": \"Salah\" },\n    { \"key\": \"C\", \"text\": \"Zakah\" },\n    { \"key\": \"D\", \"text\": \"Sawm\" }\n  ],\n  \"correctAnswer\": \"A\",\n  \"explanation\": \"The Shahadah is the declaration of faith.\",\n  \"difficulty\": \"Easy\",\n  \"defaultMarks\": 1,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data._id) pm.collectionVariables.set(\"cbtQuestionId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List CBT Questions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/questions?subject={{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "questions"
+              ],
+              "query": [
+                {
+                  "key": "subject",
+                  "value": "{{subjectId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create CBT Exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample CBT Exam\",\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"description\": \"Sample computer-based test\",\n  \"instructions\": \"Answer all questions.\",\n  \"startAt\": \"{{cbtStartAt}}\",\n  \"endAt\": \"{{cbtEndAt}}\",\n  \"durationMinutes\": 30,\n  \"passMark\": 50,\n  \"maxAttempts\": 1,\n  \"shuffleQuestions\": true,\n  \"shuffleOptions\": true,\n  \"resultVisibility\": \"AfterPublish\",\n  \"allowReview\": true,\n  \"isPublished\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data._id) pm.collectionVariables.set(\"cbtExamId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List CBT Exams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams?classSubject={{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams"
+              ],
+              "query": [
+                {
+                  "key": "classSubject",
+                  "value": "{{classSubjectId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Attach CBT Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "questions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    { \"question\": \"{{cbtQuestionId}}\", \"marks\": 1 }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const entries = Array.isArray(json.data) ? json.data : (json.data && json.data.questions) || [];",
+                  "if (entries[0] && entries[0]._id) pm.collectionVariables.set(\"cbtExamQuestionId\", entries[0]._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish CBT Exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "publish"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "CBT Exam Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "statistics"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student CBT Exams",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/exams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "exams"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Start CBT Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/exams/{{cbtExamId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "exams",
+                "{{cbtExamId}}",
+                "start"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.attempt && json.data.attempt._id) pm.collectionVariables.set(\"cbtAttemptId\", json.data.attempt._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save CBT Answers",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/attempts/{{cbtAttemptId}}/answers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "answers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    { \"question\": \"{{cbtExamQuestionId}}\", \"selectedAnswer\": \"A\" }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Submit CBT Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/attempts/{{cbtAttemptId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "submit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CBT Attempt Result",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/attempts/{{cbtAttemptId}}/result",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "result"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publish CBT Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/results/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "results",
+                "publish"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Void CBT Attempt",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/attempts/{{cbtAttemptId}}/void",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "void"
               ]
             }
           }

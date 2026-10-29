@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquare,
+  MonitorCheck,
   Users,
   Wallet,
 } from "lucide-react";
@@ -32,6 +33,7 @@ export const teacherNav: NavGroup[] = [
       { label: "My Attendance", path: "/teacher/attendance/me", icon: CalendarRange },
       { label: "Assessments", path: "/teacher/assessments", icon: BookOpen },
       { label: "Results", path: "/teacher/results", icon: FileText },
+      { label: "CBT", path: "/teacher/cbt", icon: MonitorCheck },
     ],
   },
   {
@@ -50,6 +52,7 @@ export const studentNav: NavGroup[] = [
     items: [
       { label: "Dashboard", path: "/student", icon: LayoutDashboard },
       { label: "My Results", path: "/student/results", icon: FileText },
+      { label: "CBT Exams", path: "/student/cbt", icon: MonitorCheck },
       { label: "My Attendance", path: "/student/attendance", icon: ClipboardCheck },
     ],
   },

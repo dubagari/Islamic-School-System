@@ -33,6 +33,24 @@ const assessmentScoreSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+
+        source: {
+            type: String,
+            enum: ["Manual", "CBT"],
+            default: "Manual",
+        },
+
+        cbtExam: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CbtExam",
+            default: null,
+        },
+
+        cbtAttempt: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CbtAttempt",
+            default: null,
+        },
     },
     {
         timestamps: true,

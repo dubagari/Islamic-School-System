@@ -105,6 +105,7 @@ export type NotificationType =
   | "fee"
   | "result"
   | "attendance"
+  | "exam"
   | "system";
 
 export type NotificationItem = {

@@ -116,6 +116,21 @@ const ResultsPage = lazy(() =>
     default: m.ResultsPage,
   })),
 );
+const CbtExamsPage = lazy(() =>
+  import("@/pages/cbt/CbtExamsPage").then((m) => ({
+    default: m.CbtExamsPage,
+  })),
+);
+const CbtExamDetailPage = lazy(() =>
+  import("@/pages/cbt/CbtExamDetailPage").then((m) => ({
+    default: m.CbtExamDetailPage,
+  })),
+);
+const QuestionBankPage = lazy(() =>
+  import("@/pages/cbt/QuestionBankPage").then((m) => ({
+    default: m.QuestionBankPage,
+  })),
+);
 
 const FinanceOverviewPage = lazy(() =>
   import("@/pages/finance/FinanceOverviewPage").then((m) => ({
@@ -396,6 +411,32 @@ export default function App() {
               element={
                 <Suspense fallback={<PageLoader />}>
                   <ResultsPage />
+                </Suspense>
+              }
+            />
+
+            {/* CBT */}
+            <Route
+              path="/cbt/exams"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <CbtExamsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/cbt/exams/:id"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <CbtExamDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/cbt/questions"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <QuestionBankPage />
                 </Suspense>
               }
             />

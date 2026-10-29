@@ -682,6 +682,167 @@ The default grading scale is A–F, with pass at `50`:
 
 ---
 
+## 8A. Computer-Based Testing (CBT)
+
+CBT is a standalone module with an optional link to an existing assessment.
+Question types are `MultipleChoice` and `TrueFalse`. Grading is automatic on
+submission. Attempt timers are enforced server-side and an attempt auto-submits
+when it expires.
+
+### 8A.1 Question Bank
+
+Base path: `/api/v2/cbt/questions` - Admin and Teacher.
+
+Teachers can only manage questions for subjects they are assigned to.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/` | Create a question |
+| `GET` | `/` | List questions (`subject`, `type`, `difficulty`, `isActive`, `search`, pagination) |
+| `GET` | `/:id` | Get a question |
+| `PATCH` | `/:id` | Update a question |
+| `DELETE` | `/:id` | Delete a question (blocked while attached to an exam) |
+
+Create body:
+
+```json
+{
+  "subject": "<subjectId>",
+  "questionText": "What is the first pillar of Islam?",
+  "type": "MultipleChoice",
+  "options": [
+    { "key": "A", "text": "Shahadah" },
+    { "key": "B", "text": "Salah" }
+  ],
+  "correctAnswer": "A",
+  "explanation": "The Shahadah is the declaration of faith.",
+  "difficulty": "Easy",
+  "defaultMarks": 1,
+  "isActive": true
+}
+```
+
+For `TrueFalse`, options default to `True`/`False` and `correctAnswer` is
+`true` or `false`.
+
+### 8A.2 Exams
+
+Base path: `/api/v2/cbt/exams` - Admin and Teacher.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/` | Create an exam |
+| `GET` | `/` | List exams (`classSubject`, `academicSemester`, `isPublished`, `search`, pagination) |
+| `GET` | `/:id` | Get an exam |
+| `PATCH` | `/:id` | Update exam settings |
+| `DELETE` | `/:id` | Delete an exam before any attempt exists |
+| `POST` | `/:id/publish` | Publish or unpublish (`{ "isPublished": true }`) |
+| `POST` | `/:id/results/publish` | Release or hide results (`{ "isPublished": true }`) |
+| `GET` | `/:id/questions` | List attached questions with marks and `totalMarks` |
+| `POST` | `/:id/questions` | Attach bank questions (`{ "questions": [{ "question": "<id>", "marks": 1 }] }`) |
+| `PATCH` | `/:id/questions/reorder` | Reorder (`{ "order": ["<examQuestionId>"] }`) |
+| `PATCH` | `/:id/questions/:examQuestionId` | Update a question's marks |
+| `DELETE` | `/:id/questions/:examQuestionId` | Detach a question from the exam |
+| `GET` | `/:id/attempts` | List attempts for the exam |
+| `GET` | `/:id/statistics` | Attempt, average, and pass-rate statistics |
+
+Create body:
+
+```json
+{
+  "title": "Fiqh Midterm CBT",
+  "classSubject": "<classSubjectId>",
+  "description": "Optional",
+  "instructions": "Answer all questions.",
+  "startAt": "2026-03-01T08:00:00.000Z",
+  "endAt": "2026-03-01T10:00:00.000Z",
+  "durationMinutes": 45,
+  "passMark": 50,
+  "maxAttempts": 1,
+  "shuffleQuestions": true,
+  "shuffleOptions": true,
+  "resultVisibility": "AfterPublish",
+  "allowReview": false,
+  "linkedAssessment": "<assessmentId>",
+  "isPublished": false
+}
+```
+
+Rules:
+
+- `linkedAssessment` must belong to the same class subject and semester.
+- Structural changes (attaching, detaching, reordering, or editing marks) are
+  blocked after the first non-voided attempt.
+- `maxAttempts` is `1`-`5` (default `1`).
+- `resultVisibility`: `AfterPublish`, `Immediate`, or `Hidden`.
+
+### 8A.3 Student Exam and Attempt Flow
+
+Base path: `/api/v2/cbt` - Student, except shared result endpoints.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/student/exams` | Published exams for the student's class (`status` filter) |
+| `POST` | `/student/exams/:examId/start` | Start or resume the active attempt |
+| `GET` | `/student/attempts` | The student's attempt history |
+| `GET` | `/student/attempts/:attemptId` | Resume payload with questions and saved answers |
+| `PATCH` | `/student/attempts/:attemptId/answers` | Save answers (`{ "answers": [{ "question": "<examQuestionId>", "selectedAnswer": "A" }] }`) |
+| `POST` | `/student/attempts/:attemptId/submit` | Submit and grade the attempt |
+| `GET` | `/attempts/:attemptId/result` | Result (Admin, Teacher, Student, Parent) |
+| `GET` | `/students/:studentId/attempts` | Attempts for a student (Admin, Teacher, Student, Parent) |
+
+Start rules:
+
+- The exam must be published, active, and inside its availability window.
+- The student must be enrolled in the exam's class.
+- Only one `InProgress` attempt may exist at a time.
+- The attempt expiry is the earlier of `startedAt + durationMinutes` and the
+  exam `endAt`.
+- A retake is allowed while non-voided attempts are below `maxAttempts`.
+- Starting again while an attempt is active returns the existing attempt and its
+  saved answers.
+
+The resume payload includes `serverTime`, `questions`, and the attempt
+`expiresAt`, so clients can render an accurate countdown.
+
+Submission:
+
+- Unanswered questions score zero.
+- `score` is the sum of marks for correct answers.
+- `percentage = round(score / totalMarks * 100)`.
+- `passed = percentage >= passMark`.
+- If the exam is linked to an assessment, the CBT score is written to
+  `AssessmentScore` with `source: "CBT"`. A manually entered score is never
+  overwritten; the attempt records `linkedScoreStatus: "SkippedManualScore"`.
+- Auto-submission occurs when the attempt expires.
+
+### 8A.4 Attempt Administration
+
+| Method | Path | Access | Description |
+| --- | --- | --- | --- |
+| `PATCH` | `/api/v2/cbt/attempts/:attemptId/void` | Admin | Void an attempt and remove its linked CBT score |
+
+Voided attempts are excluded from attempt counts and can be replaced by a new
+attempt.
+
+### 8A.5 Automated Smoke Test
+
+Run the end-to-end CBT smoke test with:
+
+```bash
+cd backend
+npm run test:cbt
+```
+
+The test starts the app in-process against an isolated database and drops it
+afterwards. By default it derives `<database>_cbt_smoke` from `MONGO_URI`; set
+`CBT_SMOKE_MONGO_URI` to use a different test database. It logs in as admin,
+teacher, student, and parent once, then reuses each token through exam
+authoring, attempts, retakes, result publishing, expiry, voiding, linked
+assessment scoring, and access-control checks.
+
+---
+
 ## 9. Finance
 
 ### 9.1 Fee Structures
@@ -1107,9 +1268,9 @@ redacted from the stored request body.
 | Role | Main access |
 | --- | --- |
 | `admin` | All academic, admissions, finance, parent administration, reports, settings, audit, and system maintenance |
-| `teacher` | Own profile/dashboard, assigned class subjects, assessments, scores, attendance, published result viewing |
-| `student` | Own profile/dashboard, own published results, report card, transcript, own attendance, own invoices/payments |
-| `parent` | Linked children's overview, attendance, published results, report card, transcript, invoices, payments |
+| `teacher` | Own profile/dashboard, assigned class subjects, assessments, scores, attendance, CBT authoring for assigned subjects, published result viewing |
+| `student` | Own profile/dashboard, own published results, report card, transcript, own attendance, own invoices/payments, CBT attempts and released results |
+| `parent` | Linked children's overview, attendance, published results, report card, transcript, invoices, payments, CBT attempt history and released results |
 
 Role checks are enforced server-side. Frontend visibility is not a security
 boundary.
