@@ -5,7 +5,10 @@ import { Landmark } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useAppSelector } from "@/app/hooks";
-import { selectCurrentUser } from "@/features/auth/authSlice";
+import {
+  selectCurrentUser,
+  selectIsAuthenticated,
+} from "@/features/auth/authSlice";
 
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { ChangePasswordPage } from "@/pages/auth/ChangePasswordPage";
@@ -90,8 +93,19 @@ function RequireAuth({ children }: { children: ReactNode }) {
 function RequireRole({ allow, children }: { allow: string[]; children: ReactNode }) {
   const user = useAppSelector(selectCurrentUser);
   if (!allow.includes(user?.role ?? "")) {
-    return <Navigate to="/use-admin" replace />;
+    return <Navigate to="/" replace />;
   }
+  return <>{children}</>;
+}
+
+function PublicOnly({ children }: { children: ReactNode }) {
+  const user = useAppSelector(selectCurrentUser);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
+  if (user && isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return <>{children}</>;
 }
 
@@ -110,7 +124,14 @@ function ProtectedLayout() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/login"
+        element={
+          <PublicOnly>
+            <LoginPage />
+          </PublicOnly>
+        }
+      />
       <Route path="/change-password" element={<ChangePasswordPage />} />
 
       <Route element={<ProtectedLayout />}>
