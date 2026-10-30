@@ -142,5 +142,7 @@ export const portalLinks = {
   portal: "http://localhost:5174/student",
   portalTeacher: "http://localhost:5174/teacher",
   portalParent: "http://localhost:5174/parent",
-  admin: "http://localhost:5173/login",
+  admin: "https://islamic-school-system-admin-dashboa.vercel.app/",
 };
+
+
