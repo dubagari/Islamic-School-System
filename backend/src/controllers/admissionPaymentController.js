@@ -23,7 +23,7 @@ export const confirmCashPaymentController =
             // The authenticated admin should be
             // available through req.user
             const confirmedBy =
-                req.user?.id || null;
+                req.user?._id || null;
 
             const application =
                 await confirmCashPaymentService({

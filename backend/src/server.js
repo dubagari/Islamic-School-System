@@ -1,31 +1,48 @@
-import dns from "node:dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+import "dotenv/config";
 
-import dotenv from "dotenv";
+import dns from "node:dns";
+
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
+import { env, validateEnv } from "./config/env.js";
 import seedAdmin from "./seeds/adminSeeder.js";
 
-dotenv.config();
-
 // ==========================================
-// Database Connection
+// Validate Environment
 // ==========================================
 
-connectDB();
-seedAdmin();
+validateEnv();
 
 // ==========================================
-// Server
+// Start Server
 // ==========================================
 
-const PORT = process.env.PORT || 5000;
+const startServer = async () => {
+    await connectDB();
 
-app.listen(PORT, () => {
+    await seedAdmin();
 
-    console.log(
-        `Server is running on port ${PORT}`
-    );
+    const server = app.listen(env.port, () => {
+        console.log(
+            `Server is running on port ${env.port} (${env.nodeEnv})`
+        );
+    });
 
+    const shutdown = (signal) => {
+        console.log(`Received ${signal}. Shutting down...`);
+
+        server.close(() => {
+            process.exit(0);
+        });
+    };
+
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
+};
+
+startServer().catch((error) => {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
 });

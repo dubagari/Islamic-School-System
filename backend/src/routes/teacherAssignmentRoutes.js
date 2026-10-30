@@ -1,4 +1,3 @@
-
 import express from "express";
 
 import {
@@ -11,45 +10,84 @@ import {
     getMyTeacherAssignmentsController,
     getMyTeacherClassesController,
 } from "../controllers/teacherAssignmentController.js";
+
 import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    createTeacherAssignmentSchema,
+    updateTeacherAssignmentSchema,
+} from "../validators/teacherValidators.js";
 
 const router = express.Router();
 
 // ======================================================
-// Teacher Assignment Routes
-// ===========================================================
-
-// Create teacher assignment
-router.post( "/", createTeacherAssignmentController);
-
-// Get all teacher assignments
-router.get("/", getTeacherAssignmentsController);
-
-
-// Get assignments by teacher
-router.get("/teacher/:teacher", getTeacherAssignmentsByTeacherController);
-
-// ======================================================
-// Teacher - Get My Assignments
+// Teacher - My Assignments
 // ======================================================
 
-router.get("/my-assignments", protect, authorize("teacher"), getMyTeacherAssignmentsController);
+router.get(
+    "/my-assignments",
+    protect,
+    authorize("teacher"),
+    getMyTeacherAssignmentsController
+);
+
+router.get(
+    "/my-classes",
+    protect,
+    authorize("teacher"),
+    getMyTeacherClassesController
+);
 
 // ======================================================
-// Teacher - Get My Classes / Subjects
+// Admin - Assignments
 // ======================================================
 
-router.get("/my-classes",protect,authorize("teacher"), getMyTeacherClassesController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createTeacherAssignmentSchema),
+    createTeacherAssignmentController
+);
 
-// Get assignment by ID
-router.get("/:id", getTeacherAssignmentByIdController);
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    getTeacherAssignmentsController
+);
 
-// Update assignment
-router.put("/:id", updateTeacherAssignmentController);
+router.get(
+    "/teacher/:teacher",
+    protect,
+    authorize("admin"),
+    getTeacherAssignmentsByTeacherController
+);
 
-// Delete assignment
-router.delete("/:id", deleteTeacherAssignmentController);
+router.get(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getTeacherAssignmentByIdController
+);
 
+router.put(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateTeacherAssignmentSchema),
+    updateTeacherAssignmentController
+);
 
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteTeacherAssignmentController
+);
 
 export default router;

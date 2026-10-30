@@ -1,0 +1,6581 @@
+{
+  "info": {
+    "name": "Darul Ulum Management System API",
+    "description": "End-to-end Postman collection for the Darul Ulum school management backend (API v2). Run Auth > Admin Login first. Create academic setup records before running dependent requests. Role-specific self-service requests use teacherToken, studentToken, or parentToken; set the corresponding credentials in the environment and run those login requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "identifier",
+      "value": "admin",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "Admin123@",
+      "type": "string"
+    },
+    {
+      "key": "newPassword",
+      "value": "NewPassword123@",
+      "type": "string"
+    },
+    {
+      "key": "teacherIdentifier",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentIdentifier",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentIdentifier",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "page",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "limit",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "applicationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "applicationNumber",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "academicSectionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "academicLevelId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "academicSessionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "academicSemesterId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "academicClassId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "subjectId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "classSubjectId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacherId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assignmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "enrollmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentRecordId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "attendanceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assessmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "scoreId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "feeStructureId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "invoiceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "announcementId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "messageId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "managedUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auditLogId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "feeAmount",
+      "value": "25000",
+      "type": "string"
+    },
+    {
+      "key": "paymentAmount",
+      "value": "10000",
+      "type": "string"
+    },
+    {
+      "key": "parentUsername",
+      "value": "parent.test",
+      "type": "string"
+    },
+    {
+      "key": "parentEmail",
+      "value": "parent.test@example.com",
+      "type": "string"
+    },
+    {
+      "key": "parentPasswordValue",
+      "value": "Parent123@",
+      "type": "string"
+    },
+    {
+      "key": "cbtQuestionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtExamId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtExamQuestionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtAttemptId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cbtStartAt",
+      "value": "2026-10-29T08:00:00.000Z",
+      "type": "string"
+    },
+    {
+      "key": "cbtEndAt",
+      "value": "2026-10-29T10:00:00.000Z",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00. Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "API Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01. Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{identifier}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Logs in as an admin and stores the token in the collection variable token. Set identifier/password in the environment."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set(\"token\", json.data.token);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "    pm.collectionVariables.set(\"adminUserId\", json.data.user.id);",
+                  "}",
+                  "pm.test(\"Admin Login succeeds\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Teacher Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{teacherIdentifier}}\",\n  \"password\": \"{{teacherPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Logs in as a teacher and stores the token in teacherToken."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set(\"teacherToken\", json.data.token);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "    pm.collectionVariables.set(\"teacherUserId\", json.data.user.id);",
+                  "}",
+                  "pm.test(\"Teacher Login succeeds\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Student Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{studentIdentifier}}\",\n  \"password\": \"{{studentPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Logs in as a student and stores the token in studentToken."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set(\"studentToken\", json.data.token);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "    pm.collectionVariables.set(\"studentUserId\", json.data.user.id);",
+                  "}",
+                  "pm.test(\"Student Login succeeds\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Parent Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"{{parentIdentifier}}\",\n  \"password\": \"{{parentPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Logs in as a parent and stores the token in parentToken."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set(\"parentToken\", json.data.token);",
+                  "}",
+                  "if (json.data && json.data.user && json.data.user.id) {",
+                  "    pm.collectionVariables.set(\"parentUserId\", json.data.user.id);",
+                  "}",
+                  "pm.test(\"Parent Login succeeds\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Current Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "auth",
+                "change-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"{{password}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Changing the password clears mustChangePassword. Use the current password and a new password of at least 8 characters."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Academic Setup",
+      "item": [
+        {
+          "name": "Create Academic Section",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sections"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Junior Secondary\",\n  \"code\": \"JSS\",\n  \"description\": \"Junior secondary section\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"academicSectionId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Academic Sections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sections"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Section",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sections/{{academicSectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sections",
+                "{{academicSectionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Section",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sections/{{academicSectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sections",
+                "{{academicSectionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated section description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Section",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sections/{{academicSectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sections",
+                "{{academicSectionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Level",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-levels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-levels"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JSS 1\",\n  \"levelNumber\": 1,\n  \"section\": \"{{academicSectionId}}\",\n  \"description\": \"First junior secondary level\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"academicLevelId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Academic Levels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-levels",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-levels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Level",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-levels/{{academicLevelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-levels",
+                "{{academicLevelId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Level",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-levels/{{academicLevelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-levels",
+                "{{academicLevelId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated level description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Level",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-levels/{{academicLevelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-levels",
+                "{{academicLevelId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sessions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2026/2027\",\n  \"startDate\": \"2026-09-01\",\n  \"endDate\": \"2027-07-31\",\n  \"isCurrent\": true,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"academicSessionId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Academic Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sessions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sessions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sessions/{{academicSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sessions",
+                "{{academicSessionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Session",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sessions/{{academicSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sessions",
+                "{{academicSessionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-sessions/{{academicSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-sessions",
+                "{{academicSessionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Semester",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-semesters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-semesters"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"First Semester\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"startDate\": \"2026-09-01\",\n  \"endDate\": \"2027-01-31\",\n  \"isCurrent\": true,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"academicSemesterId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Academic Semesters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-semesters",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-semesters"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Semester",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-semesters/{{academicSemesterId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-semesters",
+                "{{academicSemesterId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Semester",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-semesters/{{academicSemesterId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-semesters",
+                "{{academicSemesterId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Semester",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-semesters/{{academicSemesterId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-semesters",
+                "{{academicSemesterId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Class",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JSS 1A\",\n  \"academicLevel\": \"{{academicLevelId}}\",\n  \"capacity\": 40,\n  \"classTeacher\": null,\n  \"description\": \"Class arm A\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"academicClassId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Academic Classs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Class",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes/{{academicClassId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes",
+                "{{academicClassId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Class",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes/{{academicClassId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes",
+                "{{academicClassId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"JSS 1A\",\n  \"academicLevel\": \"{{academicLevelId}}\",\n  \"capacity\": 40,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Class",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes/{{academicClassId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes",
+                "{{academicClassId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Classes In Level",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes/level/{{academicLevelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes",
+                "level",
+                "{{academicLevelId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assign Student To Class",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/academic-classes/assign-student",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "academic-classes",
+                "assign-student"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"academicClassId\": \"{{academicClassId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "subjects"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arabic\",\n  \"prefix\": \"ARB\",\n  \"section\": \"{{academicSectionId}}\",\n  \"description\": \"Arabic language\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"subjectId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "subjects"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/subjects/{{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "subjects",
+                "{{subjectId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/subjects/{{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "subjects",
+                "{{subjectId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated subject description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Subject",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/subjects/{{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "subjects",
+                "{{subjectId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Class Subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicClass\": \"{{academicClassId}}\",\n  \"subject\": \"{{subjectId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"description\": \"Arabic for JSS 1A\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"classSubjectId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Class Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Class Subject",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects/{{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects",
+                "{{classSubjectId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Class Subject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects/{{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects",
+                "{{classSubjectId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated class subject description\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Class Subject",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects/{{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects",
+                "{{classSubjectId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Class Subjects In Section",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/class-subjects/section/{{academicSectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "class-subjects",
+                "section",
+                "{{academicSectionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Teacher Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacher\": \"{{teacherUserId}}\",\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"assignedDate\": \"2026-09-01\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"assignmentId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Teacher Assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Teacher Assignment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "{{assignmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Teacher Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "{{assignmentId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Teacher Assignment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/{{assignmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "{{assignmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher My Assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/my-assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "my-assignments"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher My Classes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/my-classes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "my-classes"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assignments For Teacher",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-assignments/teacher/{{teacherUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-assignments",
+                "teacher",
+                "{{teacherUserId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Admissions and Students",
+      "item": [
+        {
+          "name": "Submit Admission Application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Musa\",\n  \"middleName\": \"Ibrahim\",\n  \"lastName\": \"Abdullah\",\n  \"gender\": \"Male\",\n  \"dateOfBirth\": \"2014-03-12\",\n  \"email\": \"musa.application@example.com\",\n  \"phone\": \"08030000000\",\n  \"address\": \"Kano, Nigeria\",\n  \"parentName\": \"Ibrahim Abdullah\",\n  \"parentPhone\": \"08030000001\",\n  \"parentEmail\": \"ibrahim.parent@example.com\",\n  \"relationship\": \"Father\",\n  \"currentLevel\": \"Primary 5\",\n  \"previousMadrasa\": \"Noorul Huda Madrasa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const application = data.application || data;",
+                  "if (application._id) pm.collectionVariables.set('applicationId', application._id);",
+                  "if (application.applicationNumber) pm.collectionVariables.set('applicationNumber', application.applicationNumber);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Check Application By Number",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications/number/{{applicationNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications",
+                "number",
+                "{{applicationNumber}}"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "List Admission Applications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Admission Application",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications",
+                "{{applicationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Admission Application",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications",
+                "{{applicationId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Updated address, Kano, Nigeria\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Approve Admission Application",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications/{{applicationId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications",
+                "{{applicationId}}",
+                "approve"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Admission Application",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-applications/{{applicationId}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-applications",
+                "{{applicationId}}",
+                "reject"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Optional rejection reason\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Confirm Cash Admission Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-payments/cash/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-payments",
+                "cash",
+                "{{applicationId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5000,\n  \"paymentReference\": \"CASH-ADM-001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Initialize Paystack Admission Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-payments/paystack/initialize/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-payments",
+                "paystack",
+                "initialize",
+                "{{applicationId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5000,\n  \"email\": \"musa.application@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify Paystack Admission Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/admission-payments/paystack/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "admission-payments",
+                "paystack",
+                "verify"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reference\": \"PAYSTACK-REFERENCE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-registration/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-registration",
+                "{{applicationId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const student = data.student || data;",
+                  "if (student._id) pm.collectionVariables.set('studentId', student._id);",
+                  "if (student.registrationNumber) pm.collectionVariables.set('studentRegistrationNumber', student.registrationNumber);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset Student Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-passwords/{{studentId}}/reset",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-passwords",
+                "{{studentId}}",
+                "reset"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/students/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "students",
+                "dashboard"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Own Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/students/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "students",
+                "profile"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "students",
+                "{{studentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Student Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"{{studentId}}\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicClass\": \"{{academicClassId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"enrollmentId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Student Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Current Student Enrollment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/student/{{studentId}}/current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "student",
+                "{{studentId}}",
+                "current"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Enrollment History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/student/{{studentId}}/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "student",
+                "{{studentId}}",
+                "history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Enrollments By Student",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/student/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "student",
+                "{{studentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student Enrollment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/{{enrollmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "{{enrollmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Student Enrollment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/{{enrollmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "{{enrollmentId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicClass\": \"{{academicClassId}}\",\n  \"status\": \"Active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Deactivate Student Enrollment",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/{{enrollmentId}}/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "{{enrollmentId}}",
+                "deactivate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Student Enrollment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-enrollments/{{enrollmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-enrollments",
+                "{{enrollmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Student Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"{{studentId}}\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"academicClass\": \"{{academicClassId}}\",\n  \"recordType\": \"General\",\n  \"title\": \"General student record\",\n  \"description\": \"Created from Postman\",\n  \"recordDate\": \"2026-10-23\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"studentRecordId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Student Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Record History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records/student/{{studentId}}/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records",
+                "student",
+                "{{studentId}}",
+                "history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student Record",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records/{{studentRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records",
+                "{{studentRecordId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Student Record",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records/{{studentRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records",
+                "{{studentRecordId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated student record\",\n  \"description\": \"Updated from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Deactivate Student Record",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/student-records/{{studentRecordId}}/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "student-records",
+                "{{studentRecordId}}",
+                "deactivate"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Teachers",
+      "item": [
+        {
+          "name": "Teacher Own Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "profile"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "dashboard"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Abdullahi\",\n  \"middleName\": \"Yusuf\",\n  \"lastName\": \"Ibrahim\",\n  \"gender\": \"Male\",\n  \"dateOfBirth\": \"1990-05-10\",\n  \"email\": \"teacher.postman@example.com\",\n  \"phone\": \"08030000002\",\n  \"address\": \"Kano, Nigeria\",\n  \"qualification\": \"B.Ed\",\n  \"specialization\": \"Arabic and Islamic Studies\",\n  \"employmentDate\": \"2026-09-01\",\n  \"employmentType\": \"Full Time\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const teacher = data.teacher || data;",
+                  "if (teacher && (teacher._id || teacher.id)) pm.collectionVariables.set('teacherId', teacher._id || teacher.id);",
+                  "const user = data.user || teacher.user;",
+                  "if (user && (user._id || user.id)) pm.collectionVariables.set('teacherUserId', user._id || user.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Teachers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Teacher By Number",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/number/TCH/2026/00001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "number",
+                "TCH",
+                "2026",
+                "00001"
+              ]
+            },
+            "description": "Replace the teacher number in the path with a real one."
+          }
+        },
+        {
+          "name": "Get Teacher",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/{{teacherId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "{{teacherId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Teacher",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/{{teacherId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "{{teacherId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"08030000003\",\n  \"specialization\": \"Arabic Language\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Teacher",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teachers/{{teacherId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teachers",
+                "{{teacherId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Teacher Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance",
+                "bulk"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-10-23\",\n  \"records\": [\n    {\n      \"teacher\": \"{{teacherId}}\",\n      \"status\": \"Present\",\n      \"checkIn\": \"07:45\",\n      \"checkOut\": \"14:30\",\n      \"remarks\": \"\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "My Teacher Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance",
+                "me"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Teacher Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Teacher Attendance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance",
+                "{{attendanceId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Present\",\n  \"remarks\": \"Updated from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Set attendanceId to a teacher attendance record ID before running."
+          }
+        },
+        {
+          "name": "Delete Teacher Attendance",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/teacher-attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "teacher-attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Student Attendance",
+      "item": [
+        {
+          "name": "Mark Student Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/bulk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "bulk"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicClass\": \"{{academicClassId}}\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"date\": \"2026-10-23\",\n  \"records\": [\n    {\n      \"student\": \"{{studentId}}\",\n      \"status\": \"Present\",\n      \"remarks\": \"\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const first = Array.isArray(data.records) ? data.records[0] : null;",
+                  "if (first && first._id) pm.collectionVariables.set('attendanceId', first._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Class Attendance Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/class/{{academicClassId}}/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "class",
+                "{{academicClassId}}",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Class Attendance Records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/class/{{academicClassId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "class",
+                "{{academicClassId}}"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-10-23"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Attendance History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/student/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "student",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Student Attendance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Late\",\n  \"remarks\": \"Updated from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Student Attendance",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Assessments and Results",
+      "item": [
+        {
+          "name": "Create Assessment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"name\": \"First Test\",\n  \"type\": \"Test\",\n  \"maxScore\": 20,\n  \"weight\": 20,\n  \"date\": \"2026-10-20\",\n  \"description\": \"First continuous assessment\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"assessmentId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Assessments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments"
+              ],
+              "query": [
+                {
+                  "key": "classSubject",
+                  "value": "{{classSubjectId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Assessment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "{{assessmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Assessment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "{{assessmentId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated assessment description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Assessment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "{{assessmentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enter Assessment Scores",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/{{assessmentId}}/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "{{assessmentId}}",
+                "scores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"student\": \"{{studentId}}\",\n      \"score\": 18,\n      \"remarks\": \"Good\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const scores = Array.isArray(data) ? data : (data.scores || []);",
+                  "const first = scores[0];",
+                  "if (first && first._id) pm.collectionVariables.set('scoreId', first._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assessment Scores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/{{assessmentId}}/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "{{assessmentId}}",
+                "scores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Assessment Score",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/scores/{{scoreId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "scores",
+                "{{scoreId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 19,\n  \"remarks\": \"Updated from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Assessment Score",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/assessments/scores/{{scoreId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "assessments",
+                "scores",
+                "{{scoreId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compute Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/compute",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "compute"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Publish Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "publish"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Class Subject Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/class/{{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "class",
+                "{{classSubjectId}}"
+              ],
+              "query": [
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/student/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "student",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Report Card",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/report-card/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "report-card",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Transcript",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/results/transcript/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "results",
+                "transcript",
+                "{{studentId}}"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06a. Computer-Based Testing",
+      "item": [
+        {
+          "name": "Create CBT Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "questions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"{{subjectId}}\",\n  \"questionText\": \"What is the first pillar of Islam?\",\n  \"type\": \"MultipleChoice\",\n  \"options\": [\n    { \"key\": \"A\", \"text\": \"Shahadah\" },\n    { \"key\": \"B\", \"text\": \"Salah\" },\n    { \"key\": \"C\", \"text\": \"Zakah\" },\n    { \"key\": \"D\", \"text\": \"Sawm\" }\n  ],\n  \"correctAnswer\": \"A\",\n  \"explanation\": \"The Shahadah is the declaration of faith.\",\n  \"difficulty\": \"Easy\",\n  \"defaultMarks\": 1,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data._id) pm.collectionVariables.set(\"cbtQuestionId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List CBT Questions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/questions?subject={{subjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "questions"
+              ],
+              "query": [
+                {
+                  "key": "subject",
+                  "value": "{{subjectId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create CBT Exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample CBT Exam\",\n  \"classSubject\": \"{{classSubjectId}}\",\n  \"description\": \"Sample computer-based test\",\n  \"instructions\": \"Answer all questions.\",\n  \"startAt\": \"{{cbtStartAt}}\",\n  \"endAt\": \"{{cbtEndAt}}\",\n  \"durationMinutes\": 30,\n  \"passMark\": 50,\n  \"maxAttempts\": 1,\n  \"shuffleQuestions\": true,\n  \"shuffleOptions\": true,\n  \"resultVisibility\": \"AfterPublish\",\n  \"allowReview\": true,\n  \"isPublished\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data._id) pm.collectionVariables.set(\"cbtExamId\", json.data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List CBT Exams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams?classSubject={{classSubjectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams"
+              ],
+              "query": [
+                {
+                  "key": "classSubject",
+                  "value": "{{classSubjectId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Attach CBT Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "questions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    { \"question\": \"{{cbtQuestionId}}\", \"marks\": 1 }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const entries = Array.isArray(json.data) ? json.data : (json.data && json.data.questions) || [];",
+                  "if (entries[0] && entries[0]._id) pm.collectionVariables.set(\"cbtExamQuestionId\", entries[0]._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish CBT Exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "publish"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "CBT Exam Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "statistics"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student CBT Exams",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/exams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "exams"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Start CBT Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/exams/{{cbtExamId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "exams",
+                "{{cbtExamId}}",
+                "start"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.attempt && json.data.attempt._id) pm.collectionVariables.set(\"cbtAttemptId\", json.data.attempt._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save CBT Answers",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/attempts/{{cbtAttemptId}}/answers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "answers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    { \"question\": \"{{cbtExamQuestionId}}\", \"selectedAnswer\": \"A\" }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Submit CBT Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/student/attempts/{{cbtAttemptId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "student",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "submit"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CBT Attempt Result",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{studentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/attempts/{{cbtAttemptId}}/result",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "result"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publish CBT Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/exams/{{cbtExamId}}/results/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "exams",
+                "{{cbtExamId}}",
+                "results",
+                "publish"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Void CBT Attempt",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/cbt/attempts/{{cbtAttemptId}}/void",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "cbt",
+                "attempts",
+                "{{cbtAttemptId}}",
+                "void"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Finance",
+      "item": [
+        {
+          "name": "Create Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "fee-structures"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"First Semester Tuition\",\n  \"feeType\": \"Tuition\",\n  \"description\": \"Tuition fee\",\n  \"amount\": \"{{feeAmount}}\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"academicClass\": \"{{academicClassId}}\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"feeStructureId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Fee Structures",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/fee-structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "fee-structures"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Fee Structure",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Fee Structure",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated fee structure\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Fee Structure",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/fee-structures/{{feeStructureId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "fee-structures",
+                "{{feeStructureId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Generate Invoices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "generate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"academicClass\": \"{{academicClassId}}\",\n  \"studentIds\": [\n    \"{{studentId}}\"\n  ],\n  \"dueDate\": \"2026-11-30\",\n  \"notes\": \"Generated from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const invoice = (Array.isArray(data) ? data[0] : null) || data.invoice || (Array.isArray(data.invoices) ? data.invoices[0] : null) || data;",
+                  "if (invoice && invoice._id) pm.collectionVariables.set('invoiceId', invoice._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Manual Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student\": \"{{studentId}}\",\n  \"academicSession\": \"{{academicSessionId}}\",\n  \"academicSemester\": \"{{academicSemesterId}}\",\n  \"academicClass\": \"{{academicClassId}}\",\n  \"items\": [\n    {\n      \"feeStructure\": \"{{feeStructureId}}\",\n      \"name\": \"Tuition\",\n      \"description\": \"First semester tuition\",\n      \"amount\": \"{{feeAmount}}\"\n    }\n  ],\n  \"dueDate\": \"2026-11-30\",\n  \"notes\": \"Manual invoice from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"invoiceId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Student Fee Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/student/{{studentId}}/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "student",
+                "{{studentId}}",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Invoices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invoice Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/{{invoiceId}}/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "{{invoiceId}}",
+                "payments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Invoice",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "{{invoiceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Invoice",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "{{invoiceId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated invoice notes\",\n  \"dueDate\": \"2026-12-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancel Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/{{invoiceId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "{{invoiceId}}",
+                "cancel"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Cancelled from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Invoice",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/invoices/{{invoiceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "invoices",
+                "{{invoiceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "payments"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice\": \"{{invoiceId}}\",\n  \"amount\": \"{{paymentAmount}}\",\n  \"method\": \"Cash\",\n  \"reference\": \"CASH-PAY-001\",\n  \"paidAt\": \"2026-10-23\",\n  \"notes\": \"Payment from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const payment = data.payment || data;",
+                  "if (payment && payment._id) pm.collectionVariables.set('paymentId', payment._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "payments",
+                "{{paymentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reverse Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/payments/{{paymentId}}/reverse",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "payments",
+                "{{paymentId}}",
+                "reverse"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Reversed from Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Finance Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/finance/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "finance",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Finance Collections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/finance/collections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "finance",
+                "collections"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "day"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Outstanding Invoices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/finance/outstanding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "finance",
+                "outstanding"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Parent Portal",
+      "item": [
+        {
+          "name": "Create Parent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ibrahim Abdullah\",\n  \"username\": \"{{parentUsername}}\",\n  \"email\": \"{{parentEmail}}\",\n  \"password\": \"{{parentPasswordValue}}\",\n  \"phone\": \"08030000001\",\n  \"alternatePhone\": \"08030000004\",\n  \"address\": \"Kano, Nigeria\",\n  \"occupation\": \"Trader\",\n  \"studentIds\": [\n    \"{{studentId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"parentId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Parents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Link Students To Parent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents/{{parentId}}/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents",
+                "{{parentId}}",
+                "students"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentIds\": [\n    \"{{studentId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Unlink Student From Parent",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents/{{parentId}}/students/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents",
+                "{{parentId}}",
+                "students",
+                "{{studentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Parent",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents/{{parentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents",
+                "{{parentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Parent",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents/{{parentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents",
+                "{{parentId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"occupation\": \"Business Owner\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Parent",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parents/{{parentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parents",
+                "{{parentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Own Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "profile"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Children",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "dashboard"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "attendance"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/results",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "results"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Report Card",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/report-card",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "report-card"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Transcript",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/transcript",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "transcript"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Fees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/fees",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "fees"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Invoices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/invoices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "invoices"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Parent Child Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/parent/children/{{studentId}}/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "parent",
+                "children",
+                "{{studentId}}",
+                "payments"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{parentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. Communication",
+      "item": [
+        {
+          "name": "Announcement Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements",
+                "unread-count"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Announcement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Resumption Notice\",\n  \"content\": \"School resumes on Monday.\",\n  \"audience\": \"all\",\n  \"priority\": \"Normal\",\n  \"publishAt\": \"2026-10-20\",\n  \"expiresAt\": \"2026-11-01\",\n  \"isPublished\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"announcementId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Announcements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Announcement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements/{{announcementId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements",
+                "{{announcementId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Announcement Read",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements/{{announcementId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements",
+                "{{announcementId}}",
+                "read"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Announcement",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements/{{announcementId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements",
+                "{{announcementId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"High\",\n  \"content\": \"Updated announcement content.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Announcement",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/announcements/{{announcementId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "announcements",
+                "{{announcementId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Message Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages",
+                "unread-count"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark All Messages Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages",
+                "read-all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"{{adminUserId}}\",\n  \"subject\": \"Postman message\",\n  \"body\": \"This is a direct message sent from the Postman collection.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json.data || {};",
+                  "const candidates = [data, data.teacher, data.student, data.parent, data.invoice, data.payment, data.application, data.user, data.enrollment, data.record, data.assessment, data.announcement, data.setting, data.section, data.level, data.session, data.semester, data.class, data.subject, data.classSubject, data.assignment, data.feeStructure, data.parentProfile];",
+                  "const item = candidates.find((entry) => entry && (entry._id || entry.id));",
+                  "if (item) pm.collectionVariables.set(\"messageId\", item._id || item.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages"
+              ],
+              "query": [
+                {
+                  "key": "box",
+                  "value": "all"
+                },
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Conversation With User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages/conversation/{{adminUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages",
+                "conversation",
+                "{{adminUserId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Message Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/messages/{{messageId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "messages",
+                "{{messageId}}",
+                "read"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Notification Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications",
+                "unread-count"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark All Notifications Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications",
+                "read-all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Broadcast Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications/broadcast",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications",
+                "broadcast"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"System maintenance\",\n  \"message\": \"The portal will be unavailable at 10 PM.\",\n  \"type\": \"system\",\n  \"role\": \"all\",\n  \"userIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications/{{notificationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/notifications/{{notificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "notifications",
+                "{{notificationId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Reports",
+      "item": [
+        {
+          "name": "Dashboard Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "dashboard"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enrollment Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/enrollment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "enrollment"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "class"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "attendance"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                },
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "day"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Academic Performance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/academics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "academics"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                },
+                {
+                  "key": "includeUnpublished",
+                  "value": "false"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Finance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/finance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "finance"
+              ],
+              "query": [
+                {
+                  "key": "academicSession",
+                  "value": "{{academicSessionId}}"
+                },
+                {
+                  "key": "academicSemester",
+                  "value": "{{academicSemesterId}}"
+                },
+                {
+                  "key": "from",
+                  "value": "2026-09-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-23"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "day"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Student Roster Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher Workload Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/reports/teachers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "reports",
+                "teachers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. System Administration",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Managed User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/{{managedUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "{{managedUserId}}"
+              ]
+            },
+            "description": "Set managedUserId to a non-admin or another admin user ID."
+          }
+        },
+        {
+          "name": "Update Managed User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/{{managedUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "{{managedUserId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Managed User Updated\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reset Managed User Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/{{managedUserId}}/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "{{managedUserId}}",
+                "reset-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Deactivate Managed User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/users/{{managedUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "users",
+                "{{managedUserId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Public Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/settings/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "settings",
+                "public"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "List Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Setting",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/settings/school.branding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "settings",
+                "school.branding"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upsert Setting",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/settings/school.branding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "settings",
+                "school.branding"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": {\n    \"name\": \"Darul Ulum\",\n    \"motto\": \"Knowledge and Character\"\n  },\n  \"category\": \"branding\",\n  \"description\": \"Public school branding\",\n  \"isPublic\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Setting",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/settings/school.branding",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "settings",
+                "school.branding"
+              ]
+            }
+          }
+        },
+        {
+          "name": "System Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/system/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "system",
+                "info"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Database Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/system/database",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "system",
+                "database"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Synchronize Indexes",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/system/sync-indexes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "system",
+                "sync-indexes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/audit-logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "{{limit}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = Array.isArray(json.data) ? json.data : [];",
+                  "if (data[0] && data[0]._id) pm.collectionVariables.set('auditLogId', data[0]._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Audit Log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/audit-logs/{{auditLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "audit-logs",
+                "{{auditLogId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

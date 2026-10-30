@@ -152,14 +152,6 @@ export const completeStudentRegistrationService =
                 10
             );
 
-
-
-        console.log("STUDENT LOGIN DEBUG:", {
-    registrationNumber,
-    defaultPassword,
-    hashedPassword,
-});
-
         // --------------------------------------------------
         // 8. Create Student User
         // --------------------------------------------------

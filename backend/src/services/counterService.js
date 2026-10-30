@@ -18,7 +18,7 @@ export const generateNumber = async (
                 },
             },
             {
-                new: true,
+                returnDocument: "after",
                 upsert: true,
             }
         );

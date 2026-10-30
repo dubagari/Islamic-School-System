@@ -2,7 +2,11 @@
 import Student from "../models/Student.js";
 import User from "../models/User.js";
 
-import bcrypt from "bcryptjs";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
+import { buildSearchFilter } from "../utils/search.js";
 
 
 // ======================================================
@@ -10,20 +14,50 @@ import bcrypt from "bcryptjs";
 // Admin
 // ======================================================
 
-export const getAllStudentsService = async () => {
-    const students = await Student.find()
-        .populate(
-            "user",
-            "-password"
-        )
-        .populate(
-            "academicClass"
-        )
-        .sort({
-            createdAt: -1,
-        });
+export const getAllStudentsService = async (query = {}) => {
+    const { page, limit, skip } = getPagination(query);
 
-    return students;
+    const filter = {
+        ...buildSearchFilter(query.search, [
+            "registrationNumber",
+            "applicationNumber",
+            "firstName",
+            "middleName",
+            "lastName",
+            "phone",
+            "parentName",
+            "parentPhone",
+        ]),
+    };
+
+    if (query.status) {
+        filter.status = query.status;
+    }
+
+    if (query.isActive !== undefined) {
+        filter.isActive =
+            query.isActive === true || query.isActive === "true";
+    }
+
+    if (query.academicClass) {
+        filter.academicClass = query.academicClass;
+    }
+
+    if (query.paymentStatus) {
+        filter.paymentStatus = query.paymentStatus;
+    }
+
+    const [students, total] = await Promise.all([
+        Student.find(filter)
+            .populate("user", "-password")
+            .populate("academicClass")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Student.countDocuments(filter),
+    ]);
+
+    return paginatedResult(students, total, { page, limit });
 };
 
 // ======================================================
@@ -63,18 +97,8 @@ export const getStudentByIdService = async (
 export const getStudentProfileService = async (
     userId
 ) => {
-    console.log(
-        "PROFILE SERVICE - USER ID:",
-        userId
-    );
-
     const user =
         await User.findById(userId);
-
-    console.log(
-        "PROFILE SERVICE - USER:",
-        user
-    );
 
     if (!user) {
         throw new Error(
@@ -94,11 +118,6 @@ export const getStudentProfileService = async (
         );
     }
 
-    console.log(
-        "PROFILE SERVICE - STUDENT ID:",
-        user.student
-    );
-
     const student =
         await Student.findById(
             user.student
@@ -111,11 +130,6 @@ export const getStudentProfileService = async (
                 "academicClass"
             );
 
-    console.log(
-        "PROFILE SERVICE - STUDENT:",
-        student
-    );
-
     if (!student) {
         throw new Error(
             "Student profile not found."
@@ -123,105 +137,6 @@ export const getStudentProfileService = async (
     }
 
     return student;
-};
-
-
-// ======================================================
-// Reset Student Password
-// Admin only
-// ======================================================
-
-export const resetStudentPasswordService = async (
-    studentId
-) => {
-
-    // --------------------------------------------------
-    // 1. Find student
-    // --------------------------------------------------
-
-    const student =
-        await Student.findById(studentId);
-
-    if (!student) {
-        throw new Error(
-            "Student not found."
-        );
-    }
-
-    // --------------------------------------------------
-    // 2. Make sure student has a user account
-    // --------------------------------------------------
-
-    if (!student.user) {
-        throw new Error(
-            "Student does not have a user account."
-        );
-    }
-
-    // --------------------------------------------------
-    // 3. Find user account
-    // --------------------------------------------------
-
-    const user =
-        await User.findById(student.user);
-
-    if (!user) {
-        throw new Error(
-            "Student user account not found."
-        );
-    }
-
-    // --------------------------------------------------
-    // 4. Generate temporary password
-    // Example: STU260002
-    // --------------------------------------------------
-
-    const temporaryPassword =
-        `STU${student.registrationNumber
-            .replace(/\//g, "")
-            .slice(-6)}`;
-
-    // --------------------------------------------------
-    // 5. Hash temporary password
-    // --------------------------------------------------
-
-    const hashedPassword =
-        await bcrypt.hash(
-            temporaryPassword,
-            10
-        );
-
-    // --------------------------------------------------
-    // 6. Update user account
-    // --------------------------------------------------
-
-    user.password = hashedPassword;
-
-    user.mustChangePassword = true;
-
-    await user.save();
-
-    // --------------------------------------------------
-    // 7. Return reset information
-    // --------------------------------------------------
-
-    return {
-        student: {
-            id: student._id,
-            fullName: student.fullName,
-            registrationNumber:
-                student.registrationNumber,
-        },
-
-        login: {
-            username:
-                user.username,
-
-            temporaryPassword,
-
-            mustChangePassword: true,
-        },
-    };
 };
 
 

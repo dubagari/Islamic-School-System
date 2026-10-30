@@ -1,5 +1,11 @@
 import AdmissionApplication from "../models/AdmissionApplication.js";
 import Counter from "../models/Counter.js";
+import { notFound } from "../utils/AppError.js";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
+import { buildSearchFilter } from "../utils/search.js";
 
 // ======================================================
 // Generate Application Number
@@ -19,7 +25,7 @@ const generateApplicationNumber = async () => {
             },
         },
         {
-            new: true,
+            returnDocument: "after",
             upsert: true,
         }
     );
@@ -53,6 +59,7 @@ export const createAdmissionApplicationService =
             relationship,
             currentLevel,
             previousMadrasa,
+            photoUrl,
         } = data;
 
         // ----------------------------------------------
@@ -101,10 +108,11 @@ export const createAdmissionApplicationService =
                 parentPhone,
                 parentEmail,
                 relationship,
-                currentLevel,
-                previousMadrasa,
+            currentLevel,
+            previousMadrasa,
+            photoUrl,
 
-                applicationNumber,
+            applicationNumber,
 
                 status: "Pending",
                 statusReason: "",
@@ -121,11 +129,42 @@ export const createAdmissionApplicationService =
 // ======================================================
 
 export const getAdmissionApplicationsService =
-    async () => {
-        return await AdmissionApplication.find()
-            .sort({
-                createdAt: -1,
-            });
+    async (query = {}) => {
+        const { page, limit, skip } = getPagination(query);
+
+        const filter = {
+            ...buildSearchFilter(query.search, [
+                "applicationNumber",
+                "firstName",
+                "middleName",
+                "lastName",
+                "phone",
+                "email",
+                "parentName",
+                "parentPhone",
+            ]),
+        };
+
+        if (query.status) {
+            filter.status = query.status;
+        }
+
+        if (query.paymentStatus) {
+            filter.paymentStatus = query.paymentStatus;
+        }
+
+        const [applications, total] = await Promise.all([
+            AdmissionApplication.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            AdmissionApplication.countDocuments(filter),
+        ]);
+
+        return paginatedResult(applications, total, {
+            page,
+            limit,
+        });
     };
 
 // ======================================================
@@ -150,16 +189,35 @@ export const getAdmissionApplicationByIdService =
 // Get Application By Application Number
 // ======================================================
 
+const normalizePhone = (value) =>
+    String(value || "").replace(/\D/g, "").slice(-10);
+
+const phoneMatchesApplication = (application, phone) => {
+    const expected = normalizePhone(phone);
+
+    if (!expected) {
+        return false;
+    }
+
+    return (
+        normalizePhone(application.phone) === expected ||
+        normalizePhone(application.parentPhone) === expected
+    );
+};
+
 export const getAdmissionApplicationByNumberService =
-    async (applicationNumber) => {
+    async (applicationNumber, phone) => {
         const application =
             await AdmissionApplication.findOne({
                 applicationNumber,
             });
 
-        if (!application) {
-            throw new Error(
-                "Admission application not found."
+        if (
+            !application ||
+            !phoneMatchesApplication(application, phone)
+        ) {
+            throw notFound(
+                "Application not found or phone number does not match."
             );
         }
 
