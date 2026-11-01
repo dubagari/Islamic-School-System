@@ -109,6 +109,7 @@ app.use(
         },
     })
 );
+app.use("/uploads", uploadRoutes);
 app.use("/api/v2/uploads", uploadRoutes);
 
 app.get("/health", (req, res) => {

@@ -14,11 +14,20 @@ import {
 } from "@/features/auth/authSlice";
 import type { LoginResponse } from "@/features/auth/authSlice";
 
-export const API_BASE_URL =
+const configuredApiUrl =
   (import.meta.env.VITE_API_URL as string | undefined) ??
   (import.meta.env.DEV
     ? "http://localhost:5000/api/v2"
     : "https://islamic-school-system.onrender.com/api/v2");
+
+function normalizeApiBaseUrl(url: string): string {
+  const normalized = url.trim().replace(/\/+$/, "");
+  return /\/api\/v2$/i.test(normalized)
+    ? normalized
+    : `${normalized}/api/v2`;
+}
+
+export const API_BASE_URL = normalizeApiBaseUrl(configuredApiUrl);
 
 export function assetUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) return path;

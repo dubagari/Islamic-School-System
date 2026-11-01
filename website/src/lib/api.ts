@@ -1,6 +1,15 @@
-const API_BASE_URL =
+const configuredApiUrl =
   import.meta.env.VITE_API_URL ??
   (import.meta.env.DEV ? "http://localhost:5000/api/v2" : "https://islamic-school-system.onrender.com/api/v2");
+
+function normalizeApiBaseUrl(url: string): string {
+  const normalized = url.trim().replace(/\/+$/, "");
+  return /\/api\/v2$/i.test(normalized)
+    ? normalized
+    : `${normalized}/api/v2`;
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(configuredApiUrl);
 
 export type ApiEnvelope<T> = {
   success: boolean;
