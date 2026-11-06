@@ -99,7 +99,12 @@ export type AuditListParams = {
 
 /** Public API root (e.g. http://localhost:5000) derived from the v2 base URL. */
 const API_ROOT = ((import.meta.env.VITE_API_URL as string | undefined) ??
-  "http://localhost:5000/api/v2").replace(/\/api\/v2\/?$/, "");
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api/v2"
+    : "https://islamic-school-system.onrender.com/api/v2")).replace(
+  /\/api\/v2\/?$/,
+  "",
+);
 
 const buildParams = (params?: Record<string, unknown>) => {
   const clean: Record<string, unknown> = {};
