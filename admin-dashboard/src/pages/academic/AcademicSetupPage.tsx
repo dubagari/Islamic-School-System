@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog, Dialog } from "@/components/ui/Dialog";
+import { ClassTeachingDialog } from "@/pages/academic/ClassTeachingDialog";
 import {
   Fieldset,
   InputField,
@@ -1721,6 +1722,7 @@ function ClassesTab() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<AcademicClassRecord | null>(null);
   const [deleting, setDeleting] = useState<AcademicClassRecord | null>(null);
+  const [managingTeaching, setManagingTeaching] = useState<AcademicClassRecord | null>(null);
 
   const {
     data,
@@ -1795,6 +1797,9 @@ function ClassesTab() {
         align: "end",
         render: (r) => (
           <div className="flex justify-end gap-1.5">
+            <Button size="sm" variant="ghost" onClick={() => setManagingTeaching(r)}>
+              Courses
+            </Button>
             <Button size="sm" variant="outline" onClick={() => setEditing(r)}>
               Edit
             </Button>
@@ -1873,6 +1878,13 @@ function ClassesTab() {
             setEditing(null);
             feedback.setNotice(message);
           }}
+        />
+      )}
+      {managingTeaching && (
+        <ClassTeachingDialog
+          key={managingTeaching._id}
+          academicClass={managingTeaching}
+          onClose={() => setManagingTeaching(null)}
         />
       )}
 

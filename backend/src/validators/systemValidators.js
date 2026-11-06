@@ -56,6 +56,10 @@ export const userQuerySchema = z
 
 export const userDirectoryQuerySchema = z
     .object({
+        role: z
+            .enum(["super_admin", "admin", "teacher", "student", "parent"])
+            .optional(),
+        isActive: z.enum(["true", "false"]).optional(),
         search: z.string().trim().max(150).optional(),
         limit: z.coerce.number().int().min(1).max(500).optional(),
     })

@@ -65,12 +65,14 @@ export function ProfilePage() {
         >
           <div className="space-y-3 text-sm text-ink-600">
             <p>
-              Last change required:{" "}
-              {profile?.mustChangePassword ? (
-                <Badge tone="warning">At next sign-in</Badge>
-              ) : (
-                <Badge tone="success">Up to date</Badge>
-              )}
+              Password status:{" "}
+            {profile?.role === "super_admin" ? (
+              <Badge tone="success">No forced rotation</Badge>
+            ) : profile?.mustChangePassword ? (
+              <Badge tone="warning">At next sign-in</Badge>
+            ) : (
+              <Badge tone="success">Up to date</Badge>
+            )}
             </p>
             <p>
               Last login:{" "}

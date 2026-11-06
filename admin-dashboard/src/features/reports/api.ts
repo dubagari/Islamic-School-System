@@ -1,5 +1,9 @@
 import { baseApi, type ApiEnvelope } from "@/app/api";
 
+import type { AcademicSemester, AcademicSession } from "@/features/students/api";
+import type { AdmissionApplication } from "@/features/admissions/api";
+import type { FinanceSummary, Payment } from "@/features/finance/api";
+
 /*
  * Reports endpoints (API_REFERENCE.md section 12) — Admin only.
  *
@@ -44,6 +48,40 @@ export type FinanceReportParams = {
   groupBy?: "day" | "month" | "method";
 };
 
+export type DashboardReport = {
+  academicContext: {
+    session: AcademicSession | null;
+    semester: AcademicSemester | null;
+  };
+  people: {
+    students: {
+      total: number;
+      active: number;
+      newThisMonth: number;
+    };
+    teachers: { active: number };
+    parents: { active: number };
+  };
+  academics: {
+    activeClasses: number;
+    activeEnrollments: number;
+    pendingAdmissions: number;
+    publishedResults: number;
+    pendingResults: number;
+  };
+  attendanceToday: {
+    Present: number;
+    Absent: number;
+    Late: number;
+    Excused: number;
+    total: number;
+    attendanceRate: number;
+  };
+  finance?: FinanceSummary;
+  recentPayments?: Payment[];
+  recentAdmissions: AdmissionApplication[];
+};
+
 function toQueryString(
   params: Record<string, string | number | boolean | undefined>,
 ): string {
@@ -61,7 +99,7 @@ function toQueryString(
 
 export const reportsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getDashboardReport: build.query<ApiEnvelope<unknown>, void>({
+    getDashboardReport: build.query<ApiEnvelope<DashboardReport>, void>({
       query: () => "/reports/dashboard",
       providesTags: ["Reports"],
     }),

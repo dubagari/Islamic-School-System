@@ -14,10 +14,23 @@ const seedAdmin = async () => {
             role: "super_admin",
         });
 
+        await User.updateMany(
+            {
+                role: "super_admin",
+                mustChangePassword: true,
+            },
+            {
+                $set: {
+                    mustChangePassword: false,
+                },
+            }
+        );
+
         if (adminExists) {
 
             if (!superAdminExists) {
                 adminExists.role = "super_admin";
+                adminExists.mustChangePassword = false;
 
                 await adminExists.save();
 
@@ -47,7 +60,7 @@ const seedAdmin = async () => {
             password: hashedPassword,
             role: "super_admin",
             isActive: true,
-            mustChangePassword: true,
+            mustChangePassword: false,
         });
 
         console.log(

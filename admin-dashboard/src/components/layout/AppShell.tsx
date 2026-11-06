@@ -5,7 +5,7 @@ import { AlertTriangle, Bell, DoorOpen, Menu, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { useLogoutMutation, useSelfProfileQuery } from "@/app/api";
-import { selectCurrentUser, setUser } from "@/features/auth/authSlice";
+import { selectCurrentUser, setUser, userRequiresPasswordChange } from "@/features/auth/authSlice";
 import { isActivePath, navForRole } from "./nav";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { Badge } from "@/components/ui/Badge";
@@ -206,7 +206,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </p>
           </div>
 
-          {profile?.data?.mustChangePassword && (
+          {userRequiresPasswordChange(profile?.data ?? user) && (
             <Link to="/change-password" className="hidden sm:block">
               <Badge tone="warning" icon={<AlertTriangle className="size-3" aria-hidden />}>
                 Password change required

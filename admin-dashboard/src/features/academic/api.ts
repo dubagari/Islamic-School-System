@@ -560,10 +560,10 @@ const academicApi = baseApi.injectEndpoints({
         error ? [] : (["TeacherAssignments"] as const),
     }),
 
-    listTeacherUsers: build.query<ApiEnvelope<UserAccount[]>, UsersListParams | void>({
-      query: (params) => ({
-        url: "/users",
-        params: buildParams({ role: "teacher", limit: 200, ...params }),
+    listTeacherUsers: build.query<ApiEnvelope<UserAccount[]>, void>({
+      query: () => ({
+        url: "/users/directory",
+        params: buildParams({ role: "teacher", isActive: "true", limit: 500 }),
       }),
       providesTags: ["Users"],
     }),

@@ -93,8 +93,8 @@ backend/
 5. **Audit logger** registers a response-finish listener for authenticated
    mutations. It does not block the request.
 6. **Route middleware** applies JWT verification and role authorization.
-7. **Password gate** blocks all protected routes except profile and
-   change-password while `mustChangePassword` is true.
+7. **Password gate** blocks protected routes except profile and
+   change-password while `mustChangePassword` is true. Super admins are exempt.
 8. **Zod validation** validates body, query, or params. Validated query values
    are stored in `req.validatedQuery` because Express 5 query objects are
    read-only.
@@ -130,7 +130,8 @@ Errors use `AppError` and helpers: `badRequest`, `unauthorized`, `forbidden`,
 - Passwords are hashed with bcrypt.
 - JWT contains `id` and `role`, signed with `JWT_SECRET`.
 - `protect` loads the current user and rejects inactive accounts.
-- `mustChangePassword` is enforced globally after authentication.
+- `mustChangePassword` is enforced after authentication for every role except
+  `super_admin`; super admin accounts can still change their password voluntarily.
 
 ### Roles
 
@@ -340,7 +341,7 @@ for dashboard cards and charts.
 - User administration lists users, updates identity/status, resets passwords, and
   deactivates accounts. Creating administrative accounts (`admin`/
   `super_admin`) and performing these operations is reserved for `super_admin`;
-  a concise active user directory is available to both admin roles for
+  a concise filterable user directory is available to both admin roles for
   communication audiences.
 - At least one active `super_admin` must remain. Self-deactivation is prohibited.
 - System settings provide a key/value store with public visibility control.

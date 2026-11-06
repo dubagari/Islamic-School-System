@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import User from "../models/User.js";
-import { matchesRole } from "../utils/roles.js";
+import { matchesRole, requiresPasswordChange } from "../utils/roles.js";
 import {
     forbidden,
     unauthorized,
@@ -50,7 +50,7 @@ export const protect = async (req, res, next) => {
         req.user = user;
 
         if (
-            user.mustChangePassword &&
+            requiresPasswordChange(user) &&
             !isPasswordChangeAllowed(req.originalUrl)
         ) {
             return res.status(403).json({

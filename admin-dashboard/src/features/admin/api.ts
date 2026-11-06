@@ -32,7 +32,27 @@ export type PutSettingPayload = {
 
 // ----- Section 13.3 — System maintenance -----
 
-export type SystemInfoData = Record<string, unknown>;
+export type SystemInfoData = {
+  application?: {
+    name?: string;
+    environment?: string;
+    nodeVersion?: string;
+    mongooseVersion?: string;
+    uptimeSeconds?: number;
+    memory?: {
+      rss?: number;
+      heapUsed?: number;
+      heapTotal?: number;
+    };
+  };
+  database?: {
+    state?: string;
+    name?: string;
+    host?: string;
+  };
+  records?: Record<string, number>;
+  generatedAt?: string;
+} & Record<string, unknown>;
 
 export type SystemDatabaseData = Record<string, unknown>;
 

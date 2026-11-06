@@ -21,6 +21,9 @@ export const isAdminRole = (role) =>
 
 export const isSuperAdmin = (role) => role === ROLES.SUPER_ADMIN;
 
+export const requiresPasswordChange = (user) =>
+    Boolean(user?.mustChangePassword) && !isSuperAdmin(user?.role);
+
 /**
  * Role authorization matcher.
  * A super admin satisfies any authorization that accepts `admin`,

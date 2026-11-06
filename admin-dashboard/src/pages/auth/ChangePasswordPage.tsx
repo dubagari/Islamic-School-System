@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ShieldAlert } from "lucide-react";
 
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { selectCurrentUser, updatePasswordFlags } from "@/features/auth/authSlice";
+import {
+  selectCurrentUser,
+  updatePasswordFlags,
+  userRequiresPasswordChange,
+} from "@/features/auth/authSlice";
 import { useChangePasswordMutation } from "@/app/api";
 import { Button } from "@/components/ui/Button";
 import { InputField } from "@/components/ui/Fields";
@@ -22,7 +26,7 @@ export function ChangePasswordPage() {
   const [error, setError] = useState<string>();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const forceChange = user?.mustChangePassword ?? false;
+  const forceChange = userRequiresPasswordChange(user);
 
   const strength = passwordStrength(newPassword);
 

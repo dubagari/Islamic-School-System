@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import Student from "../models/Student.js";
 import User from "../models/User.js";
 import { forbidden } from "../utils/AppError.js";
+import { requiresPasswordChange } from "../utils/roles.js";
 import {
     assertStudentSchoolFeePortalAccessService,
 } from "./publicSchoolFeeService.js";
@@ -124,7 +125,7 @@ export const loginService = async (
             email: user.email,
             role: user.role,
             mustChangePassword:
-                user.mustChangePassword,
+                requiresPasswordChange(user),
         },
     };
 
@@ -180,7 +181,10 @@ export const getProfileService = async (
         throw new Error("User not found.");
     }
 
-    return user;
+    return {
+        ...user.toObject(),
+        mustChangePassword: requiresPasswordChange(user),
+    };
 
 };
 

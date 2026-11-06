@@ -69,6 +69,10 @@ the password is changed:
 
 All other protected requests return `403` with code `PASSWORD_CHANGE_REQUIRED`.
 
+`super_admin` accounts are exempt from forced password rotation. A super admin
+can continue to change the password voluntarily, but the flag does not block
+routes or trigger the password-change gate.
+
 ### Pagination, search, and filters
 
 List endpoints accept:
@@ -1179,7 +1183,7 @@ Base path: `/api/v2/users` — Administrative accounts only.
 
 | Method | Path | Access | Description |
 | --- | --- | --- | --- |
-| `GET` | `/directory` | Admin / Super admin | Lightweight active user directory (messages/notifications) |
+| `GET` | `/directory` | Admin / Super admin | Lightweight filterable user directory (communication and role-scoped lookups) |
 | `POST` | `/` | Super admin | Create an administrative account (`admin` or `super_admin`) |
 | `GET` | `/` | Super admin | List users with role/status/search filters |
 | `GET` | `/:id` | Super admin | Get a user and linked profile |
@@ -1187,8 +1191,8 @@ Base path: `/api/v2/users` — Administrative accounts only.
 | `POST` | `/:id/reset-password` | Super admin | Reset another user's password |
 | `DELETE` | `/:id` | Super admin | Deactivate a user |
 
-Directory query: `search`, `limit`. It returns active users with `fullName`,
-`username`, `email`, `role`, and `isActive` only.
+Directory query: `role`, `isActive=true|false`, `search`, `limit`. It returns users
+with `fullName`, `username`, `email`, `role`, and `isActive` only.
 
 Create body:
 
@@ -1203,10 +1207,12 @@ Create body:
 ```
 
 If `password` is omitted, a temporary password is generated and returned once in
-the response. The user must change it on next login.
+the response. The user must change it on next login. `super_admin` accounts
+are not forced to change their generated password.
 
 Update body may include `fullName`, `email`, `isActive`, and
-`mustChangePassword`. An admin cannot deactivate their own account. The last
+`mustChangePassword`. A `super_admin` cannot be forced into a password
+rotation. An admin cannot deactivate their own account. The last
 active `super_admin` cannot be deactivated through either update or delete.
 
 Password reset body:
@@ -1218,7 +1224,8 @@ Password reset body:
 ```
 
 If `newPassword` is omitted, a temporary password is generated and returned once
-in the response. The user must change it on next login. An admin cannot use this
+in the response. The user must change it on next login. A `super_admin` is not
+forced through this password rotation. An admin cannot use this
 endpoint to reset their own password; use `/api/v2/auth/change-password`.
 
 ### 13.2 System Settings

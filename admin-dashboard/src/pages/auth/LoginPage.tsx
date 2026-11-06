@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 
 import { useLoginMutation } from "@/app/api";
+import { userRequiresPasswordChange } from "@/features/auth/authSlice";
 import { Button } from "@/components/ui/Button";
 
 const SCHOOL_PORTAL_URL =
@@ -40,7 +41,7 @@ export function LoginPage() {
       }
 
       navigate(
-        result.data?.user?.mustChangePassword ? "/change-password" : "/",
+        userRequiresPasswordChange(result.data?.user ?? null) ? "/change-password" : "/",
         { replace: true },
       );
     } catch (err) {

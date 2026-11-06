@@ -1,7 +1,7 @@
 ﻿import { Navigate, Route, Routes, useLocation, Outlet } from "react-router-dom";
 
 import { useAppSelector } from "@/app/hooks";
-import { selectCurrentUser, selectIsAuthenticated } from "@/features/auth/authSlice";
+import { selectCurrentUser, selectIsAuthenticated, userRequiresPasswordChange } from "@/features/auth/authSlice";
 import { AppShell } from "@/components/layout/AppShell";
 
 import { LoginPage } from "@/pages/auth/LoginPage";
@@ -182,7 +182,7 @@ export default function App() {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const user = useAppSelector(selectCurrentUser);
   const location = useLocation();
-  const mustChangePassword = user?.mustChangePassword ?? false;
+  const mustChangePassword = userRequiresPasswordChange(user);
 
   const passwordGateActive =
     mustChangePassword && isAuthenticated && location.pathname !== "/change-password";

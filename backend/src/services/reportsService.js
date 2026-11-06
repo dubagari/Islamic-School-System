@@ -254,6 +254,12 @@ export const getDashboardReportService = async (user) => {
                 },
             },
         ]),
+        includeFinance
+            ? getFinanceSummaryService({
+                  academicSession: context.session?._id,
+                  academicSemester: context.semester?._id,
+              })
+            : undefined,
         context.semester
             ? Result.countDocuments({
                   academicSemester: context.semester._id,

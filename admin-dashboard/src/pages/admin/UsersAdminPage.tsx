@@ -60,11 +60,24 @@ function roleTone(role: string): BadgeTone {
 }
 
 function fmtDateTime(value?: string | null): string {
-  if (!value) return "—";
+  if (!value) return "\u2014";
   const date = new Date(value);
   return Number.isNaN(date.getTime())
-    ? "—"
+    ? "\u2014"
     : date.toLocaleString();
+}
+
+function passwordStatusLabel(user: UsersAdminUser): {
+  tone: BadgeTone;
+  text: string;
+} {
+  if (user.role === "super_admin") {
+    return { tone: "success", text: "No forced rotation" };
+  }
+  return {
+    tone: user.mustChangePassword ? "warning" : "neutral",
+    text: user.mustChangePassword ? "Must change" : "Up to date",
+  };
 }
 
 // ======================================================
@@ -194,8 +207,8 @@ export function UsersAdminPage() {
       key: "mustChangePassword",
       header: "Password",
       render: (u) => (
-        <Badge tone={u.mustChangePassword ? "warning" : "neutral"}>
-          {u.mustChangePassword ? "Must change" : "Up to date"}
+        <Badge tone={passwordStatusLabel(u).tone}>
+          {passwordStatusLabel(u).text}
         </Badge>
       ),
     },
@@ -408,8 +421,8 @@ export function UsersAdminPage() {
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-600">
                 <span>Last login: {fmtDateTime(u.lastLogin)}</span>
-                <Badge tone={u.mustChangePassword ? "warning" : "neutral"}>
-                  {u.mustChangePassword ? "Must change password" : "Password up to date"}
+                <Badge tone={passwordStatusLabel(u).tone}>
+                  {passwordStatusLabel(u).text}
                 </Badge>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -557,7 +570,9 @@ function CreateAdminDialog({ open, onClose, onCreated }: CreateAdminDialogProps)
       >
         <div className="space-y-4">
           <Alert tone="success" title="Account ready">
-            The user must change the password at next sign-in.
+            {created.user.role === "super_admin"
+              ? "Super admins are not forced to change their password."
+              : "The user must change the password at next sign-in."}
           </Alert>
           {created.temporaryPassword && (
             <>
@@ -712,7 +727,9 @@ function EditUserDialog({ user, onClose, onSaved }: EditUserDialogProps) {
         body: {
           fullName: fullName.trim(),
           email: email.trim(),
-          mustChangePassword,
+          ...(user.role !== "super_admin"
+            ? { mustChangePassword }
+            : {}),
         },
       }).unwrap();
       onSaved({
@@ -771,15 +788,21 @@ function EditUserDialog({ user, onClose, onSaved }: EditUserDialogProps) {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-ink-700">
-            <input
-              type="checkbox"
-              checked={mustChangePassword}
-              onChange={(e) => setMustChangePassword(e.target.checked)}
-              className="size-4 rounded border-ink-300 text-primary-700 focus:ring-primary-500/40"
-            />
-            Force password change on next sign-in
-          </label>
+          {user?.role === "super_admin" ? (
+            <p className="mt-3 text-xs text-ink-500">
+              Super admin accounts are never forced to change their password.
+            </p>
+          ) : (
+            <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-ink-700">
+              <input
+                type="checkbox"
+                checked={mustChangePassword}
+                onChange={(e) => setMustChangePassword(e.target.checked)}
+                className="size-4 rounded border-ink-300 text-primary-700 focus:ring-primary-500/40"
+              />
+              Force password change on next sign-in
+            </label>
+          )}
         </Fieldset>
       </form>
     </Dialog>
@@ -832,7 +855,9 @@ function ResetPasswordDialog({ target, result, onResult, onClose }: ResetPasswor
       >
         <div className="space-y-4">
           <Alert tone="success" title="Password was reset">
-            The user must change this password at next sign-in. Show it only once, over a secure channel.
+            {result.user.role === "super_admin"
+              ? "Super admins are not forced to change this password. Show it only once, over a secure channel."
+              : "The user must change this password at next sign-in. Show it only once, over a secure channel."}
           </Alert>
           <pre className="overflow-x-auto rounded-lg border border-ink-200 bg-forest-50 px-4 py-3 font-mono text-sm text-ink-900">
             {result.temporaryPassword ?? "—"}
@@ -853,7 +878,11 @@ function ResetPasswordDialog({ target, result, onResult, onClose }: ResetPasswor
         onClose={onClose}
         onConfirm={() => void handleConfirm()}
         title="Reset password"
-        description={`A new temporary password will be generated for ${target.fullName} (@${target.username}). The current password stops working and the user must change the temporary password at next sign-in.`}
+        description={`A new temporary password will be generated for ${target.fullName} (@${target.username}).${
+          target.role === "super_admin"
+            ? " Super admins are not forced to change the generated password."
+            : " The current password stops working and the user must change the temporary password at next sign-in."
+        }`}
         confirmLabel="Reset password"
         loading={resetting}
       />

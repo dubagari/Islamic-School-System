@@ -92,6 +92,10 @@ export const { setCredentials, setUser, updatePasswordFlags, logout } =
 
 export default authSlice.reducer;
 
+export function userRequiresPasswordChange(user: User | null | undefined): boolean {
+  return Boolean(user?.mustChangePassword) && user?.role !== "super_admin";
+}
+
 export const selectCurrentUser = (state: { auth: AuthState }) =>
   state.auth.user;
 
@@ -99,4 +103,4 @@ export const selectIsAuthenticated = (state: { auth: AuthState }) =>
   Boolean(state.auth.token);
 
 export const selectMustChangePassword = (state: { auth: AuthState }) =>
-  state.auth.user?.mustChangePassword ?? false;
+  userRequiresPasswordChange(state.auth.user);

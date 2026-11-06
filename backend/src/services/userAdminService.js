@@ -173,7 +173,7 @@ export const updateUserService = async (
 
     if (data.mustChangePassword !== undefined) {
         user.mustChangePassword =
-            data.mustChangePassword;
+            isSuperAdmin(user.role) ? false : data.mustChangePassword;
     }
 
     await user.save();
@@ -221,7 +221,7 @@ export const resetUserPasswordService = async (
         newPassword,
         10
     );
-    user.mustChangePassword = true;
+    user.mustChangePassword = !isSuperAdmin(user.role);
 
     await user.save();
 
@@ -313,7 +313,7 @@ export const createAdminAccountService = async (
         password: await bcrypt.hash(password, 10),
         role,
         isActive: data.isActive ?? true,
-        mustChangePassword: true,
+        mustChangePassword: !isSuperAdmin(role),
     });
 
     return {
@@ -336,6 +336,14 @@ export const getUserDirectoryService = async (query) => {
             "email",
         ]),
     };
+
+    if (query.role) {
+        filter.role = query.role;
+    }
+
+    if (query.isActive !== undefined) {
+        filter.isActive = query.isActive === "true";
+    }
 
     const users = await User.find(filter)
         .select(

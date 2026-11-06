@@ -1,5 +1,11 @@
-import { useMemo } from "react";
-import { CalendarCheck, ClipboardList, GraduationCap, RefreshCw, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  CalendarCheck,
+  ClipboardList,
+  GraduationCap,
+  RefreshCw,
+  Users,
+} from "lucide-react";
 
 import { useAppSelector } from "@/app/hooks";
 import { Alert } from "@/components/ui/Alert";
@@ -10,36 +16,28 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { StatCard, StatGrid } from "@/components/ui/StatCard";
 import { selectCurrentUser } from "@/features/auth/authSlice";
 import {
-  findAdmissionsBreakdown,
-  findRecordArray,
   formatCellValue,
   formatPercentValue,
   formatStatNumber,
   getApiErrorMessage,
-  isRecord,
-  pickNumber,
-  prettifyKey,
   useGetDashboardReportQuery,
 } from "@/features/reports/api";
+import type { DashboardReport } from "@/features/reports/api";
+import type { AdmissionApplication } from "@/features/admissions/api";
 
-const RECENT_KEYS = [/recent/i, /application/i, /admission/i];
-
-function statValue(
-  root: unknown,
-  patterns: RegExp[],
-  percent = false,
-): string {
-  const found = pickNumber(root, patterns);
-  if (found === null) return "\u2014";
-  return percent ? formatPercentValue(found) : formatStatNumber(found);
-}
+import { SuperAdminDashboard } from "./SuperAdminDashboard";
 
 export function DashboardPage() {
   const user = useAppSelector(selectCurrentUser);
   const isAdmin = user?.role === "admin";
+  const isSuperAdmin = user?.role === "super_admin";
 
   const { data, isLoading, isError, error, refetch } =
-    useGetDashboardReportQuery(undefined, { skip: !isAdmin });
+    useGetDashboardReportQuery(undefined, { skip: !isAdmin && !isSuperAdmin });
+
+  if (isSuperAdmin) {
+    return <SuperAdminDashboard />;
+  }
 
   if (!isAdmin) {
     return (
@@ -83,57 +81,23 @@ function AdminDashboard({
   errorMessage,
   onRetry,
 }: {
-  data: unknown;
+  data?: DashboardReport;
   isLoading: boolean;
   isError: boolean;
   errorMessage: string | null;
   onRetry: () => void;
 }) {
-  const totalStudents = statValue(data, [
-    /^totalStudents$/i,
-    /^totalStudentsCount$/i,
-    /^totalActiveStudents$/i,
-    /^studentsCount$/i,
-    /^students$/i,
-    /^totalStudent$/i,
-  ]);
-  const totalTeachers = statValue(data, [
-    /^totalTeachers$/i,
-    /^teachersCount$/i,
-    /^teachers$/i,
-    /^totalTeacher$/i,
-  ]);
-  const activeEnrollments = statValue(data, [
-    /^activeEnrollments$/i,
-    /^totalEnrollments$/i,
-    /^enrollmentsCount$/i,
-    /^currentEnrollments$/i,
-    /^enrollments$/i,
-  ]);
-  const attendanceRate = statValue(
-    data,
-    [
-      /^overallAttendanceRate$/i,
-      /^totalAttendanceRate$/i,
-      /^attendanceRate$/i,
-      /^attendancePercentage$/i,
-      /^averageAttendance/i,
-    ],
-    true,
-  );
+  const students = data?.people.students;
+  const teachers = data?.people.teachers;
+  const academics = data?.academics;
+  const attendance = data?.attendanceToday;
 
-  const breakdown = useMemo(() => findAdmissionsBreakdown(data), [data]);
-  const recentRows = useMemo(
-    () => findRecordArray(data, RECENT_KEYS),
-    [data],
-  );
-
-  const hasStats =
-    totalStudents !== "\u2014" ||
-    totalTeachers !== "\u2014" ||
-    activeEnrollments !== "\u2014" ||
-    attendanceRate !== "\u2014";
-  const hasContent = hasStats || Boolean(breakdown) || Boolean(recentRows);
+  const hasContent =
+    students?.total != null ||
+    teachers?.active != null ||
+    academics?.activeEnrollments != null ||
+    attendance?.attendanceRate != null ||
+    Boolean(data?.recentAdmissions.length);
 
   return (
     <>
@@ -147,7 +111,7 @@ function AdminDashboard({
         <Alert tone="error" title="Failed to load dashboard" className="mb-4">
           {errorMessage}
           <span className="mt-2 block">
-            <Button size="sm" variant="outline" icon={<ArrowPathIcon />} onClick={onRetry}>
+            <Button size="sm" variant="outline" icon={<RefreshIcon />} onClick={onRetry}>
               Retry
             </Button>
           </span>
@@ -157,43 +121,91 @@ function AdminDashboard({
       <StatGrid cols={4} className="mb-6">
         <StatCard
           label="Total students"
-          value={totalStudents}
+          value={students?.total != null ? formatStatNumber(students.total) : "\u2014"}
           loading={isLoading}
+          sub={
+            students?.active != null
+              ? `${formatStatNumber(students.active)} active`
+              : undefined
+          }
           icon={<GraduationCapIcon />}
         />
         <StatCard
-          label="Total teachers"
-          value={totalTeachers}
+          label="Active teachers"
+          value={teachers?.active != null ? formatStatNumber(teachers.active) : "\u2014"}
           loading={isLoading}
           tone="primary"
+          sub={
+            data?.people.parents.active != null
+              ? `${formatStatNumber(data.people.parents.active)} active parents`
+              : undefined
+          }
           icon={<UsersIcon />}
         />
         <StatCard
           label="Active enrollments"
-          value={activeEnrollments}
+          value={
+            academics?.activeEnrollments != null
+              ? formatStatNumber(academics.activeEnrollments)
+              : "\u2014"
+          }
           loading={isLoading}
           tone="gold"
+          sub={
+            academics?.activeClasses != null
+              ? `${formatStatNumber(academics.activeClasses)} active classes`
+              : undefined
+          }
           icon={<ClipboardListIcon />}
         />
         <StatCard
           label="Attendance rate"
-          value={attendanceRate}
+          value={
+            attendance?.attendanceRate != null
+              ? formatPercentValue(attendance.attendanceRate)
+              : "\u2014"
+          }
           loading={isLoading}
+          sub={
+            attendance?.total != null
+              ? `${formatStatNumber(attendance.total)} records today`
+              : undefined
+          }
           icon={<CalendarCheckIcon />}
         />
       </StatGrid>
 
-      {breakdown && <AdmissionsBreakdownCard breakdown={breakdown} />}
-
-      {recentRows && recentRows.length > 0 && (
-        <Card
-          title="Recent admissions"
-          description="Latest admission applications in the system."
-          className="mt-6"
-        >
-          <RecentAdmissionsTable rows={recentRows} />
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
+        <Card title="Academic signals">
+          <SignalRow
+            label="Pending admissions"
+            value={academics?.pendingAdmissions}
+            to="/admissions"
+            loading={isLoading}
+          />
+          <SignalRow
+            label="Published results"
+            value={academics?.publishedResults}
+            to="/results"
+            loading={isLoading}
+          />
+          <SignalRow
+            label="Awaiting publication"
+            value={academics?.pendingResults}
+            to="/results"
+            loading={isLoading}
+          />
         </Card>
-      )}
+
+        {data?.recentAdmissions && (
+          <Card
+            title="Recent admissions"
+            description="Latest admission applications in the system."
+          >
+            <RecentAdmissionsTable rows={data.recentAdmissions} />
+          </Card>
+        )}
+      </div>
 
       {!isLoading && !isError && !hasContent && (
         <EmptyState
@@ -201,7 +213,7 @@ function AdminDashboard({
           title="No dashboard data yet"
           description="The dashboard report returned no content. Try again."
           action={
-            <Button variant="outline" icon={<ArrowPathIcon />} onClick={onRetry}>
+            <Button variant="outline" icon={<RefreshIcon />} onClick={onRetry}>
               Retry
             </Button>
           }
@@ -211,93 +223,72 @@ function AdminDashboard({
   );
 }
 
-function AdmissionsBreakdownCard({
-  breakdown,
+function SignalRow({
+  label,
+  value,
+  to,
+  loading,
 }: {
-  breakdown: { pending: number | null; approved: number | null; rejected: number | null };
+  label: string;
+  value?: number | null;
+  to: string;
+  loading?: boolean;
 }) {
-  const entries = [
-    { label: "Pending", value: breakdown.pending, bar: "bg-gold-500" },
-    { label: "Approved", value: breakdown.approved, bar: "bg-primary-700" },
-    { label: "Rejected", value: breakdown.rejected, bar: "bg-red-600" },
-  ].filter((entry) => entry.value !== null) as {
-    label: string;
-    value: number;
-    bar: string;
-  }[];
-
-  if (entries.length === 0) return null;
-
-  const max = Math.max(...entries.map((entry) => entry.value), 1);
-
   return (
-    <Card title="Admissions status" description="Applications by current status.">
-      <ul className="space-y-3">
-        {entries.map((entry) => (
-          <li key={entry.label}>
-            <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="font-medium text-ink-700">{entry.label}</span>
-              <span className="text-ink-500">{formatStatNumber(entry.value)}</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-ink-100" role="presentation">
-              <div
-                className={`h-full rounded-full ${entry.bar}`}
-                style={{ width: `${Math.max((entry.value / max) * 100, 2)}%` }}
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <div className="mb-3 last:mb-0">
+      <Link to={to} className="text-xs font-medium text-ink-700 hover:text-primary-800">
+        {label}
+      </Link>
+      <p
+        className={`mt-0.5 text-lg font-bold text-ink-900 ${
+          loading ? "animate-pulse bg-ink-100 text-transparent" : ""
+        }`}
+      >
+        {value != null ? formatStatNumber(value) : "0"}
+      </p>
+    </div>
   );
 }
 
-function RecentAdmissionsTable({ rows }: { rows: Record<string, unknown>[] }) {
-  const columns = useMemo<Column<Record<string, unknown>>[]>(() => {
-    const preferred = [
-      "applicationNumber",
-      "fullName",
-      "name",
-      "applicantName",
-      ...Object.keys(rows[0] ?? {}),
-    ];
-    const seen = new Set<string>();
-    const keys: string[] = [];
+function RecentAdmissionsTable({ rows }: { rows: AdmissionApplication[] }) {
+  const columns = recentAdmissionColumns;
 
-    for (const key of preferred) {
-      if (seen.has(key)) continue;
-      const value = rows[0]?.[key];
-      if (value === undefined || typeof value === "object") {
-        continue;
-      }
-      seen.add(key);
-      keys.push(key);
-      if (keys.length >= 6) break;
-    }
+  if (rows.length === 0) {
+    return <p className="text-sm text-ink-500">No recent admissions.</p>;
+  }
 
-    return keys.map((key) => ({
-      key,
-      header: prettifyKey(key),
-      render: (row) => formatCellValue(key, row[key]),
-    }));
-  }, [rows]);
-
-  if (columns.length === 0) return null;
-
-  return (
-    <DataTable
-      columns={columns}
-      data={rows}
-      rowKey={(row, index) => {
-        const id =
-          (isRecord(row) && (row._id ?? row.id ?? row.applicationNumber)) ?? "";
-        return `${String(id)}-${index}`;
-      }}
-    />
-  );
+  return <DataTable columns={columns} data={rows} rowKey={(row) => row._id} />;
 }
 
-const ArrowPathIcon = () => <RefreshCw className="size-4" aria-hidden />;
+const recentAdmissionColumns: Column<AdmissionApplication>[] = [
+  {
+    key: "applicationNumber",
+    header: "Application",
+    render: (row) => (
+      <span className="font-mono text-xs">{row.applicationNumber ?? "\u2014"}</span>
+    ),
+  },
+  {
+    key: "fullName",
+    header: "Applicant",
+    render: (row) =>
+      [row.firstName, row.middleName, row.lastName].filter(Boolean).join(" ") ||
+      "\u2014",
+  },
+  {
+    key: "status",
+    header: "Status",
+    render: (row) => row.status,
+  },
+  {
+    key: "createdAt",
+    header: "Created",
+    align: "end",
+    render: (row) => formatCellValue("createdAt", row.createdAt),
+  },
+];
+
+const RefreshIcon = () => <RefreshCw className="size-4" aria-hidden />;
 const GraduationCapIcon = () => <GraduationCap className="size-4" aria-hidden />;
 const UsersIcon = () => <Users className="size-4" aria-hidden />;
 const ClipboardListIcon = () => <ClipboardList className="size-4" aria-hidden />;
