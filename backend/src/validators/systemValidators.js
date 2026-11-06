@@ -25,7 +25,7 @@ export const auditLogQuerySchema = z
     .object({
         user: objectId.optional(),
         role: z
-            .enum(["admin", "teacher", "student", "parent"])
+        .enum(["super_admin", "admin", "teacher", "student", "parent"])
             .optional(),
         method: z
             .enum(["POST", "PATCH", "PUT", "DELETE"])
@@ -46,11 +46,18 @@ export const auditLogQuerySchema = z
 export const userQuerySchema = z
     .object({
         role: z
-            .enum(["admin", "teacher", "student", "parent"])
+            .enum(["super_admin", "admin", "teacher", "student", "parent"])
             .optional(),
         isActive: z.enum(["true", "false"]).optional(),
         search: z.string().trim().max(150).optional(),
         ...paginationFields,
+    })
+    .passthrough();
+
+export const userDirectoryQuerySchema = z
+    .object({
+        search: z.string().trim().max(150).optional(),
+        limit: z.coerce.number().int().min(1).max(500).optional(),
     })
     .passthrough();
 
@@ -60,6 +67,15 @@ const optionalEmail = z
     .email("A valid email address is required.")
     .optional()
     .or(z.literal(""));
+
+export const createUserSchema = z.object({
+    fullName: z.string().trim().min(2).max(150),
+    username: z.string().trim().min(3).max(50),
+    email: optionalEmail,
+    password: z.string().min(8).max(128).optional(),
+    role: z.enum(["admin", "super_admin"]),
+    isActive: z.boolean().optional(),
+});
 
 export const updateUserSchema = z
     .object({

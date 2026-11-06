@@ -33,8 +33,8 @@ import {
 } from "@/features/communication/api";
 import {
   getApiErrorMessage,
-  useListUsersQuery,
-  type UsersAdminUser,
+  useGetUserDirectoryQuery,
+  type DirectoryUser,
 } from "@/features/staff/api";
 
 import { useAppSelector } from "@/app/hooks";
@@ -96,7 +96,9 @@ function fmtRelative(value: string | null | undefined): string {
 
 export function NotificationsPage() {
   const currentUser = useAppSelector(selectCurrentUser);
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin =
+    currentUser?.role === "admin" ||
+    currentUser?.role === "super_admin";
 
   const [page, setPage] = useState(1);
   const [typeFilter, setTypeFilter] = useState<NotificationType | "">("");
@@ -375,10 +377,10 @@ export function NotificationsPage() {
   );
 }
 
-// The users list is admin-only (13.1); broadcast is admin-only too.
-function useBroadcastUsers(enabled: boolean): UsersAdminUser[] {
-  const { data } = useListUsersQuery(
-    { isActive: true, limit: 200, role: "all" },
+// Both admin roles can access the concise user directory.
+function useBroadcastUsers(enabled: boolean): DirectoryUser[] {
+  const { data } = useGetUserDirectoryQuery(
+    { limit: 200 },
     { skip: !enabled },
   );
   return data?.data ?? [];
@@ -389,7 +391,7 @@ function BroadcastDialog({
   onClose,
   onDone,
 }: {
-  users: UsersAdminUser[];
+  users: DirectoryUser[];
   onClose: () => void;
   onDone: (message: string) => void;
 }) {

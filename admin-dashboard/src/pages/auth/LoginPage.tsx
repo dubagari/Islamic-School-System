@@ -29,7 +29,9 @@ export function LoginPage() {
         password,
       }).unwrap();
 
-      if (result.data?.user?.role !== "admin") {
+      const role = result.data?.user?.role;
+
+      if (role !== "admin" && role !== "super_admin") {
         setError(
           "This dashboard is for administrators only. Please sign in through the school portal.",
         );
@@ -97,7 +99,7 @@ export function LoginPage() {
               <input
                 type="text"
                 name="identifier"
-                autoComplete="username"
+                autoComplete="off"
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
@@ -114,7 +116,7 @@ export function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

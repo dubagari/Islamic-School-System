@@ -13,6 +13,10 @@ import {
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { ChangePasswordPage } from "@/pages/auth/ChangePasswordPage";
 import { ProfilePage } from "@/pages/auth/ProfilePage";
+import { AdmissionPaymentPage } from "@/pages/admission/AdmissionPaymentPage";
+import { AdmissionPaymentCallbackPage } from "@/pages/admission/AdmissionPaymentCallbackPage";
+import { SchoolFeePaymentPage } from "@/pages/admission/SchoolFeePaymentPage";
+import { SchoolFeePaymentCallbackPage } from "@/pages/admission/SchoolFeePaymentCallbackPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 function lazyNamed<T extends ComponentType<unknown>>(
@@ -37,6 +41,8 @@ const StudentDashboardPage = lazyNamed(() => import("@/pages/student/StudentDash
 const StudentResultsPage = lazyNamed(() => import("@/pages/student/StudentResultsPage"), "StudentResultsPage");
 const StudentAttendancePage = lazyNamed(() => import("@/pages/student/StudentAttendancePage"), "StudentAttendancePage");
 const StudentFeesPage = lazyNamed(() => import("@/pages/student/StudentFeesPage"), "StudentFeesPage");
+const FeePaymentCallbackPage = lazyNamed(() => import("@/pages/student/FeePaymentCallbackPage"), "FeePaymentCallbackPage");
+const StudentAdmissionLetterPage = lazyNamed(() => import("@/pages/student/StudentAdmissionLetterPage"), "StudentAdmissionLetterPage");
 const StudentCbtPage = lazyNamed(() => import("@/pages/student/StudentCbtPage"), "StudentCbtPage");
 const CbtAttemptPage = lazyNamed(() => import("@/pages/student/CbtAttemptPage"), "CbtAttemptPage");
 const CbtResultPage = lazyNamed(() => import("@/pages/student/CbtResultPage"), "CbtResultPage");
@@ -131,6 +137,22 @@ export default function App() {
             <LoginPage />
           </PublicOnly>
         }
+      />
+      <Route
+        path="/admission-payment"
+        element={<AdmissionPaymentPage />}
+      />
+      <Route
+        path="/admission-payment/callback"
+        element={<AdmissionPaymentCallbackPage />}
+      />
+      <Route
+        path="/school-fee-payment"
+        element={<SchoolFeePaymentPage />}
+      />
+      <Route
+        path="/school-fee-payment/callback"
+        element={<SchoolFeePaymentCallbackPage />}
       />
       <Route path="/change-password" element={<ChangePasswordPage />} />
 
@@ -235,6 +257,22 @@ export default function App() {
           element={
             <RequireRole allow={["student"]}>
               <StudentFeesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/student/admission-letter"
+          element={
+            <RequireRole allow={["student"]}>
+              <StudentAdmissionLetterPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/fee-payment/callback"
+          element={
+            <RequireRole allow={["student", "parent", "admin"]}>
+              <FeePaymentCallbackPage />
             </RequireRole>
           }
         />

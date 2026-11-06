@@ -1,5 +1,5 @@
 import { baseApi, type ApiEnvelope } from "@/app/api";
-import type { ApiErrorPayload } from "@/types";
+import type { ApiErrorPayload, Role } from "@/types";
 
 // ======================================================
 // Types
@@ -23,7 +23,7 @@ export type TeacherUserAccount = {
   _id: string;
   username: string;
   email?: string | null;
-  role: "admin" | "teacher" | "student" | "parent";
+  role: Role;
   isActive: boolean;
   mustChangePassword: boolean;
   lastLogin?: string | null;
@@ -190,7 +190,7 @@ export type UsersAdminUser = {
   fullName: string;
   username: string;
   email?: string | null;
-  role: "admin" | "teacher" | "student" | "parent";
+  role: Role;
   isActive: boolean;
   mustChangePassword: boolean;
   lastLogin?: string | null;
@@ -229,6 +229,29 @@ export type UpdateUserPayload = {
 };
 
 export type ResetUserPasswordResponse = {
+  user: UsersAdminUser;
+  temporaryPassword: string | null;
+};
+
+export type DirectoryUser = {
+  _id: string;
+  fullName: string;
+  username: string;
+  email?: string | null;
+  role: Role;
+  isActive: boolean;
+};
+
+export type CreateUserPayload = {
+  fullName: string;
+  username: string;
+  email?: string;
+  password?: string;
+  role: "admin" | "super_admin";
+  isActive?: boolean;
+};
+
+export type CreateUserResponse = {
   user: UsersAdminUser;
   temporaryPassword: string | null;
 };
@@ -425,13 +448,30 @@ const injectedApi = baseApi.injectEndpoints({
     }),
 
     // ----- Users (docs 13.1) -----
+    getUserDirectory: build.query<
+      ApiEnvelope<DirectoryUser[]>,
+      { search?: string; limit?: number }
+    >({
+      query: (params) => ({
+        url: "/users/directory",
+        params,
+      }),
+      providesTags: ["Users"],
+    }),
+    createAdminAccount: build.mutation<
+      ApiEnvelope<CreateUserResponse>,
+      CreateUserPayload
+    >({
+      query: (body) => ({ url: "/users", method: "POST", body }),
+      invalidatesTags: ["Users"],
+    }),
     listUsers: build.query<
       ApiEnvelope<UsersAdminUser[]>,
       {
         page?: number;
         limit?: number;
         search?: string;
-        role?: "admin" | "teacher" | "student" | "parent" | "all";
+        role?: Role | "all";
         isActive?: boolean;
       }
     >({
@@ -499,6 +539,8 @@ export const {
   useLinkParentStudentsMutation,
   useUnlinkParentStudentMutation,
   useListStudentsBasicQuery,
+  useGetUserDirectoryQuery,
+  useCreateAdminAccountMutation,
   useListUsersQuery,
   useGetUserQuery,
   useUpdateUserMutation,

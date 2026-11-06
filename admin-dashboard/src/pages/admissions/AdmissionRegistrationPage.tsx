@@ -238,7 +238,7 @@ function RegistrationResultCard({
   const copyCredentials = async () => {
     try {
       await navigator.clipboard.writeText(
-        `Username: ${username}\nDefault password: ${defaultPassword}`,
+        `Username: ${username}\nPassword: ${defaultPassword}`,
       );
       setCopied(true);
     } catch {
@@ -287,8 +287,8 @@ function RegistrationResultCard({
       </dl>
 
       <pre className="rounded-lg border border-ink-100 bg-forest-50 p-4 font-mono text-[13px] leading-relaxed text-ink-900">
-        {`Username:         ${username}
-Default password: ${defaultPassword}`}
+        {`Username:   ${username}
+Password:   ${defaultPassword}`}
       </pre>
 
       <Alert tone="info" className="mt-3">

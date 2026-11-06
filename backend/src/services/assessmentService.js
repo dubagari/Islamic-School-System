@@ -13,6 +13,7 @@ import {
     paginatedResult,
 } from "../utils/pagination.js";
 import { escapeRegex } from "../utils/search.js";
+import { isAdminRole } from "../utils/roles.js";
 import {
     badRequest,
     forbidden,
@@ -70,7 +71,7 @@ const assertClassSubjectAccess = async (
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return;
     }
 
@@ -262,7 +263,7 @@ export const getAssessmentsService = async (
         filter.classSubject = {
             $in: assignedClassSubjectIds,
         };
-    } else if (user.role !== "admin") {
+    } else if (!isAdminRole(user.role)) {
         throw forbidden();
     }
 

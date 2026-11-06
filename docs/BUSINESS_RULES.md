@@ -313,10 +313,12 @@ building screens, reports, and automations.
 
 ### Access to finance data
 
-- Admins can view and manage all invoices and payments.
+- Super admins can view and manage all invoices and payments. Regular admins do
+  not have access to finance modules.
+- Enrollment/payment admission approvals remain available to regular admins.
 - Students can view only their own invoices, payments, and fee summary.
 - Parents can view only invoices and payments for linked children.
-- Finance reports are admin-only.
+- Finance reports are super-admin-only.
 
 ---
 
@@ -362,7 +364,7 @@ building screens, reports, and automations.
 - Notifications are always scoped to the recipient.
 - Users can mark one or all notifications as read.
 - Users can delete their own notifications.
-- Admins can broadcast notifications by role or explicit user list.
+- Admin roles can broadcast notifications by role or explicit user list.
 - Notification types are `announcement`, `message`, `fee`, `result`,
   `attendance`, and `system`.
 - Automatic notifications are created for published results, fee payments,
@@ -372,7 +374,8 @@ building screens, reports, and automations.
 
 ## 10. Reports
 
-- Reports are admin-only.
+- Reports are available to admin roles; the Finance category is
+  super-admin-only.
 - Dashboard reports use the current active session and semester when available.
 - Enrollment reports default to the current session.
 - Attendance reports default to the last 30 days and the current semester.
@@ -389,8 +392,12 @@ building screens, reports, and automations.
 
 ## 11. System Administration
 
-- Only admins can manage users, settings, system information, indexes, and audit
-  logs.
+- Only super admins can manage users, settings, system information, indexes, and
+  audit logs.
+- Administrative account creation is reserved for super admins; both `admin` and
+  `super_admin` roles are selectable.
+- At least one active `super_admin` account must always remain, and an
+  administrator cannot deactivate their own account.
 - User accounts are soft-deactivated; historical records remain.
 - Admin password resets require a password change on next login.
 - System settings are stored as key/value pairs with category, description, and
@@ -400,7 +407,7 @@ building screens, reports, and automations.
 - Sensitive request fields (`password`, `token`, `secret`, `authorization`, etc.)
   are redacted before being stored.
 - Audit logging failure must never block the underlying business operation.
-- Index synchronization is an explicit admin maintenance action.
+- Index synchronization is an explicit super-admin maintenance action.
 - Database statistics and system information must not expose credentials or
   connection secrets.
 

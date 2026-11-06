@@ -6,6 +6,8 @@ import {
     updateUserController,
     resetUserPasswordController,
     deactivateUserController,
+    createUserController,
+    getUserDirectoryController,
 } from "../controllers/systemController.js";
 
 import { authorize, protect } from "../middleware/authMiddleware.js";
@@ -15,11 +17,27 @@ import {
     resetUserPasswordSchema,
     updateUserSchema,
     userQuerySchema,
+    userDirectoryQuerySchema,
+    createUserSchema,
 } from "../validators/systemValidators.js";
 
 const router = express.Router();
 
 router.use(protect, authorize("admin"));
+
+router.get(
+    "/directory",
+    validate(userDirectoryQuerySchema, "query"),
+    getUserDirectoryController
+);
+
+router.use(authorize("super_admin"));
+
+router.post(
+    "/",
+    validate(createUserSchema),
+    createUserController
+);
 
 router.get(
     "/",

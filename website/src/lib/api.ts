@@ -4,9 +4,10 @@ const configuredApiUrl =
 
 function normalizeApiBaseUrl(url: string): string {
   const normalized = url.trim().replace(/\/+$/, "");
-  return /\/api\/v2$/i.test(normalized)
-    ? normalized
-    : `${normalized}/api/v2`;
+  const baseUrl = normalized
+    .replace(/\/api\/v2$/i, "")
+    .replace(/\/api$/i, "");
+  return `${baseUrl}/api/v2`;
 }
 
 const API_BASE_URL = normalizeApiBaseUrl(configuredApiUrl);

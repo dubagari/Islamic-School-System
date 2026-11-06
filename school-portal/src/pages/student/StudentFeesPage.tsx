@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 
 import { Badge, StatusBadge } from "@/components/ui/Badge";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { DataTable, EmptyState, type Column } from "@/components/ui/DataTable";
@@ -12,8 +13,10 @@ import { StatCard, StatGrid } from "@/components/ui/StatCard";
 
 import {
   extractErrorMessage,
+  feePaymentStorage,
   formatDate,
   formatNaira,
+  initializeFeePaystackPayment,
   refName,
   useGetInvoiceByIdQuery,
   useGetStudentFeeSummaryQuery,
@@ -25,6 +28,15 @@ import {
 } from "@/features/student/api";
 
 const PAYMENTS_PAGE_SIZE = 10;
+
+function isPayable(invoice: InvoiceRecord): boolean {
+  const status = (invoice.status ?? "").toLowerCase();
+  return (
+    Number(invoice.balance ?? 0) > 0 &&
+    status !== "paid" &&
+    status !== "cancelled"
+  );
+}
 
 function periodCell(invoice: InvoiceRecord): ReactNode {
   const session = refName(invoice.academicSession) ?? "—";
@@ -58,6 +70,8 @@ function invoiceOf(payment: PaymentRecord): string {
 
 function useInvoiceColumns(
   onView: (invoiceId: string) => void,
+  onPay: (invoiceId: string) => void,
+  payingInvoiceId: string | null,
 ): Column<InvoiceRecord>[] {
   return useMemo(
     () => [
@@ -111,13 +125,25 @@ function useInvoiceColumns(
         header: "",
         align: "end",
         render: (i) => (
-          <Button size="sm" variant="outline" onClick={() => onView(i._id)}>
-            View
-          </Button>
+          <div className="flex justify-end gap-2">
+            {isPayable(i) && (
+              <Button
+                size="sm"
+                variant="primary"
+                loading={payingInvoiceId === i._id}
+                onClick={() => onPay(i._id)}
+              >
+                Pay balance
+              </Button>
+            )}
+            <Button size="sm" variant="outline" onClick={() => onView(i._id)}>
+              View
+            </Button>
+          </div>
         ),
       },
     ],
-    [onView],
+    [onView, onPay, payingInvoiceId],
   );
 }
 
@@ -197,12 +223,28 @@ function SummaryTile({ label, children }: { label: string; children: ReactNode }
 export function StudentFeesPage() {
   const [invoiceId, setInvoiceIdState] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null);
+  const [payError, setPayError] = useState<string | null>(null);
 
   const onViewInvoice = useCallback(
     (id: string) => setInvoiceIdState(id),
     [],
   );
-  const invoiceColumns = useInvoiceColumns(onViewInvoice);
+
+  const onPayInvoice = useCallback(async (id: string) => {
+    setPayingInvoiceId(id);
+    setPayError(null);
+    try {
+      const init = await initializeFeePaystackPayment({ invoiceId: id });
+      feePaymentStorage.set(init);
+      window.location.href = init.authorizationUrl;
+    } catch (err) {
+      setPayError(extractErrorMessage(err) ?? "Could not start this payment.");
+      setPayingInvoiceId(null);
+    }
+  }, []);
+
+  const invoiceColumns = useInvoiceColumns(onViewInvoice, onPayInvoice, payingInvoiceId);
 
   const {
     data: profileEnvelope,
@@ -251,9 +293,17 @@ export function StudentFeesPage() {
     <div>
       <PageHeader
         title="My fees"
-        arabic="الرسوم"
+        arabic="O<U,O�O3U^U."
         description="Your invoices, payment history and outstanding balance."
       />
+
+      {summary && summary.hasInvoices === false && (
+        <Alert tone="info" className="mb-6">
+          {summary.expectedFee && summary.expectedFee > 0
+            ? `Expected school fee: ${formatNaira(summary.expectedFee)}. An invoice has not been issued for you yet, so you cannot pay online until the school issues one.`
+            : "Your school fee has not been set yet and no invoice has been issued. Contact the school office."}
+        </Alert>
+      )}
 
       <StatGrid cols={4} className="mb-6">
         <StatCard
@@ -300,6 +350,11 @@ export function StudentFeesPage() {
         title="Invoices"
         description="Select an invoice to see its line items and payments."
       >
+        {payError && (
+          <Alert tone="error" className="mb-4" onDismiss={() => setPayError(null)}>
+            {payError}
+          </Alert>
+        )}
         {isError ? (
           <EmptyState
             title="Could not load your fees"
@@ -368,6 +423,8 @@ export function StudentFeesPage() {
       <InvoiceDetailDialog
         invoiceId={invoiceId}
         onClose={() => setInvoiceIdState(null)}
+        onPay={onPayInvoice}
+        paying={payingInvoiceId !== null}
       />
     </div>
   );
@@ -376,9 +433,13 @@ export function StudentFeesPage() {
 function InvoiceDetailDialog({
   invoiceId,
   onClose,
+  onPay,
+  paying,
 }: {
   invoiceId: string | null;
   onClose: () => void;
+  onPay: (invoiceId: string) => void;
+  paying: boolean;
 }) {
   const { data: envelope, isLoading } = useGetInvoiceByIdQuery(invoiceId ?? "", {
     skip: !invoiceId,
@@ -401,9 +462,19 @@ function InvoiceDetailDialog({
           : undefined
       }
       footer={
-        <Button variant="outline" onClick={onClose}>
-          Close
-        </Button>
+        <div className="flex gap-2">
+          {invoice && isPayable(invoice) && (
+            <Button
+              loading={paying}
+              onClick={() => invoiceId && onPay(invoiceId)}
+            >
+              Pay balance
+            </Button>
+          )}
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </div>
       }
     >
       {isLoading || !invoice ? (

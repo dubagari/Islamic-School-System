@@ -5,6 +5,7 @@ import {
     getStudentByIdController,
     getStudentProfileController,
     getStudentDashboardController,
+    getStudentAdmissionLetterController,
 } from "../controllers/studentController.js";
 
 import { authorize, protect } from "../middleware/authMiddleware.js";
@@ -29,6 +30,13 @@ router.get(
     protect,
     authorize("student"),
     getStudentProfileController
+);
+
+router.get(
+    "/me/admission-letter",
+    protect,
+    authorize("student"),
+    getStudentAdmissionLetterController
 );
 
 // ======================================================

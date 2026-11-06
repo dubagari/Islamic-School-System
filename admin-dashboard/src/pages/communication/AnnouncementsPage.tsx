@@ -109,7 +109,9 @@ function UnreadBadge({ title }: { title: string }) {
 
 export function AnnouncementsPage() {
   const currentUser = useAppSelector(selectCurrentUser);
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin =
+    currentUser?.role === "admin" ||
+    currentUser?.role === "super_admin";
 
   const [page, setPage] = useState(1);
   const [showExpired, setShowExpired] = useState(false);

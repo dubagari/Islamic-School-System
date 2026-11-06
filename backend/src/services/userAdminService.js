@@ -12,8 +12,13 @@ import {
 } from "../utils/search.js";
 import {
     badRequest,
+    forbidden,
     notFound,
 } from "../utils/AppError.js";
+import {
+    SUPER_ADMIN_ROLE,
+    isSuperAdmin,
+} from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -34,6 +39,22 @@ const populateUser = (query) =>
             "parent",
             "phone isActive students"
         );
+
+const assertNotLastActiveSuperAdmin = async (
+    excludeUserId
+) => {
+    const count = await User.countDocuments({
+        role: SUPER_ADMIN_ROLE,
+        isActive: true,
+        _id: { $ne: excludeUserId },
+    });
+
+    if (count === 0) {
+        throw badRequest(
+            "At least one active super admin account must remain."
+        );
+    }
+};
 
 // ======================================================
 // List Users
@@ -111,6 +132,13 @@ export const updateUserService = async (
         throw badRequest(
             "You cannot deactivate your own account."
         );
+    }
+
+    if (
+        data.isActive === false &&
+        isSuperAdmin(user.role)
+    ) {
+        await assertNotLastActiveSuperAdmin(user._id);
     }
 
     if (
@@ -227,6 +255,10 @@ export const deactivateUserService = async (
         throw notFound("User not found.");
     }
 
+    if (isSuperAdmin(user.role)) {
+        await assertNotLastActiveSuperAdmin(user._id);
+    }
+
     user.isActive = false;
 
     await user.save();
@@ -234,4 +266,83 @@ export const deactivateUserService = async (
     return await populateUser(
         User.findById(user._id)
     );
+};
+
+// ======================================================
+// Create Admin / Super Admin Account
+// ======================================================
+
+export const createAdminAccountService = async (
+    data
+) => {
+    const role = data.role;
+    const username = data.username.toLowerCase();
+    const email = data.email ? data.email.toLowerCase() : undefined;
+
+    const duplicates = await Promise.all([
+        User.findOne({ username }),
+        email
+            ? User.findOne({ email })
+            : null,
+    ]);
+
+    if (duplicates[0]) {
+        throw badRequest(
+            "A user with this username already exists."
+        );
+    }
+
+    if (duplicates[1]) {
+        throw badRequest(
+            "A user with this email already exists."
+        );
+    }
+
+    const generated = !data.password;
+
+    const password = generated
+        ? `Tmp@${crypto
+              .randomBytes(8)
+              .toString("hex")}`
+        : data.password;
+
+    const user = await User.create({
+        fullName: data.fullName,
+        username,
+        email,
+        password: await bcrypt.hash(password, 10),
+        role,
+        isActive: data.isActive ?? true,
+        mustChangePassword: true,
+    });
+
+    return {
+        user: await populateUser(User.findById(user._id)),
+        temporaryPassword: generated ? password : null,
+    };
+};
+
+// ======================================================
+// User Directory (Message / Notification Audience)
+// ======================================================
+
+export const getUserDirectoryService = async (query) => {
+    const limit = query.limit ?? 200;
+
+    const filter = {
+        ...buildSearchFilter(query.search, [
+            "fullName",
+            "username",
+            "email",
+        ]),
+    };
+
+    const users = await User.find(filter)
+        .select(
+            "fullName username email role isActive"
+        )
+        .sort({ fullName: 1 })
+        .limit(limit);
+
+    return users;
 };

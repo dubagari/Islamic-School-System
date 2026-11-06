@@ -1175,20 +1175,39 @@ Academic reports default to published results unless
 
 ### 13.1 Users
 
-Base path: `/api/v2/users` — Admin only.
+Base path: `/api/v2/users` — Administrative accounts only.
 
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/` | List users with role/status/search filters |
-| `GET` | `/:id` | Get a user and linked profile |
-| `PATCH` | `/:id` | Update name, email, active state, or password-change flag |
-| `POST` | `/:id/reset-password` | Reset another user's password |
-| `DELETE` | `/:id` | Deactivate a user |
+| Method | Path | Access | Description |
+| --- | --- | --- | --- |
+| `GET` | `/directory` | Admin / Super admin | Lightweight active user directory (messages/notifications) |
+| `POST` | `/` | Super admin | Create an administrative account (`admin` or `super_admin`) |
+| `GET` | `/` | Super admin | List users with role/status/search filters |
+| `GET` | `/:id` | Super admin | Get a user and linked profile |
+| `PATCH` | `/:id` | Super admin | Update name, email, active state, or password-change flag |
+| `POST` | `/:id/reset-password` | Super admin | Reset another user's password |
+| `DELETE` | `/:id` | Super admin | Deactivate a user |
 
-List query: `role`, `isActive`, `search`, `page`, `limit`.
+Directory query: `search`, `limit`. It returns active users with `fullName`,
+`username`, `email`, `role`, and `isActive` only.
+
+Create body:
+
+```json
+{
+  "fullName": "Finance Administrator",
+  "username": "finance-admin",
+  "email": "finance@example.com",
+  "password": "OptionalTemporary123@",
+  "role": "admin"
+}
+```
+
+If `password` is omitted, a temporary password is generated and returned once in
+the response. The user must change it on next login.
 
 Update body may include `fullName`, `email`, `isActive`, and
-`mustChangePassword`. An admin cannot deactivate their own account.
+`mustChangePassword`. An admin cannot deactivate their own account. The last
+active `super_admin` cannot be deactivated through either update or delete.
 
 Password reset body:
 
@@ -1267,7 +1286,8 @@ redacted from the stored request body.
 
 | Role | Main access |
 | --- | --- |
-| `admin` | All academic, admissions, finance, parent administration, reports, settings, audit, and system maintenance |
+| `super_admin` | All academic, admissions, finance, parent administration, reports, user administration, settings, audit, and system maintenance |
+| `admin` | Academic administration, admissions and admission payments, parent administration, non-finance reports, announcements/messages/notifications. No finance, user account management, settings, audit logs, or system maintenance |
 | `teacher` | Own profile/dashboard, assigned class subjects, assessments, scores, attendance, CBT authoring for assigned subjects, published result viewing |
 | `student` | Own profile/dashboard, own published results, report card, transcript, own attendance, own invoices/payments, CBT attempts and released results |
 | `parent` | Linked children's overview, attendance, published results, report card, transcript, invoices, payments, CBT attempt history and released results |

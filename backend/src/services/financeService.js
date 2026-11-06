@@ -5,6 +5,7 @@ import AcademicClass from "../models/AcademicClass.js";
 import AcademicSession from "../models/AcademicSession.js";
 import AcademicSemester from "../models/AcademicSemester.js";
 import Student from "../models/Student.js";
+import SystemSetting from "../models/SystemSetting.js";
 import {
     assertStudentAccess,
     getParentForUser,
@@ -24,6 +25,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isSuperAdmin } from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -202,7 +204,7 @@ const assertInvoiceAccess = async (user, invoice) => {
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isSuperAdmin(user.role)) {
         return;
     }
 
@@ -245,7 +247,7 @@ const assertPaymentAccess = async (user, payment) => {
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isSuperAdmin(user.role)) {
         return;
     }
 
@@ -284,7 +286,7 @@ const assertPaymentAccess = async (user, payment) => {
 };
 
 const getScopedStudentFilter = async (user) => {
-    if (user.role === "admin") {
+    if (isSuperAdmin(user.role)) {
         return null;
     }
 
@@ -1038,6 +1040,27 @@ export const getInvoicePaymentsService = async (
 };
 
 // ======================================================
+// School fee configuration
+// ======================================================
+
+export const getSchoolFeeAmount = async () => {
+    const setting = await SystemSetting.findOne({
+        key: "school.fee",
+    });
+
+    if (!setting) {
+        return 0;
+    }
+
+    const value =
+        typeof setting.value === "number"
+            ? setting.value
+            : Number(setting.value);
+
+    return Number.isFinite(value) ? Math.max(0, value) : 0;
+};
+
+// ======================================================
 // Student Fee Summary
 // Admin / Student (own)
 // ======================================================
@@ -1140,9 +1163,14 @@ export const getStudentFeeSummaryService = async (
                     invoice.status !== "Paid" &&
                     invoice.status !== "Cancelled"
             ).length,
+            hasInvoices:
+                invoices.filter(
+                    (invoice) => invoice.status !== "Cancelled"
+                ).length > 0,
             totalBilled,
             totalPaid,
             totalBalance,
+            expectedFee: await getSchoolFeeAmount(),
         },
         invoices,
         payments,

@@ -34,8 +34,8 @@ import {
 } from "@/features/communication/api";
 import {
   getApiErrorMessage,
-  useListUsersQuery,
-  type UsersAdminUser,
+  useGetUserDirectoryQuery,
+  type DirectoryUser,
 } from "@/features/staff/api";
 
 import { useAppSelector } from "@/app/hooks";
@@ -73,7 +73,9 @@ type Tab = "inbox" | "sent";
 export function MessagesPage() {
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserId = currentUser?._id ?? "";
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin =
+    currentUser?.role === "admin" ||
+    currentUser?.role === "super_admin";
 
   const [tab, setTab] = useState<Tab>("inbox");
   const [page, setPage] = useState(1);
@@ -87,9 +89,9 @@ export function MessagesPage() {
   });
   const { data: unreadEnvelope } = useGetMessagesUnreadCountQuery();
 
-  // Section 13.1 — /users is admin-only, so only admins get a participant list.
-  const { data: usersData } = useListUsersQuery(
-    { isActive: true, limit: 200, role: "all" },
+  // User directory is available to both admin roles.
+  const { data: usersData } = useGetUserDirectoryQuery(
+    { limit: 200 },
     { skip: !isAdmin },
   );
 
@@ -140,7 +142,7 @@ export function MessagesPage() {
     const id = refId(other);
     if (!id) return null;
     const foundUser = (usersData?.data ?? []).find(
-      (u: UsersAdminUser) => u._id === id,
+      (u: DirectoryUser) => u._id === id,
     );
     if (foundUser) {
       return {
@@ -315,7 +317,7 @@ export function MessagesPage() {
           activeUser={activeUser}
           onSetActive={setActiveUser}
           userOptions={(usersData?.data ?? []).filter(
-            (u: UsersAdminUser) => u._id !== currentUserId,
+            (u: DirectoryUser) => u._id !== currentUserId,
           )}
           currentUserId={currentUserId}
         />
@@ -332,7 +334,7 @@ function ConversationPanel({
 }: {
   activeUser: Participant | null;
   onSetActive: (user: Participant | null) => void;
-  userOptions: UsersAdminUser[];
+  userOptions: DirectoryUser[];
   currentUserId: string;
 }) {
   const [subject, setSubject] = useState("");

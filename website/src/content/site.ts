@@ -138,11 +138,17 @@ export const school = {
 
 export type SchoolContent = typeof school;
 
+export const PORTAL_BASE_URL =
+  import.meta.env.VITE_PORTAL_URL ?? "http://localhost:5174";
+
+export const portalUrl = (path = "/") =>
+  `${PORTAL_BASE_URL.replace(/\/+$/, "")}${path}`;
+
 export const portalLinks = {
-  portal: "http://localhost:5174/student",
-  portalTeacher: "http://localhost:5174/teacher",
-  portalParent: "http://localhost:5174/parent",
-  admin: "https://islamic-school-system-admin-dashboa.vercel.app/",
+  portal: portalUrl("/student"),
+  portalTeacher: portalUrl("/teacher"),
+  admin: "http://localhost:5173/admin",
 };
+
 
 

@@ -18,7 +18,9 @@ export const getDashboardReportController = async (
     next
 ) => {
     try {
-        const report = await getDashboardReportService();
+        const report = await getDashboardReportService(
+            req.user
+        );
 
         res.status(200).json({
             success: true,

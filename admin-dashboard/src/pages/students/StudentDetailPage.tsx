@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, KeyRound } from "lucide-react";
 
+import { useAppSelector } from "@/app/hooks";
+import { selectCurrentUser } from "@/features/auth/authSlice";
+
 import { Alert } from "@/components/ui/Alert";
 import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -121,6 +124,8 @@ type ResetResult = {
 export function StudentDetailPage() {
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const currentUser = useAppSelector(selectCurrentUser);
+  const isSuperAdmin = currentUser?.role === "super_admin";
 
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [resetResult, setResetResult] = useState<ResetResult | null>(null);
@@ -254,7 +259,7 @@ export function StudentDetailPage() {
         <GuardianDetailsCard student={student} isLoading={isLoading} />
         <EnrollmentHistoryCard studentId={id} />
         <ResultsCard studentId={id} />
-        <FinanceSummaryCard studentId={id} />
+        {isSuperAdmin && <FinanceSummaryCard studentId={id} />}
       </div>
 
       <ConfirmDialog

@@ -1,12 +1,18 @@
 
 import Student from "../models/Student.js";
 import User from "../models/User.js";
+import AdmissionApplication from "../models/AdmissionApplication.js";
 
 import {
     getPagination,
     paginatedResult,
 } from "../utils/pagination.js";
 import { buildSearchFilter } from "../utils/search.js";
+import {
+    badRequest,
+    forbidden,
+    notFound,
+} from "../utils/AppError.js";
 
 
 // ======================================================
@@ -137,6 +143,70 @@ export const getStudentProfileService = async (
     }
 
     return student;
+};
+
+// ======================================================
+// Get Own Admission Letter
+// Student (letter unlocks after the admission fee is paid)
+// ======================================================
+
+export const getStudentAdmissionLetterService = async (
+    userId
+) => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+        throw notFound("User account not found.");
+    }
+
+    if (user.role !== "student") {
+        throw forbidden(
+            "This account is not a student account."
+        );
+    }
+
+    if (!user.student) {
+        throw notFound(
+            "Student profile is not linked to this account."
+        );
+    }
+
+    const student = await Student.findById(user.student);
+
+    if (!student) {
+        throw notFound("Student profile not found.");
+    }
+
+    const application =
+        (student.admissionApplication &&
+            (await AdmissionApplication.findById(
+                student.admissionApplication
+            ))) ||
+        (student.applicationNumber
+            ? await AdmissionApplication.findOne({
+                  applicationNumber: student.applicationNumber,
+              })
+            : null);
+
+    if (!application) {
+        throw notFound(
+            "No admission application is linked to your student record."
+        );
+    }
+
+    if (application.status !== "Approved") {
+        throw badRequest(
+            "This application has not been approved for admission."
+        );
+    }
+
+    if (application.paymentStatus !== "Paid") {
+        throw badRequest(
+            "The admission letter unlocks once the admission fee is paid."
+        );
+    }
+
+    return application;
 };
 
 

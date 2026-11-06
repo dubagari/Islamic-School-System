@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
 
@@ -87,7 +87,8 @@ export function InputField({
   min?: string;
   max?: string;
 }) {
-  const inputId = id ?? `field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
+  const htmlId = useId();
+  const inputId = id ?? `${htmlId}-field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <FieldShell label={label} required={required} hint={hint} error={error} className={className} id={inputId}>
       <input
@@ -127,7 +128,8 @@ export function SelectField({
   onChange: (event: { target: { value: string } }) => void;
   children: ReactNode;
 }) {
-  const selectId = id ?? `field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
+  const htmlId = useId();
+  const selectId = id ?? `${htmlId}-field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <FieldShell label={label} required={required} hint={hint} error={error} className={className} id={selectId}>
       <select
@@ -163,7 +165,8 @@ export function TextareaField({
   onChange: (event: { target: { value: string } }) => void;
   maxLength?: number;
 }) {
-  const areaId = id ?? `field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
+  const htmlId = useId();
+  const areaId = id ?? `${htmlId}-field-${label?.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <FieldShell label={label} required={required} hint={hint} error={error} className={className} id={areaId}>
       <textarea

@@ -29,21 +29,21 @@ router.use(protect);
 
 router.post(
     "/generate",
-    authorize("admin"),
+    authorize("super_admin"),
     validate(generateInvoicesSchema),
     generateInvoicesController
 );
 
 router.post(
     "/",
-    authorize("admin"),
+    authorize("super_admin"),
     validate(createInvoiceSchema),
     createInvoiceController
 );
 
 router.get(
     "/student/:studentId/summary",
-    authorize("admin", "student", "parent"),
+    authorize("super_admin", "student", "parent"),
     validate(idParam("studentId"), "params"),
     validate(invoiceQuerySchema, "query"),
     getStudentFeeSummaryController
@@ -51,28 +51,28 @@ router.get(
 
 router.get(
     "/",
-    authorize("admin", "student", "parent"),
+    authorize("super_admin", "student", "parent"),
     validate(invoiceQuerySchema, "query"),
     getInvoicesController
 );
 
 router.get(
     "/:id/payments",
-    authorize("admin", "student", "parent"),
+    authorize("super_admin", "student", "parent"),
     validate(idParam("id"), "params"),
     getInvoicePaymentsController
 );
 
 router.get(
     "/:id",
-    authorize("admin", "student", "parent"),
+    authorize("super_admin", "student", "parent"),
     validate(idParam("id"), "params"),
     getInvoiceByIdController
 );
 
 router.patch(
     "/:id",
-    authorize("admin"),
+    authorize("super_admin"),
     validate(idParam("id"), "params"),
     validate(updateInvoiceSchema),
     updateInvoiceController
@@ -80,7 +80,7 @@ router.patch(
 
 router.post(
     "/:id/cancel",
-    authorize("admin"),
+    authorize("super_admin"),
     validate(idParam("id"), "params"),
     validate(cancelInvoiceSchema),
     cancelInvoiceController
@@ -88,7 +88,7 @@ router.post(
 
 router.delete(
     "/:id",
-    authorize("admin"),
+    authorize("super_admin"),
     validate(idParam("id"), "params"),
     deleteInvoiceController
 );

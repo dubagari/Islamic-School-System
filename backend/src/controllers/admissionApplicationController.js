@@ -1,4 +1,6 @@
-import { buildAdmissionApplicationPdf } from "../services/admissionPdfService.js";
+import {
+    buildAdmissionApplicationPdf,
+} from "../services/admissionPdfService.js";
 import {
     createAdmissionApplicationService,
     getAdmissionApplicationsService,

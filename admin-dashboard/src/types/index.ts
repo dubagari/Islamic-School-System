@@ -1,4 +1,11 @@
-export type Role = "admin" | "teacher" | "student" | "parent";
+export type Role =
+  | "super_admin"
+  | "admin"
+  | "teacher"
+  | "student"
+  | "parent";
+
+export type AdminRole = "super_admin" | "admin";
 
 export type User = {
   _id: string;

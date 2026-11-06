@@ -88,7 +88,7 @@ export function Header() {
               >
                 {(
                   [
-                    ["Student portal", portalLinks.portal],
+                    ["Login", portalLinks.portal],
                     // ["Teacher portal", portalLinks.portalTeacher],
                     // ["Parent portal", portalLinks.portalParent],
                     // ["Administration", portalLinks.admin],

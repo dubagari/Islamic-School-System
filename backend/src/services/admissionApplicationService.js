@@ -192,7 +192,7 @@ export const getAdmissionApplicationByIdService =
 const normalizePhone = (value) =>
     String(value || "").replace(/\D/g, "").slice(-10);
 
-const phoneMatchesApplication = (application, phone) => {
+export const phoneMatchesApplication = (application, phone) => {
     const expected = normalizePhone(phone);
 
     if (!expected) {

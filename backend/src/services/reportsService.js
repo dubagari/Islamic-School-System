@@ -27,6 +27,7 @@ import {
     escapeRegex,
 } from "../utils/search.js";
 import { DEFAULT_GRADE_SCALE } from "../utils/grading.js";
+import { isSuperAdmin } from "../utils/roles.js";
 
 // ======================================================
 // Date / Academic Context Helpers
@@ -180,8 +181,9 @@ const groupedEnrollments = (enrollments, selector) => {
 // Dashboard
 // ======================================================
 
-export const getDashboardReportService = async () => {
+export const getDashboardReportService = async (user) => {
     const context = await resolveAcademicContext({});
+    const includeFinance = isSuperAdmin(user?.role);
 
     const todayStart = startOfUtcDay();
     const todayEnd = endOfUtcDay();
@@ -252,10 +254,6 @@ export const getDashboardReportService = async () => {
                 },
             },
         ]),
-        getFinanceSummaryService({
-            academicSession: context.session?._id,
-            academicSemester: context.semester?._id,
-        }),
         context.semester
             ? Result.countDocuments({
                   academicSemester: context.semester._id,
@@ -274,14 +272,16 @@ export const getDashboardReportService = async () => {
             )
             .sort({ createdAt: -1 })
             .limit(5),
-        Payment.find({ status: "Completed" })
-            .populate(
-                "student",
-                "firstName middleName lastName registrationNumber"
-            )
-            .populate("invoice", "invoiceNumber")
-            .sort({ paidAt: -1 })
-            .limit(5),
+        includeFinance
+            ? Payment.find({ status: "Completed" })
+                  .populate(
+                      "student",
+                      "firstName middleName lastName registrationNumber"
+                  )
+                  .populate("invoice", "invoiceNumber")
+                  .sort({ paidAt: -1 })
+                  .limit(5)
+            : [],
     ]);
 
     const attendance = {
@@ -329,9 +329,9 @@ export const getDashboardReportService = async () => {
             pendingResults,
         },
         attendanceToday: attendance,
-        finance,
+        finance: includeFinance ? finance : undefined,
+        recentPayments: includeFinance ? recentPayments : undefined,
         recentAdmissions,
-        recentPayments,
     };
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 
 import { Alert } from "@/components/ui/Alert";
@@ -16,6 +16,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 
 import { getApiErrorMessage } from "@/features/staff/api";
 import type { UserRef } from "@/features/communication/api";
+import { formatNaira } from "@/features/admissions/api";
 
 import {
   useDeleteSettingMutation,
@@ -72,6 +73,44 @@ export function SettingsPage() {
   const [putSetting, { isLoading: saving }] = usePutSettingMutation();
   const [deleteSetting, { isLoading: deleting }] = useDeleteSettingMutation();
 
+  const feeSetting = settings.find((s) => s.key === "admission.fee");
+  const feeValue =
+    typeof feeSetting?.value === "number"
+      ? feeSetting.value
+      : Number(feeSetting?.value ?? NaN);
+  const feeInitial =
+    Number.isFinite(feeValue) && feeValue > 0 ? String(feeValue) : "";
+
+  const [feeValueText, setFeeValueText] = useState("");
+  const [feeUpdating, setFeeUpdating] = useState(false);
+  const [feeError, setFeeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (feeInitial) {
+      setFeeValueText(feeInitial);
+    }
+  }, [feeInitial]);
+
+  const schoolFeeSetting = settings.find((s) => s.key === "school.fee");
+  const schoolFeeValue =
+    typeof schoolFeeSetting?.value === "number"
+      ? schoolFeeSetting.value
+      : Number(schoolFeeSetting?.value ?? NaN);
+  const schoolFeeInitial =
+    Number.isFinite(schoolFeeValue) && schoolFeeValue > 0
+      ? String(schoolFeeValue)
+      : "";
+
+  const [schoolFeeValueText, setSchoolFeeValueText] = useState("");
+  const [schoolFeeUpdating, setSchoolFeeUpdating] = useState(false);
+  const [schoolFeeError, setSchoolFeeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (schoolFeeInitial) {
+      setSchoolFeeValueText(schoolFeeInitial);
+    }
+  }, [schoolFeeInitial]);
+
   const onSortChange = (key: string | null) => {
     setSort((prev) =>
       prev.key === key
@@ -80,6 +119,63 @@ export function SettingsPage() {
           : { key: null, dir: "asc" }
         : { key, dir: "asc" },
     );
+  };
+
+  const handleUpdateSchoolFee = async () => {
+    const parsed = Number(schoolFeeValueText.trim());
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setSchoolFeeError("Enter a positive amount.");
+      return;
+    }
+
+    try {
+      setSchoolFeeUpdating(true);
+      setSchoolFeeError(null);
+      await putSetting({
+        key: "school.fee",
+        body: {
+          value: parsed,
+          category: "finance",
+          description:
+            "Expected school fee in naira, shown when no invoice has been issued.",
+        },
+      }).unwrap();
+      await refetch();
+      setNotice("School fee updated.");
+    } catch (err) {
+      setSchoolFeeError(
+        getApiErrorMessage(err, "Could not save the school fee."),
+      );
+    } finally {
+      setSchoolFeeUpdating(false);
+    }
+  };
+
+  const handleUpdateFee = async () => {
+    const parsed = Number(feeValueText.trim());
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setFeeError("Enter a positive amount.");
+      return;
+    }
+
+    try {
+      setFeeUpdating(true);
+      setFeeError(null);
+      await putSetting({
+        key: "admission.fee",
+        body: {
+          value: parsed,
+          category: "finance",
+          description: "Admission/acceptance fee in naira.",
+        },
+      }).unwrap();
+      await refetch();
+      setNotice("Admission fee updated.");
+    } catch (err) {
+      setFeeError(getApiErrorMessage(err, "Could not save the admission fee."));
+    } finally {
+      setFeeUpdating(false);
+    }
   };
 
   const columns: Column<Setting>[] = [
@@ -206,6 +302,91 @@ export function SettingsPage() {
           </div>
         </Alert>
       )}
+
+      <Card
+        className="mb-4"
+        title="Admission payment fee"
+        description="Applicants use this fee to complete admission payment through Paystack."
+      >
+        <form
+          id="admission-fee-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleUpdateFee();
+          }}
+          className="grid gap-4 sm:grid-cols-[minmax(0,200px)_auto] sm:items-end"
+        >
+          <InputField
+            label="Amount (₦)"
+            required
+            type="number"
+            min="1"
+            step="0.01"
+            inputMode="decimal"
+            value={feeValueText}
+            onChange={(e) => setFeeValueText(e.target.value)}
+            error={feeError ?? undefined}
+          />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" loading={feeUpdating}>
+              Save fee
+            </Button>
+            {feeSetting && (
+              <p className="text-xs text-ink-500">
+                Current: {formatNaira(feeValue)}
+              </p>
+            )}
+          </div>
+        </form>
+        {!feeSetting && (
+          <Alert tone="warning" className="mt-4">
+            No admission fee is saved yet. Set it before enabling online payments.
+          </Alert>
+        )}
+      </Card>
+
+      <Card
+        className="mb-4"
+        title="School fee"
+        description="Expected school fee shown to students when no invoice has been issued. Real billing uses fee structures and generated invoices."
+      >
+        <form
+          id="school-fee-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleUpdateSchoolFee();
+          }}
+          className="grid gap-4 sm:grid-cols-[minmax(0,200px)_auto] sm:items-end"
+        >
+          <InputField
+            label="Amount (₦)"
+            required
+            type="number"
+            min="1"
+            step="0.01"
+            inputMode="decimal"
+            value={schoolFeeValueText}
+            onChange={(e) => setSchoolFeeValueText(e.target.value)}
+            error={schoolFeeError ?? undefined}
+          />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" loading={schoolFeeUpdating}>
+              Save school fee
+            </Button>
+            {schoolFeeSetting && (
+              <p className="text-xs text-ink-500">
+                Current: {formatNaira(schoolFeeValue)}
+              </p>
+            )}
+          </div>
+        </form>
+        {!schoolFeeSetting && (
+          <Alert tone="warning" className="mt-4">
+            No school fee is saved yet. Students see a contact-the-office
+            notice until it is set or an invoice is issued. Set it now?
+          </Alert>
+        )}
+      </Card>
 
       <Card padded={false}>
         <DataTable

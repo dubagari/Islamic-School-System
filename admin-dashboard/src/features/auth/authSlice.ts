@@ -29,7 +29,8 @@ function readStoredAuth(): AuthState {
       typeof parsed === "object" &&
       "user" in parsed &&
       "token" in parsed &&
-      parsed.user?.role === "admin"
+      parsed.user?.role === "admin" ||
+      parsed.user?.role === "super_admin"
     ) {
       return parsed;
     }

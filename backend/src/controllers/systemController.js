@@ -13,6 +13,8 @@ import {
     updateUserService,
     resetUserPasswordService,
     deactivateUserService,
+    createAdminAccountService,
+    getUserDirectoryService,
 } from "../services/userAdminService.js";
 import {
     getSettingsService,
@@ -169,6 +171,51 @@ export const getUserByIdController = async (
             success: true,
             message: "User retrieved successfully.",
             data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const createUserController = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const result =
+            await createAdminAccountService(
+                req.body
+            );
+
+        res.status(201).json({
+            success: true,
+            message:
+                "Administrative account created successfully. The user must change the password on next login.",
+            data: result.user,
+            temporaryPassword:
+                result.temporaryPassword,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getUserDirectoryController = async (
+    req,
+    res,
+    next
+) => {
+    try {
+        const users =
+            await getUserDirectoryService(
+                req.validatedQuery || req.query
+            );
+
+        res.status(200).json({
+            success: true,
+            message: "User directory retrieved successfully.",
+            data: users,
         });
     } catch (error) {
         next(error);

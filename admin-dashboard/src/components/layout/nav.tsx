@@ -102,8 +102,30 @@ export const adminNav: NavGroup[] = [
   },
 ];
 
-export function navForRole(): NavGroup[] {
-  return adminNav;
+export function navForRole(role?: string): NavGroup[] {
+  if (role === "super_admin") {
+    return adminNav;
+  }
+
+  const restrictedPrefixes = [
+    "/fees",
+    "/users",
+    "/admin/",
+  ];
+
+  const isAllowed = (path: string) =>
+    !restrictedPrefixes.some((prefix) =>
+      path === prefix || path.startsWith(`${prefix}/`),
+    );
+
+  return adminNav
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) =>
+        isAllowed(item.path),
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
 }
 
 export function isActivePath(pathname: string, itemPath: string): boolean {

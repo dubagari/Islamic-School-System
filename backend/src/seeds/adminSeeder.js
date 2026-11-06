@@ -10,7 +10,21 @@ const seedAdmin = async () => {
             role: "admin",
         });
 
+        const superAdminExists = await User.findOne({
+            role: "super_admin",
+        });
+
         if (adminExists) {
+
+            if (!superAdminExists) {
+                adminExists.role = "super_admin";
+
+                await adminExists.save();
+
+                console.log(
+                    "Existing admin account promoted to super admin."
+                );
+            }
 
             console.log(
                 "Admin account already exists."
@@ -31,13 +45,13 @@ const seedAdmin = async () => {
             username: "admin",
             email: "admin@darululum.com",
             password: hashedPassword,
-            role: "admin",
+            role: "super_admin",
             isActive: true,
             mustChangePassword: true,
         });
 
         console.log(
-            "Default admin account created successfully."
+            "Default super admin account created successfully."
         );
 
     } catch (error) {

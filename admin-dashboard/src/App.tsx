@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation, Outlet } from "react-router-dom";
+﻿import { Navigate, Route, Routes, useLocation, Outlet } from "react-router-dom";
 
 import { useAppSelector } from "@/app/hooks";
 import { selectCurrentUser, selectIsAuthenticated } from "@/features/auth/authSlice";
@@ -445,45 +445,51 @@ export default function App() {
             <Route
               path="/fees"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <FinanceOverviewPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/fees/structures"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <FeeStructuresPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/fees/invoices"
               element={
-                <Suspense fallback={<PageLoader />}>
-                  <InvoicesPage />
-                </Suspense>
+                <SuperAdminRoute>
+                  <Suspense fallback={<PageLoader />}>
+                    <InvoicesPage />
+                  </Suspense>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/fees/invoices/:id"
               element={
-                <Suspense fallback={<PageLoader />}>
-                  <InvoiceDetailPage />
-                </Suspense>
+                <SuperAdminRoute>
+                  <Suspense fallback={<PageLoader />}>
+                    <InvoiceDetailPage />
+                  </Suspense>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/fees/payments"
               element={
-                <Suspense fallback={<PageLoader />}>
-                  <PaymentsPage />
-                </Suspense>
+                <SuperAdminRoute>
+                  <Suspense fallback={<PageLoader />}>
+                    <PaymentsPage />
+                  </Suspense>
+                </SuperAdminRoute>
               }
             />
 
@@ -517,41 +523,41 @@ export default function App() {
             <Route
               path="/users"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <UsersAdminPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/admin/settings"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <SettingsPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/admin/audit-logs"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <AuditLogsPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
             <Route
               path="/admin/system"
               element={
-                <AdminRoute>
+                <SuperAdminRoute>
                   <Suspense fallback={<PageLoader />}>
                     <SystemPage />
                   </Suspense>
-                </AdminRoute>
+                </SuperAdminRoute>
               }
             />
 
@@ -597,7 +603,17 @@ function RouteFallback() {
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectCurrentUser);
 
-  if (user?.role !== "admin") {
+  if (user?.role !== "admin" && user?.role !== "super_admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function SuperAdminRoute({ children }: { children: React.ReactNode }) {
+  const user = useAppSelector(selectCurrentUser);
+
+  if (user?.role !== "super_admin") {
     return <Navigate to="/" replace />;
   }
 

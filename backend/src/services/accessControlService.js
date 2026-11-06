@@ -9,6 +9,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Teacher Access To A Class
@@ -197,7 +198,7 @@ export const assertStudentAccess = async (user, studentId) => {
         throw notFound("Student not found.");
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return student;
     }
 

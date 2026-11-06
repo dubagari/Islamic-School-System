@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import User from "../models/User.js";
+import { matchesRole } from "../utils/roles.js";
 import {
     forbidden,
     unauthorized,
@@ -76,7 +77,7 @@ export const authorize = (...roles) => {
             return next(unauthorized());
         }
 
-        if (!roles.includes(req.user.role)) {
+        if (!matchesRole(req.user.role, roles)) {
             return next(
                 forbidden(
                     "You do not have permission to perform this action."

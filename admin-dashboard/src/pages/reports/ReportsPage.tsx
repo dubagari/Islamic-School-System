@@ -23,6 +23,9 @@ import {
   useListReportSemestersQuery,
 } from "@/features/reports/api";
 
+import { useAppSelector } from "@/app/hooks";
+import { selectCurrentUser } from "@/features/auth/authSlice";
+
 type ReportType = "enrollment" | "attendance" | "academic" | "finance";
 
 const REPORT_TYPES: { id: ReportType; label: string; icon: typeof UserPlus }[] = [
@@ -134,6 +137,15 @@ const SHOWS: Record<
 };
 
 export function ReportsPage() {
+  const user = useAppSelector(selectCurrentUser);
+  const isSuperAdmin = user?.role === "super_admin";
+  const reportTypes = useMemo(
+    () =>
+      REPORT_TYPES.filter(
+        (type) => isSuperAdmin || type.id !== "finance",
+      ),
+    [isSuperAdmin],
+  );
   const [reportType, setReportType] = useState<ReportType>("enrollment");
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
 
@@ -232,7 +244,7 @@ export function ReportsPage() {
       />
 
       <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Report type">
-        {REPORT_TYPES.map((type) => {
+        {reportTypes.map((type) => {
           const Icon = type.icon;
           const selected = type.id === reportType;
           return (

@@ -1,17 +1,26 @@
-import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { AlertCircle, Eye, EyeOff, Wallet } from "lucide-react";
 
 import { useLoginMutation } from "@/app/api";
 import { Button } from "@/components/ui/Button";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState("");
+  const [searchParams] = useSearchParams();
+  const prefillIdentifier = searchParams.get("identifier") ?? "";
+
+  const [identifier, setIdentifier] = useState(prefillIdentifier);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [login, { isLoading }] = useLoginMutation();
+
+  useEffect(() => {
+    if (prefillIdentifier) {
+      setIdentifier(prefillIdentifier);
+    }
+  }, [prefillIdentifier]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -78,12 +87,12 @@ export function LoginPage() {
           <div className="space-y-4">
             <label className="block">
               <span className="mb-1.5 block text-xs font-medium text-forest-100">
-                Application Number 
+                Application or registration number
               </span>
               <input
                 type="text"
                 name="identifier"
-                autoComplete="username"
+                autoComplete="off"
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
@@ -100,7 +109,7 @@ export function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -140,6 +149,14 @@ export function LoginPage() {
           <br />
           Contact your office if you cannot sign in.
         </p>
+
+        <Link
+          to="/school-fee-payment"
+          className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-forest-700 bg-forest-800 px-3 py-2 text-xs font-semibold text-forest-50 transition-colors hover:border-primary-400 hover:text-white"
+        >
+          <Wallet className="size-4" aria-hidden />
+          Pay school fee with application number
+        </Link>
       </div>
     </main>
   );

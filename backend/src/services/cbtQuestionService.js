@@ -17,6 +17,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 const TRUE_FALSE_OPTIONS = [
     { key: "true", text: "True" },
@@ -43,7 +44,7 @@ const assertQuestionAccess = async (user, subjectId) => {
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return;
     }
 
@@ -197,7 +198,7 @@ export const getCbtQuestionsService = async (
         }).distinct("subject");
 
         filter.subject = { $in: subjectIds };
-    } else if (user.role !== "admin") {
+    } else if (!isAdminRole(user.role)) {
         throw forbidden();
     }
 

@@ -21,6 +21,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -448,7 +449,7 @@ const buildResultPayload = async (
     user
 ) => {
     const staff =
-        user.role === "admin" || user.role === "teacher";
+        isAdminRole(user.role) || user.role === "teacher";
     const visible = isResultVisible(exam, attempt);
     const canReview =
         staff || (visible && exam.allowReview === true);
@@ -983,7 +984,7 @@ export const getCbtAttemptResultService = async (
 
 const mapAttemptListItem = (attempt, exam, user) => {
     const staff =
-        user.role === "admin" || user.role === "teacher";
+        isAdminRole(user.role) || user.role === "teacher";
     const visible = isResultVisible(exam, attempt);
 
     return {

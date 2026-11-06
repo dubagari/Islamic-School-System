@@ -19,7 +19,7 @@ import {
 
 const router = express.Router();
 
-router.use(protect, authorize("admin"));
+router.use(protect, authorize("super_admin"));
 
 router.post(
     "/",

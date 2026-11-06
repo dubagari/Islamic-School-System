@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CircleAlert, CircleCheck, FileDown } from "lucide-react";
+import { CircleAlert, CircleCheck, FileDown, Wallet } from "lucide-react";
 
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/pages/AboutPage";
 import { Spinner } from "@/components/PageLoader";
 import { InputField } from "@/components/Fields";
 import { apiFetch, applicationPdfUrl, assetUrl } from "@/lib/api";
+import { portalUrl } from "@/content/site";
 
 type ApplicationRecord = {
   applicationNumber: string;
@@ -21,6 +22,8 @@ type ApplicationRecord = {
   reason?: string;
   statusReason?: string;
   photoUrl?: string;
+  paymentStatus?: "Pending" | "Paid" | "Failed" | "Cancelled" | string;
+  registrationNumber?: string | null;
 };
 
 const statusStyles: Record<string, string> = {
@@ -183,16 +186,40 @@ export function ApplicationStatusPage() {
             </dl>
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 bg-forest-50/50 px-5 py-4">
               <p className="max-w-sm text-xs leading-relaxed text-ink-500">
-                Next step depends on the status: "Pending" means the office is reviewing; "Approved" invites you for
-                the interview; questions about a "Rejected" status should be brought to the front office.
+                Next step depends on the status: "Pending" means the office is reviewing; "Approved" invites you to
+                complete your admission payment and registration. Once the admission fee is paid, your admission
+                letter is available in the student portal after you sign in.
               </p>
-              <a
-                href={applicationPdfUrl(record.applicationNumber, lookupPhone)}
-                className="inline-flex items-center gap-2 rounded-lg border border-gold-500/50 bg-white px-4 py-2 text-xs font-bold text-ink-800 transition-colors hover:border-gold-600"
-              >
-                <FileDown className="size-4" aria-hidden />
-                Download PDF
-              </a>
+              <div className="flex flex-wrap items-center gap-2">
+                {record.status === "Approved" &&
+                  record.paymentStatus !== "Paid" && (
+                    <a
+                      href={portalUrl(
+                        `/admission-payment?applicationNumber=${encodeURIComponent(record.applicationNumber)}`
+                      )}
+                      className="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-primary-800"
+                    >
+                      <Wallet className="size-4" aria-hidden />
+                      Pay admission fee
+                    </a>
+                  )}
+                {record.status === "Approved" && record.paymentStatus === "Paid" && (
+                  <a
+                    href={portalUrl("/login")}
+                    className="inline-flex items-center gap-2 rounded-lg border border-primary-200 bg-white px-4 py-2 text-xs font-bold text-ink-800 transition-colors hover:border-primary-400"
+                  >
+                    <CircleCheck className="size-4" aria-hidden />
+                    Go to student portal
+                  </a>
+                )}
+                <a
+                  href={applicationPdfUrl(record.applicationNumber, lookupPhone)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-gold-500/50 bg-white px-4 py-2 text-xs font-bold text-ink-800 transition-colors hover:border-gold-600"
+                >
+                  <FileDown className="size-4" aria-hidden />
+                  Download PDF
+                </a>
+              </div>
             </div>
           </article>
         )}

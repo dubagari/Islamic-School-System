@@ -8,6 +8,7 @@ import {
   Megaphone,
   MessageSquare,
   MonitorCheck,
+  ScrollText,
   Users,
   Wallet,
 } from "lucide-react";
@@ -63,6 +64,7 @@ export const studentNav: NavGroup[] = [
   {
     label: "School",
     items: [
+      { label: "Admission Letter", path: "/student/admission-letter", icon: ScrollText },
       { label: "Announcements", path: "/announcements", icon: Megaphone },
       { label: "Messages", path: "/messages", icon: MessageSquare },
       { label: "Notifications", path: "/notifications", icon: Bell },

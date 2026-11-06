@@ -4,7 +4,10 @@ export const loginSchema = z.object({
     identifier: z
         .string()
         .trim()
-        .min(1, "Username or email is required.")
+        .min(
+            1,
+            "Application/registration number, username, or email is required."
+        )
         .max(150),
 
     password: z

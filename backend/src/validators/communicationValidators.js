@@ -151,6 +151,7 @@ export const broadcastNotificationSchema = z.object({
     role: z
         .enum([
             "all",
+            "super_admin",
             "admin",
             "teacher",
             "student",

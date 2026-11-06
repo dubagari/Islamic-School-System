@@ -3,6 +3,7 @@ import {
   BookOpenCheck,
   CalendarDays,
   GraduationCap,
+  ScrollText,
   Wallet,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -45,6 +46,13 @@ const quickLinks = [
     path: "/student/fees",
     icon: <Wallet className="size-4" aria-hidden />,
   },
+  {
+    title: "Admission letter",
+    description: "Your official letter of admission, ready to download.",
+    label: "View letter",
+    path: "/student/admission-letter",
+    icon: <ScrollText className="size-4" aria-hidden />,
+  },
 ];
 
 export function StudentDashboardPage() {
@@ -81,6 +89,18 @@ export function StudentDashboardPage() {
   const className = refName(dashboard?.student.academicClass) ?? "";
   const attendanceSummary = attendanceEnvelope?.summary;
   const feeSummary = feeEnvelope?.summary;
+  const hasInvoices = feeSummary?.hasInvoices ?? false;
+  const expectedFee = feeSummary?.expectedFee ?? 0;
+  const feeValue = hasInvoices
+    ? feeSummary?.totalBalance
+    : expectedFee > 0
+      ? expectedFee
+      : null;
+  const feeSub = hasInvoices
+    ? `${feeSummary?.unpaidInvoices ?? 0} unpaid of ${feeSummary?.invoices ?? 0} invoice${(feeSummary?.invoices ?? 0) === 1 ? "" : "s"}`
+    : expectedFee > 0
+      ? "Invoice not issued yet"
+      : "Not set by the school yet";
 
   const attendanceRate =
     attendanceSummary && attendanceSummary.total > 0
@@ -147,13 +167,9 @@ export function StudentDashboardPage() {
           loading={isLoadingAttendance && !attendanceSummary}
         />
         <StatCard
-          label="Outstanding balance"
-          value={formatNaira(feeSummary?.totalBalance)}
-          sub={
-            feeSummary
-              ? `${feeSummary.unpaidInvoices ?? 0} unpaid of ${feeSummary.invoices ?? 0} invoice${(feeSummary.invoices ?? 0) === 1 ? "" : "s"}`
-              : "—"
-          }
+          label={hasInvoices ? "School fee balance" : "School fee"}
+          value={feeValue === null ? "—" : formatNaira(feeValue)}
+          sub={isLoadingFees && !feeSummary ? "" : feeSub}
           icon={<Wallet className="size-4" aria-hidden />}
           tone="default"
           loading={isLoadingFees && !feeSummary}

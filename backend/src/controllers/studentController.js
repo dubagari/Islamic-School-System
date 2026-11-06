@@ -4,7 +4,25 @@ import {
     getStudentByIdService,
     getStudentProfileService,
     getStudentDashboardService,
+    getStudentAdmissionLetterService,
 } from "../services/studentService.js";
+import { buildAdmissionLetterPdf } from "../services/admissionPdfService.js";
+import { getSchoolFeeAmount } from "../services/financeService.js";
+
+const sendAdmissionLetterPdf = (res, application, pdf) => {
+    const safeNumber = String(
+        application.applicationNumber || "admission-letter"
+    ).replace(/[^A-Za-z0-9]+/g, "-");
+
+    res.set({
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="admission-letter-${safeNumber}.pdf"`,
+        "Content-Length": pdf.length,
+        "Cache-Control": "no-store",
+    });
+
+    res.send(pdf);
+};
 
 // ======================================================
 // Get All Students
@@ -106,5 +124,32 @@ export const getStudentDashboardController =
 
             next(error);
 
+        }
+    };
+
+// ======================================================
+// Get Own Admission Letter
+// Student
+// ======================================================
+
+export const getStudentAdmissionLetterController =
+    async (req, res, next) => {
+        try {
+            const application =
+                await getStudentAdmissionLetterService(
+                    req.user._id
+                );
+
+            const schoolFee = await getSchoolFeeAmount();
+
+            const pdf =
+                await buildAdmissionLetterPdf(
+                    application,
+                    { schoolFee }
+                );
+
+            sendAdmissionLetterPdf(res, application, pdf);
+        } catch (error) {
+            next(error);
         }
     };

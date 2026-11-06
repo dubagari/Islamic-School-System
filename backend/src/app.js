@@ -25,6 +25,7 @@ import teacherRoutes from "./routes/teacherRoutes.js";
 import admissionApplicationRoutes from "./routes/admissionApplicationRoutes.js";
 import studentRegistrationRoutes from "./routes/studentRegistrationRoutes.js";
 import admissionPaymentRoutes from "./routes/admissionPaymentRoutes.js";
+import publicSchoolFeeRoutes from "./routes/publicSchoolFeeRoutes.js";
 import studentPasswordRoutes from "./routes/studentPasswordRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import studentEnrollmentRoutes from "./routes/studentEnrollmentRoutes.js";
@@ -88,7 +89,15 @@ app.use(
     })
 );
 
-app.use(express.json({ limit: "1mb" }));
+app.use(
+    express.json({
+        limit: "1mb",
+        // Allow Paystack's webhook controller to verify the HMAC of the raw body.
+        verify: (req, res, buf) => {
+            req.rawBody = buf;
+        },
+    })
+);
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 app.use(requestSanitizer);
@@ -148,6 +157,7 @@ app.use("/api/v2/teachers", teacherRoutes);
 app.use("/api/v2/admission-applications", admissionApplicationRoutes);
 app.use("/api/v2/student-registration", studentRegistrationRoutes);
 app.use("/api/v2/admission-payments", admissionPaymentRoutes);
+app.use("/api/v2/public-school-fees", publicSchoolFeeRoutes);
 app.use("/api/v2/student-passwords", studentPasswordRoutes);
 app.use("/api/v2/students", studentRoutes);
 app.use("/api/v2/student-enrollments", studentEnrollmentRoutes);

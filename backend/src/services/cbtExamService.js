@@ -27,6 +27,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -96,7 +97,7 @@ const assertExamAccess = async (user, classSubjectId) => {
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return;
     }
 
@@ -340,7 +341,7 @@ export const getCbtExamsService = async (
         }).distinct("classSubject");
 
         filter.classSubject = { $in: classSubjectIds };
-    } else if (user.role !== "admin") {
+    } else if (!isAdminRole(user.role)) {
         throw forbidden();
     }
 
@@ -1119,7 +1120,7 @@ export const voidCbtAttemptService = async (
 
     const exam = await getExamOrFail(attempt.exam);
 
-    if (user.role !== "admin") {
+    if (!isAdminRole(user.role)) {
         await assertExamAccess(user, exam.classSubject);
     }
 

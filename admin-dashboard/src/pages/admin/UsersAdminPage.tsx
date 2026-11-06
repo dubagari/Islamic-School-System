@@ -3,7 +3,7 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { KeyRound, Pencil, Search, ShieldCheck, UserX } from "lucide-react";
+import { KeyRound, Pencil, Search, ShieldCheck, UserPlus, UserX } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge, StatusBadge, type BadgeTone } from "@/components/ui/Badge";
 import { Alert } from "@/components/ui/Alert";
 import { Dialog, ConfirmDialog } from "@/components/ui/Dialog";
-import { Fieldset, InputField } from "@/components/ui/Fields";
+import { Fieldset, InputField, SelectField } from "@/components/ui/Fields";
 import { PagedFooter } from "@/components/ui/Pagination";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 
@@ -22,8 +22,13 @@ import {
   useResetUserPasswordMutation,
   useUpdateUserMutation,
   useDeactivateUserMutation,
+  useCreateAdminAccountMutation,
 } from "@/features/staff/api";
-import type { ResetUserPasswordResponse, UsersAdminUser } from "@/features/staff/api";
+import type {
+  CreateUserResponse,
+  ResetUserPasswordResponse,
+  UsersAdminUser,
+} from "@/features/staff/api";
 
 import { useAppSelector } from "@/app/hooks";
 import { selectCurrentUser } from "@/features/auth/authSlice";
@@ -31,6 +36,7 @@ import { selectCurrentUser } from "@/features/auth/authSlice";
 const PAGE_SIZE = 20;
 
 const ROLE_OPTIONS: UsersAdminUser["role"][] = [
+  "super_admin",
   "admin",
   "teacher",
   "student",
@@ -39,6 +45,7 @@ const ROLE_OPTIONS: UsersAdminUser["role"][] = [
 
 function roleTone(role: string): BadgeTone {
   switch (role) {
+    case "super_admin":
     case "admin":
       return "gold";
     case "teacher":
@@ -74,6 +81,7 @@ export function UsersAdminPage() {
   const [active, setActive] = useState<"" | "true" | "false">("");
 
   const [editTarget, setEditTarget] = useState<UsersAdminUser | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
   const [resetTarget, setResetTarget] = useState<UsersAdminUser | null>(null);
   const [resetResult, setResetResult] =
     useState<ResetUserPasswordResponse | null>(null);
@@ -255,9 +263,18 @@ export function UsersAdminPage() {
         description="Every sign-in account in the system, with password and activation controls."
         arabic="المستخدمون"
         actions={
-          <Button variant="outline" onClick={() => void refetch()}>
-            Refresh
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              icon={<UserPlus className="size-4" />}
+              onClick={() => setCreateOpen(true)}
+            >
+              Create admin
+            </Button>
+            <Button variant="outline" onClick={() => void refetch()}>
+              Refresh
+            </Button>
+          </>
         }
       />
 
@@ -441,6 +458,12 @@ export function UsersAdminPage() {
         <PagedFooter pagination={pagination} onPageChange={setPage} />
       </Card>
 
+      <CreateAdminDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={setBanner}
+      />
+
       <EditUserDialog
         user={editTarget}
         onClose={() => setEditTarget(null)}
@@ -482,6 +505,169 @@ export function UsersAdminPage() {
         />
       )}
     </>
+  );
+}
+
+// ======================================================
+// Create admin/super admin dialog
+// ======================================================
+
+type CreateAdminDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  onCreated: (banner: { tone: "success" | "error"; text: string }) => void;
+};
+
+function CreateAdminDialog({ open, onClose, onCreated }: CreateAdminDialogProps) {
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"admin" | "super_admin">("admin");
+  const [created, setCreated] = useState<CreateUserResponse | null>(null);
+
+  const [createAdminAccount, { isLoading: saving, error: createError }] =
+    useCreateAdminAccountMutation();
+
+  const fieldErrors = createError ? getApiFieldErrors(createError) : {};
+  const submitError = createError
+    ? getApiErrorMessage(createError, "Failed to create the account.")
+    : null;
+
+  const close = () => {
+    setCreated(null);
+    setFullName("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setRole("admin");
+    onClose();
+  };
+
+  if (!open) return null;
+
+  if (created) {
+    return (
+      <Dialog
+        open
+        onClose={close}
+        title="Account created"
+        description={`${created.user.fullName} (@${created.user.username}) · ${created.user.role}`}
+        footer={<Button onClick={close}>Close</Button>}
+      >
+        <div className="space-y-4">
+          <Alert tone="success" title="Account ready">
+            The user must change the password at next sign-in.
+          </Alert>
+          {created.temporaryPassword && (
+            <>
+              <pre className="overflow-x-auto rounded-lg border border-ink-200 bg-forest-50 px-4 py-3 font-mono text-sm text-ink-900">
+                {created.temporaryPassword}
+              </pre>
+              <p className="text-xs text-ink-500">
+                A temporary password was generated because no password was supplied.
+              </p>
+            </>
+          )}
+        </div>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      title="Create administrative account"
+      description="Creates an admin or super admin sign-in account."
+      footer={
+        <>
+          <Button variant="outline" onClick={onClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button form="create-admin-form" type="submit" loading={saving}>
+            Create account
+          </Button>
+        </>
+      }
+    >
+      <form
+        id="create-admin-form"
+        className="space-y-4"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          try {
+            const response = await createAdminAccount({
+              fullName: fullName.trim(),
+              username: username.trim().toLowerCase(),
+              email: email.trim() || undefined,
+              password: password.trim() || undefined,
+              role,
+            }).unwrap();
+            setCreated(response.data);
+            onCreated({
+              tone: "success",
+              text: `${response.data.user.fullName} (@${response.data.user.username}) was created.`,
+            });
+          } catch {
+            // Rendered from mutation state.
+          }
+        }}
+      >
+        {submitError && (
+          <div className="mb-2">
+            <Alert tone="error" title="Could not create account">
+              {submitError}
+            </Alert>
+          </div>
+        )}
+        <Fieldset legend="Account">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <InputField
+              label="Full name"
+              required
+              error={fieldErrors.fullName}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            <InputField
+              label="Username"
+              required
+              error={fieldErrors.username}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <InputField
+              label="Email"
+              type="email"
+              error={fieldErrors.email}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <SelectField
+              label="Role"
+              required
+              value={role}
+              onChange={(e) =>
+                setRole(e.target.value as "admin" | "super_admin")
+              }
+            >
+              <option value="admin">admin</option>
+              <option value="super_admin">super_admin</option>
+            </SelectField>
+          </div>
+          <div className="mt-3">
+            <InputField
+              label="Password (leave blank to generate a temporary one)"
+              type="password"
+              error={fieldErrors.password}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </Fieldset>
+      </form>
+    </Dialog>
   );
 }
 

@@ -70,6 +70,25 @@ export const env = {
         return process.env.PAYSTACK_SECRET_KEY || "";
     },
 
+    get paystackCallbackUrl() {
+        return (process.env.PAYSTACK_CALLBACK_URL || "").replace(/\/+$/, "");
+    },
+
+    get paystackFeeCallbackUrl() {
+        return (process.env.PAYSTACK_FEE_CALLBACK_URL || "").replace(/\/+$/, "");
+    },
+
+    get paystackPublicFeeCallbackUrl() {
+        return (process.env.PAYSTACK_PUBLIC_FEE_CALLBACK_URL || "").replace(
+            /\/+$/,
+            ""
+        );
+    },
+
+    get portalPublicUrl() {
+        return (process.env.PORTAL_PUBLIC_URL || "").replace(/\/+$/, "");
+    },
+
     get cloudinaryFolder() {
         return (
             process.env.CLOUDINARY_FOLDER ||

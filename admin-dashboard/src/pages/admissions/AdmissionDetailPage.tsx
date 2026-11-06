@@ -324,7 +324,7 @@ export function AdmissionDetailPage() {
           {canCollectPayment && (
             <Link to="/admissions/payments">
               <Button icon={<Wallet className="size-4" aria-hidden />} iconRight={<LinkIcon className="size-4" aria-hidden />}>
-                Confirm payment
+                Confirm cash payment
               </Button>
             </Link>
           )}
@@ -452,7 +452,7 @@ function RegistrationResultCard({
   const copyCredentials = async () => {
     try {
       await navigator.clipboard.writeText(
-        `Username: ${username}\nDefault password: ${defaultPassword}`,
+        `Username: ${username}\nPassword: ${defaultPassword}`,
       );
       setCopied(true);
     } catch {
@@ -497,11 +497,19 @@ function RegistrationResultCard({
             {registration.student.registrationNumber}
           </dd>
         </div>
+        <div>
+          <dt className="text-xs font-medium text-ink-500">Matched class</dt>
+          <dd className="mt-0.5 font-medium text-ink-900">
+            {registration.academicClass?.name ??
+              registration.student.academicClass?.name ??
+              "Not matched — assign manually"}
+          </dd>
+        </div>
       </dl>
 
       <pre className="rounded-lg border border-ink-100 bg-forest-50 p-4 font-mono text-[13px] leading-relaxed text-ink-900">
-        {`Username:         ${username}
-Default password: ${defaultPassword}`}
+        {`Username:   ${username}
+Password:   ${defaultPassword}`}
       </pre>
 
       <Alert tone="info" className="mt-3">

@@ -27,6 +27,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -64,7 +65,7 @@ const assertClassSubjectAccess = async (
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return;
     }
 

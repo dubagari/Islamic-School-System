@@ -18,6 +18,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { ADMIN_ROLES, isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Shared Notification Helper
@@ -256,7 +257,7 @@ const sendAnnouncementNotifications = async (
 };
 
 const buildAnnouncementVisibility = async (user) => {
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return null;
     }
 
@@ -355,7 +356,7 @@ const canViewAnnouncement = async (
     announcement,
     user
 ) => {
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         return true;
     }
 
@@ -525,7 +526,7 @@ export const getAnnouncementsService = async (
         ];
     }
 
-    if (user.role !== "admin") {
+    if (!isAdminRole(user.role)) {
         and.push({ isPublished: true });
         and.push({
             publishAt: { $lte: new Date() },
@@ -1233,9 +1234,15 @@ export const broadcastNotificationService = async (
         }).distinct("_id");
     } else {
         const role = data.role || "all";
+        const roleFilter =
+            role === "admin"
+                ? { role: { $in: ADMIN_ROLES } }
+                : role !== "all"
+                      ? { role }
+                      : {};
         const filter = {
             isActive: true,
-            ...(role !== "all" ? { role } : {}),
+            ...roleFilter,
         };
 
         userIds = await User.find(filter).distinct(

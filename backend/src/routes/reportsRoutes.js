@@ -52,6 +52,7 @@ router.get(
 
 router.get(
     "/finance",
+    authorize("super_admin"),
     validate(financeReportQuerySchema, "query"),
     getFinanceReportController
 );

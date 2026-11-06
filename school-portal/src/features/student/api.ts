@@ -1,4 +1,4 @@
-import { baseApi, type ApiEnvelope } from "@/app/api";
+import { baseApi, apiRequest, API_BASE_URL, type ApiEnvelope } from "@/app/api";
 
 export type NamedRef = {
   _id: string;
@@ -304,9 +304,11 @@ export type InvoiceDetailEnvelope = ApiEnvelope<InvoiceRecord> & {
 export type FeeSummary = {
   invoices?: number;
   unpaidInvoices?: number;
+  hasInvoices?: boolean;
   totalBilled?: number;
   totalPaid?: number;
   totalBalance?: number;
+  expectedFee?: number;
 };
 
 export type FeeSummaryEnvelope = ApiEnvelope<InvoiceRecord[]> & {
@@ -561,6 +563,129 @@ export type BadgeToneValue =
   | "danger"
   | "info"
   | "gold";
+
+export type FeePaystackInitialization = {
+  invoiceId: string;
+  invoiceNumber: string;
+  amount: number;
+  reference: string;
+  accessCode?: string;
+  authorizationUrl: string;
+};
+
+export type FeePaymentVerification = {
+  invoice: InvoiceRecord | null;
+  payment: PaymentRecord | null;
+};
+
+export async function initializeFeePaystackPayment({
+  invoiceId,
+  email,
+}: {
+  invoiceId: string;
+  email?: string;
+}): Promise<FeePaystackInitialization> {
+  const envelope = await apiRequest<FeePaystackInitialization>(
+    `/payments/school-fees/paystack/initialize/${encodeURIComponent(invoiceId)}`,
+    {
+      method: "POST",
+      body: {
+        ...(!email?.trim() ? {} : { email: email.trim() }),
+      },
+    },
+  );
+  return envelope.data;
+}
+
+export async function verifyFeePaystackPayment({
+  reference,
+}: {
+  reference: string;
+}): Promise<FeePaymentVerification> {
+  const envelope = await apiRequest<FeePaymentVerification>(
+    "/payments/school-fees/paystack/verify",
+    {
+      method: "POST",
+      body: { reference },
+    },
+  );
+  return envelope.data;
+}
+
+export const feePaymentStorage = {
+  set: (init: Pick<FeePaystackInitialization, "reference" | "invoiceId" | "invoiceNumber">) =>
+    sessionStorage.setItem(
+      "dums.feePayment",
+      JSON.stringify({
+        reference: init.reference,
+        invoiceId: init.invoiceId,
+        invoiceNumber: init.invoiceNumber,
+      }),
+    ),
+  get: () => {
+    try {
+      const raw = sessionStorage.getItem("dums.feePayment");
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as
+        | Pick<FeePaystackInitialization, "reference" | "invoiceId" | "invoiceNumber">
+        | null;
+      return parsed ?? null;
+    } catch {
+      return null;
+    }
+  },
+  clear: () => sessionStorage.removeItem("dums.feePayment"),
+};
+
+export async function downloadStudentAdmissionLetter(
+  fileLabel?: string,
+): Promise<void> {
+  let token: string | null = null;
+
+  try {
+    const parsed = JSON.parse(
+      localStorage.getItem("dums.auth") ?? "",
+    ) as { token?: string } | null;
+    token = parsed?.token ?? null;
+  } catch {
+    token = null;
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/students/me/admission-letter`,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    },
+  );
+
+  if (!response.ok) {
+    let message = "Could not download the admission letter.";
+
+    try {
+      const payload = (await response.json()) as { message?: string };
+      if (payload?.message) message = payload.message;
+    } catch {
+      // non-JSON error response
+    }
+
+    throw new Error(message);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeLabel = String(fileLabel || "student").replace(
+    /[^A-Za-z0-9]+/g,
+    "-",
+  );
+
+  link.href = url;
+  link.download = `admission-letter-${safeLabel}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
 
 export function gradeTone(letterGrade: string | undefined): BadgeToneValue {
   switch ((letterGrade ?? "").trim().toUpperCase()) {

@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import PDFDocument from "pdfkit";
+import sharp from "sharp";
 
 import { UPLOADS_ROOT } from "../utils/uploads.js";
 
@@ -66,6 +67,41 @@ const formatDateTime = (value) => {
     });
 };
 
+const isJpeg = (buffer) =>
+    buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+
+const isPng = (buffer) =>
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47 &&
+    buffer[4] === 0x0d &&
+    buffer[5] === 0x0a &&
+    buffer[6] === 0x1a &&
+    buffer[7] === 0x0a;
+
+const normalizePdfImage = async (buffer) => {
+    if (isJpeg(buffer) || isPng(buffer)) {
+        return buffer;
+    }
+
+    try {
+        return await sharp(buffer, { failOn: "none" })
+            .rotate()
+            .resize({
+                width: 1200,
+                height: 1600,
+                fit: "inside",
+                withoutEnlargement: true,
+            })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+    } catch {
+        return null;
+    }
+};
+
 const loadPhoto = async (photoUrl) => {
     if (!photoUrl) {
         return null;
@@ -77,7 +113,7 @@ const loadPhoto = async (photoUrl) => {
             const filePath = path.join(UPLOADS_ROOT, relative);
 
             if (fs.existsSync(filePath)) {
-                return fs.readFileSync(filePath);
+                return await normalizePdfImage(fs.readFileSync(filePath));
             }
 
             return null;
@@ -107,7 +143,7 @@ const loadPhoto = async (photoUrl) => {
             return null;
         }
 
-        return buffer;
+        return await normalizePdfImage(buffer);
     } catch {
         return null;
     }
@@ -182,7 +218,9 @@ export const buildAdmissionApplicationPdf = async (application) => {
     });
 
     if (fs.existsSync(LOGO_PATH)) {
-        doc.image(LOGO_PATH, MARGIN, 44, { width: 42, height: 42 });
+        try {
+            doc.image(LOGO_PATH, MARGIN, 44, { width: 42, height: 42 });
+        } catch {}
     }
 
     doc.font("Helvetica-Bold")
@@ -249,20 +287,35 @@ export const buildAdmissionApplicationPdf = async (application) => {
     const photoY = 110;
 
     if (photo) {
-        doc.save();
-        doc.roundedRect(photoX, photoY, 90, 110, 4).clip();
-        doc.image(photo, photoX, photoY, {
-            width: 90,
-            height: 110,
-            cover: [90, 110],
-            align: "center",
-            valign: "center",
-        });
-        doc.restore();
-        doc.roundedRect(photoX, photoY, 90, 110, 4)
-            .lineWidth(0.8)
-            .strokeColor(COLORS.line)
-            .stroke();
+        try {
+            doc.save();
+            doc.roundedRect(photoX, photoY, 90, 110, 4).clip();
+            doc.image(photo, photoX, photoY, {
+                width: 90,
+                height: 110,
+                cover: [90, 110],
+                align: "center",
+                valign: "center",
+            });
+            doc.restore();
+            doc.roundedRect(photoX, photoY, 90, 110, 4)
+                .lineWidth(0.8)
+                .strokeColor(COLORS.line)
+                .stroke();
+        } catch {
+            doc.restore();
+            doc.roundedRect(photoX, photoY, 90, 110, 4)
+                .lineWidth(0.8)
+                .strokeColor(COLORS.line)
+                .stroke();
+            doc.font("Helvetica")
+                .fontSize(8)
+                .fillColor(COLORS.muted)
+                .text("PASSPORT PHOTO", photoX, photoY + 48, {
+                    width: 90,
+                    align: "center",
+                });
+        }
     } else {
         doc.roundedRect(photoX, photoY, 90, 110, 4)
             .lineWidth(0.8)
@@ -384,6 +437,225 @@ export const buildAdmissionApplicationPdf = async (application) => {
             footerY + 10,
             { width: CONTENT_WIDTH, align: "right" }
         );
+
+    doc.end();
+
+    return finished;
+};
+
+// ======================================================
+// Admission Letter (Formal offer of admission)
+// ======================================================
+
+export const buildAdmissionLetterPdf = async (
+    application,
+    { schoolFee = 0 } = {}
+) => {
+    const doc = new PDFDocument({
+        size: "A4",
+        margin: MARGIN,
+        info: {
+            Title: `Letter of Admission ${display(application.applicationNumber)}`,
+            Author: "Darul Ulum Islamic School",
+            Subject: "Letter of admission",
+        },
+    });
+
+    const chunks = [];
+    const finished = new Promise((resolve, reject) => {
+        doc.on("data", (chunk) => chunks.push(chunk));
+        doc.on("end", () => resolve(Buffer.concat(chunks)));
+        doc.on("error", reject);
+    });
+
+    if (fs.existsSync(LOGO_PATH)) {
+        try {
+            doc.image(LOGO_PATH, MARGIN + (CONTENT_WIDTH - 140) / 2, 44, {
+                width: 70,
+                height: 70,
+            });
+        } catch {}
+    }
+
+    doc.font("Helvetica-Bold")
+        .fontSize(18)
+        .fillColor(COLORS.forest)
+        .text("Darul Ulum Islamic School", MARGIN, 126, {
+            width: CONTENT_WIDTH,
+            align: "center",
+        });
+
+    doc.font("Helvetica")
+        .fontSize(9)
+        .fillColor(COLORS.muted)
+        .text(
+            "Knowledge. Character. Faith. Community.",
+            MARGIN,
+            doc.y + 4,
+            { width: CONTENT_WIDTH, align: "center" }
+        );
+
+    doc.moveTo(MARGIN, doc.y + 18)
+        .lineTo(PAGE_WIDTH - MARGIN, doc.y + 18)
+        .lineWidth(1.5)
+        .strokeColor(COLORS.forest)
+        .stroke();
+
+    let y = doc.y + 34;
+
+    doc.font("Helvetica-Bold")
+        .fontSize(15)
+        .fillColor(COLORS.ink)
+        .text("LETTER OF ADMISSION", MARGIN, y, {
+            width: CONTENT_WIDTH,
+            align: "center",
+            characterSpacing: 0.8,
+        });
+
+    y += 30;
+
+    doc.font("Helvetica")
+        .fontSize(8.5)
+        .fillColor(COLORS.muted)
+        .text(
+            `Reference: ${display(application.applicationNumber)}   •   Date: ${formatDate(new Date())}`,
+            MARGIN,
+            y,
+            { width: CONTENT_WIDTH, align: "center" }
+        );
+
+    y += 40;
+
+    const paragraph = (text, { bold = false, size = 10.5 } = {}) => {
+        doc.font(bold ? "Helvetica-Bold" : "Helvetica")
+            .fontSize(size)
+            .fillColor(bold ? COLORS.ink : COLORS.ink)
+            .text(text, MARGIN, y, {
+                width: CONTENT_WIDTH,
+                lineGap: 3,
+            });
+        y = doc.y + 12;
+    };
+
+    paragraph(`Dear ${display(application.parentName)},`);
+    paragraph(
+        `Alhamdulillah. We are pleased to inform you that ${fullName(application)} has been offered admission into the ${display(application.currentLevel)} class of Darul Ulum Islamic School, based on the application '${display(application.applicationNumber)}',${
+            application.registrationNumber
+                ? ` and has since been registered under registration number ${display(application.registrationNumber)}.`
+                : "."
+        }`
+    );
+    paragraph(
+        `This offer is confirmed as the admission application fee of ${
+            application.paymentAmount ? `NGN ${Number(application.paymentAmount).toLocaleString()}` : "the required fee"
+        } has been received. Please present this letter to the school office when collecting the student's resumption details.`
+    );
+    paragraph(
+        schoolFee > 0
+            ? `School fees for the ${display(application.currentLevel)} class are NGN ${Number(schoolFee).toLocaleString()}. An invoice will be issued through the student portal and should be settled by the stated due date.`
+            : "Please contact the school office for the school fee schedule."
+    );
+
+    y += 12;
+
+    y = sectionTitle(doc, "Resumption requirements", y);
+
+    const requirements = [
+        "Original birth certificate / proof of age declaration.",
+        "Two recent passport-sized photographs of the student.",
+        "Child immunization / vaccination record.",
+        "Duplicate copies of the previous school report (for transfers).",
+        "A copy of this letter together with the admission payment receipt.",
+    ];
+
+    for (const requirement of requirements) {
+        doc.circle(MARGIN + 4, y + 5.5, 1.6)
+            .fillColor(COLORS.gold)
+            .fill();
+
+        doc.font("Helvetica")
+            .fontSize(10)
+            .fillColor(COLORS.ink)
+            .text(requirement, MARGIN + 16, y, {
+                width: CONTENT_WIDTH - 16,
+                lineGap: 2,
+            });
+
+        y = doc.y + 8;
+    }
+
+    y += 14;
+
+    paragraph(
+        `"And say: My Lord, increase me in knowledge." — Qur'an 20:114.`
+    );
+
+    y += 22;
+
+    const signatureX = MARGIN;
+    const ePartX = PAGE_WIDTH - MARGIN;
+
+    doc.font("Helvetica")
+        .fontSize(9)
+        .fillColor(COLORS.ink)
+        .text("Warm regards,", signatureX, y, { width: 200 });
+
+    doc.font("Helvetica-Bold")
+        .fontSize(12)
+        .fillColor(COLORS.forest)
+        .text("The Admissions Office", signatureX, y + 62, { width: 260 });
+
+    doc.font("Helvetica")
+        .fontSize(9)
+        .fillColor(COLORS.muted)
+        .text("Principal, Darul Ulum Islamic School", signatureX, y + 78, {
+            width: 260,
+        });
+
+    doc.font("Helvetica")
+        .fontSize(9)
+        .fillColor(COLORS.muted)
+        .text(
+            "School Office",
+            ePartX - 200,
+            y,
+            { width: 200, align: "right" }
+        );
+
+    doc.font("Helvetica-Bold")
+        .fontSize(12)
+        .fillColor(COLORS.forest)
+        .text(
+            display(application.applicationNumber),
+            ePartX - 200,
+            y + 62,
+            { width: 200, align: "right" }
+        );
+
+    doc.font("Helvetica")
+        .fontSize(9)
+        .fillColor(COLORS.muted)
+        .text("Registrar / Admissions Desk", ePartX - 200, y + 78, {
+            width: 200,
+            align: "right",
+        });
+
+    doc.moveDown(3);
+
+    doc.moveTo(MARGIN, y + 100)
+        .lineTo(PAGE_WIDTH - MARGIN, y + 100)
+        .lineWidth(0.8)
+        .strokeColor(COLORS.line)
+        .stroke();
+
+    const footer = `Letter generated ${formatDateTime()} for applicant ${fullName(
+        application
+    )} (${display(application.applicationNumber)}).`;
+
+    doc.font("Helvetica")
+        .fontSize(7.5)
+        .fillColor(COLORS.muted)
+        .text(footer, MARGIN, y + 108, { width: CONTENT_WIDTH });
 
     doc.end();
 

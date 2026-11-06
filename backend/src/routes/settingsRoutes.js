@@ -25,7 +25,7 @@ router.get(
 );
 
 // Admin settings management.
-router.use(protect, authorize("admin"));
+router.use(protect, authorize("super_admin"));
 
 router.get(
     "/",

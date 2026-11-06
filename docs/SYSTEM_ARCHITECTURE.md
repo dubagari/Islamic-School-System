@@ -136,10 +136,16 @@ Errors use `AppError` and helpers: `badRequest`, `unauthorized`, `forbidden`,
 
 | Role | Scope |
 | --- | --- |
-| `admin` | Full system administration |
+| `super_admin` | Full system administration, including finance, user accounts, settings, audit, and system maintenance |
+| `admin` | Academic/operational administration, admissions and admission payments, announcements, and non-finance reports, without finance, user management, settings, audit, or system access |
 | `teacher` | Assigned classes/subjects, attendance, assessments, published results |
 | `student` | Own academic, attendance, and finance data |
 | `parent` | Linked children's academic, attendance, and finance data |
+
+A super admin is accepted wherever an endpoint is authorized for `admin`; it
+also has exclusive access to finance routes, user administration, settings,
+audit logs, system maintenance, and the finance report/dashboard sections.
+Regular `admin` users keep access to admissions and admission payments.
 
 ### Access-control helpers
 
@@ -332,11 +338,15 @@ for dashboard cards and charts.
 ### System administration
 
 - User administration lists users, updates identity/status, resets passwords, and
-  deactivates accounts.
+  deactivates accounts. Creating administrative accounts (`admin`/
+  `super_admin`) and performing these operations is reserved for `super_admin`;
+  a concise active user directory is available to both admin roles for
+  communication audiences.
+- At least one active `super_admin` must remain. Self-deactivation is prohibited.
 - System settings provide a key/value store with public visibility control.
 - Audit logging captures mutations without exposing secrets.
 - Database/system info provides operational visibility without credentials.
-- Index synchronization exposes Mongoose `syncIndexes()` to admins.
+- Index synchronization exposes Mongoose `syncIndexes()` to super admins.
 
 ---
 
@@ -424,12 +434,14 @@ clear error if configuration is invalid.
 2. Configures DNS resolvers.
 3. Validates environment variables.
 4. Connects to MongoDB.
-5. Seeds the initial admin account if missing.
+5. Seeds the initial `super_admin` account; promotes an existing seeded admin if
+   no super admin exists.
 6. Starts the HTTP listener.
 7. Handles `SIGTERM` and `SIGINT` by closing the HTTP server gracefully.
 
-The initial admin seed logs “Admin account already exists” when the admin is
-present. Seeding does not overwrite an existing admin password.
+The initial seed logs “Admin account already exists” when a seeded admin is
+present. Seeding does not overwrite an existing admin password, but an existing
+admin is promoted to `super_admin` if no active super admin account exists.
 
 ---
 
@@ -438,10 +450,10 @@ present. Seeding does not overwrite an existing admin password.
 | Endpoint | Purpose |
 | --- | --- |
 | `GET /health` | Public liveness check |
-| `GET /api/v2/system/info` | Runtime, database, and record counts (admin) |
-| `GET /api/v2/system/database` | Storage and collection statistics (admin) |
-| `POST /api/v2/system/sync-indexes` | Model index synchronization (admin) |
-| `GET /api/v2/audit-logs` | Mutation audit trail (admin) |
+| `GET /api/v2/system/info` | Runtime, database, and record counts (super admin) |
+| `GET /api/v2/system/database` | Storage and collection statistics (super admin) |
+| `POST /api/v2/system/sync-indexes` | Model index synchronization (super admin) |
+| `GET /api/v2/audit-logs` | Mutation audit trail (super admin) |
 
 ---
 

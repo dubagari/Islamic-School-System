@@ -27,6 +27,7 @@ import {
     forbidden,
     notFound,
 } from "../utils/AppError.js";
+import { isAdminRole } from "../utils/roles.js";
 
 // ======================================================
 // Helpers
@@ -37,7 +38,7 @@ const assertClassAccessByRole = async (user, academicClassId) => {
         throw forbidden();
     }
 
-    if (user.role === "admin") {
+    if (isAdminRole(user.role)) {
         const academicClass = await AcademicClass.findById(
             academicClassId
         );
@@ -842,7 +843,7 @@ export const getTeacherAttendanceService = async (
         const teacher = await getTeacherForUser(user._id);
 
         filter.teacher = teacher._id;
-    } else if (user.role !== "admin") {
+    } else if (!isAdminRole(user.role)) {
         throw forbidden();
     }
 

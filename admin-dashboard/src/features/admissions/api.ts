@@ -73,10 +73,12 @@ export type RegisteredStudent = {
   middleName?: string;
   lastName: string;
   currentLevel?: string;
+  academicClass?: { _id: string; name?: string } | null;
 };
 
 export type StudentRegistrationResult = {
   student: RegisteredStudent;
+  academicClass?: { _id: string; name?: string } | null;
   login: {
     username: string;
     defaultPassword: string;
@@ -84,15 +86,7 @@ export type StudentRegistrationResult = {
   };
 };
 
-export type PaystackInitResult = {
-  authorizationUrl: string;
-  accessCode?: string;
-  reference: string;
-  amount: number;
-  applicationNumber?: string;
-};
 
-// ======================================================
 // Helpers
 // ======================================================
 
@@ -270,33 +264,6 @@ export const admissionsApi = baseApi.injectEndpoints({
       ],
     }),
 
-    initializePaystackPayment: build.mutation<
-      ApiEnvelope<PaystackInitResult>,
-      { applicationId: string; amount: number; email?: string }
-    >({
-      query: ({ applicationId, ...body }) => ({
-        url: `/admission-payments/paystack/initialize/${applicationId}`,
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: (_result, _error, { applicationId }) => [
-        "Admissions",
-        { type: "Admission", id: applicationId },
-      ],
-    }),
-
-    verifyPaystackPayment: build.mutation<
-      ApiEnvelope<AdmissionApplication>,
-      { reference: string }
-    >({
-      query: ({ reference }) => ({
-        url: "/admission-payments/paystack/verify",
-        method: "POST",
-        body: { reference },
-      }),
-      invalidatesTags: ["Admissions", "Admission"],
-    }),
-
     registerStudent: build.mutation<
       ApiEnvelope<StudentRegistrationResult>,
       string
@@ -320,8 +287,6 @@ const {
   useApproveAdmissionMutation,
   useRejectAdmissionMutation,
   useConfirmCashPaymentMutation,
-  useInitializePaystackPaymentMutation,
-  useVerifyPaystackPaymentMutation,
   useRegisterStudentMutation,
 } = admissionsApi;
 
@@ -332,7 +297,5 @@ export {
   useApproveAdmissionMutation,
   useRejectAdmissionMutation,
   useConfirmCashPaymentMutation,
-  useInitializePaystackPaymentMutation,
-  useVerifyPaystackPaymentMutation,
   useRegisterStudentMutation,
 };

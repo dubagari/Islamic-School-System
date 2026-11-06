@@ -27,7 +27,7 @@ function normalizeApiBaseUrl(url: string): string {
     : `${normalized}/api/v2`;
 }
 
-const API_BASE_URL = normalizeApiBaseUrl(configuredApiUrl);
+export const API_BASE_URL = normalizeApiBaseUrl(configuredApiUrl);
 
 export type ApiEnvelope<T> = {
   success: boolean;

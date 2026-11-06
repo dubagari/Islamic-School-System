@@ -88,8 +88,8 @@ export function Footer() {
             <a href={portalLinks.portal} className="hover:text-white">
               Student portal
             </a>
-            <a href={portalLinks.portalParent} className="hover:text-white">
-              Parent portal
+            <a href={portalLinks.portalTeacher} className="hover:text-white">
+              Teacher portal
             </a>
             <a href={portalLinks.admin} className="hover:text-white">
               Administration
