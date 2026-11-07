@@ -38,12 +38,15 @@ export const createTeacherController =    async (req, res, next) => {
 
 export const getTeachersController =    async (req, res, next) => {
         try {
-            const teachers =
-                await getTeachersService();
+            const result =
+                await getTeachersService(
+                    req.validatedQuery || req.query
+                );
 
             res.status(200).json({
                 success: true,
-                data: teachers,
+                data: result.data,
+                pagination: result.pagination,
             });
         } catch (error) {
             next(error);
@@ -153,11 +156,7 @@ export const deleteTeacherController =    async (req, res, next) => {
 
 export const getTeacherProfileController =    async (req, res, next) => {
         try {
-            console.log("TEACHER PROFILE CONTROLLER:", req.user._id);
-
             const teacher = await getTeacherProfileService(req.user._id);
-
-            console.log("TEACHER PROFILE RESULT:", teacher);
 
             res.status(200).json({
                 success: true,

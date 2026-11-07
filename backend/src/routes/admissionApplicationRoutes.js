@@ -1,4 +1,3 @@
-
 import express from "express";
 
 import {
@@ -6,53 +5,124 @@ import {
     getAdmissionApplicationsController,
     getAdmissionApplicationByIdController,
     getAdmissionApplicationByNumberController,
+    getAdmissionApplicationByNumberPdfController,
+    getAdmissionApplicationByIdPdfController,
     approveAdmissionApplicationController,
     rejectAdmissionApplicationController,
     updateAdmissionApplicationController,
 } from "../controllers/admissionApplicationController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    admissionApplicationQuerySchema,
+    admissionLookupQuerySchema,
+    createAdmissionApplicationSchema,
+    rejectAdmissionApplicationSchema,
+    updateAdmissionApplicationSchema,
+} from "../validators/admissionValidators.js";
+
 const router = express.Router();
 
 // ======================================================
-// Create Admission Application
+// Public - Submit Application
 // ======================================================
 
-router.post("/", createAdmissionApplicationController);
+router.post(
+    "/",
+    validate(createAdmissionApplicationSchema),
+    createAdmissionApplicationController
+);
 
 // ======================================================
-// Get All Admission Applications
+// Public - Check Application Status By Number
 // ======================================================
 
-router.get("/", getAdmissionApplicationsController);
+router.get(
+    "/number/:applicationNumber",
+    validate(admissionLookupQuerySchema, "query"),
+    getAdmissionApplicationByNumberController
+);
+
+router.get(
+    "/number/:applicationNumber/pdf",
+    validate(admissionLookupQuerySchema, "query"),
+    getAdmissionApplicationByNumberPdfController
+);
 
 // ======================================================
-// Get Application By Application Number
+// Admin - List Applications
 // ======================================================
 
-router.get("/number/:applicationNumber", getAdmissionApplicationByNumberController);
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(admissionApplicationQuerySchema, "query"),
+    getAdmissionApplicationsController
+);
 
 // ======================================================
-// Get Application By ID
+// Admin - Download Application PDF
 // ======================================================
 
-router.get("/:id", getAdmissionApplicationByIdController);
+router.get(
+    "/:id/pdf",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getAdmissionApplicationByIdPdfController
+);
 
 // ======================================================
-// Update Application
+// Admin - Get Application By ID
 // ======================================================
 
-router.patch("/:id", updateAdmissionApplicationController);
+router.get(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    getAdmissionApplicationByIdController
+);
 
 // ======================================================
-// Approve Application
+// Admin - Update Application
 // ======================================================
 
-router.patch("/:id/approve", approveAdmissionApplicationController);
+router.patch(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAdmissionApplicationSchema),
+    updateAdmissionApplicationController
+);
 
 // ======================================================
-// Reject Application
+// Admin - Approve Application
 // ======================================================
 
-router.patch("/:id/reject", rejectAdmissionApplicationController);
+router.patch(
+    "/:id/approve",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    approveAdmissionApplicationController
+);
+
+// ======================================================
+// Admin - Reject Application
+// ======================================================
+
+router.patch(
+    "/:id/reject",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(rejectAdmissionApplicationSchema),
+    rejectAdmissionApplicationController
+);
 
 export default router;

@@ -2,6 +2,9 @@ import bcrypt from "bcryptjs";
 
 import Student from "../models/Student.js";
 import User from "../models/User.js";
+import {
+    DEFAULT_STUDENT_PASSWORD,
+} from "./studentRegistrationService.js";
 
 // ======================================================
 // Admin - Reset Student Password
@@ -43,16 +46,10 @@ export const resetStudentPasswordService = async (
     }
 
     // --------------------------------------------------
-    // 4. Generate temporary password
-    //
-    // Example:
-    // 26/260001 → STU260001
+    // 4. Temporary password
     // --------------------------------------------------
 
-    const temporaryPassword =
-        `STU${student.registrationNumber
-            .replace(/\//g, "")
-            .slice(-6)}`;
+    const temporaryPassword = DEFAULT_STUDENT_PASSWORD;
 
     // --------------------------------------------------
     // 5. Hash temporary password

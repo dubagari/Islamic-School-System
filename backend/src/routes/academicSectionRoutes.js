@@ -8,10 +8,13 @@ import {
     deleteAcademicSectionController,
 } from "../controllers/academicSectionController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
 import {
-    protect,
-    authorize,
-} from "../middleware/authMiddleware.js";
+    createAcademicSectionSchema,
+    updateAcademicSectionSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
@@ -19,14 +22,38 @@ const router = express.Router();
 // Academic Section Routes
 // ======================================================
 
-router.post("/", protect, authorize("admin"), createAcademicSectionController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createAcademicSectionSchema),
+    createAcademicSectionController
+);
 
 router.get("/", protect, getAcademicSectionsController);
 
-router.get("/:id", protect, getAcademicSectionByIdController);
+router.get(
+    "/:id",
+    protect,
+    validate(idParam("id"), "params"),
+    getAcademicSectionByIdController
+);
 
-router.patch("/:id", protect, authorize("admin"), updateAcademicSectionController);
+router.patch(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAcademicSectionSchema),
+    updateAcademicSectionController
+);
 
-router.delete("/:id", protect, authorize("admin"), deleteAcademicSectionController);
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteAcademicSectionController
+);
 
 export default router;

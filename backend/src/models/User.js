@@ -29,9 +29,11 @@ const userSchema = new mongoose.Schema(
         role: {
             type: String,
             enum: [
+                "super_admin",
                 "admin",
                 "teacher",
                 "student",
+                "parent",
             ],
             required: true,
         },
@@ -45,6 +47,12 @@ const userSchema = new mongoose.Schema(
         student: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Student",
+            default: null,
+        },
+
+        parent: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Parent",
             default: null,
         },
 

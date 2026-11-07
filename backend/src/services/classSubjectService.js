@@ -174,22 +174,6 @@ export const createClassSubjectService = async (
     }
 
     // --------------------------------------------------
-    // Check Duplicate Course Code
-    // --------------------------------------------------
-
-    const existingCourseCode =
-        await ClassSubject.findOne({
-            courseCode,
-            academicSemester,
-        });
-
-    if (existingCourseCode) {
-        throw new Error(
-            "This course code already exists for this academic semester."
-        );
-    }
-
-    // --------------------------------------------------
     // Create Class Subject
     // --------------------------------------------------
 

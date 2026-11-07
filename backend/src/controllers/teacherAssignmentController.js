@@ -17,12 +17,11 @@ import {
 
 export const createTeacherAssignmentController =    async (req, res, next) => {
         try {
-
-           
             const assignment =
-                           await createTeacherAssignmentService(
-                    req.body
-                );
+                await createTeacherAssignmentService({
+                    ...req.body,
+                    assignedBy: req.user._id,
+                });
 
             res.status(201).json({
                 success: true,

@@ -1,8 +1,18 @@
 
 import Student from "../models/Student.js";
 import User from "../models/User.js";
+import AdmissionApplication from "../models/AdmissionApplication.js";
 
-import bcrypt from "bcryptjs";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
+import { buildSearchFilter } from "../utils/search.js";
+import {
+    badRequest,
+    forbidden,
+    notFound,
+} from "../utils/AppError.js";
 
 
 // ======================================================
@@ -10,20 +20,50 @@ import bcrypt from "bcryptjs";
 // Admin
 // ======================================================
 
-export const getAllStudentsService = async () => {
-    const students = await Student.find()
-        .populate(
-            "user",
-            "-password"
-        )
-        .populate(
-            "academicClass"
-        )
-        .sort({
-            createdAt: -1,
-        });
+export const getAllStudentsService = async (query = {}) => {
+    const { page, limit, skip } = getPagination(query);
 
-    return students;
+    const filter = {
+        ...buildSearchFilter(query.search, [
+            "registrationNumber",
+            "applicationNumber",
+            "firstName",
+            "middleName",
+            "lastName",
+            "phone",
+            "parentName",
+            "parentPhone",
+        ]),
+    };
+
+    if (query.status) {
+        filter.status = query.status;
+    }
+
+    if (query.isActive !== undefined) {
+        filter.isActive =
+            query.isActive === true || query.isActive === "true";
+    }
+
+    if (query.academicClass) {
+        filter.academicClass = query.academicClass;
+    }
+
+    if (query.paymentStatus) {
+        filter.paymentStatus = query.paymentStatus;
+    }
+
+    const [students, total] = await Promise.all([
+        Student.find(filter)
+            .populate("user", "-password")
+            .populate("academicClass")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Student.countDocuments(filter),
+    ]);
+
+    return paginatedResult(students, total, { page, limit });
 };
 
 // ======================================================
@@ -63,18 +103,8 @@ export const getStudentByIdService = async (
 export const getStudentProfileService = async (
     userId
 ) => {
-    console.log(
-        "PROFILE SERVICE - USER ID:",
-        userId
-    );
-
     const user =
         await User.findById(userId);
-
-    console.log(
-        "PROFILE SERVICE - USER:",
-        user
-    );
 
     if (!user) {
         throw new Error(
@@ -94,11 +124,6 @@ export const getStudentProfileService = async (
         );
     }
 
-    console.log(
-        "PROFILE SERVICE - STUDENT ID:",
-        user.student
-    );
-
     const student =
         await Student.findById(
             user.student
@@ -111,11 +136,6 @@ export const getStudentProfileService = async (
                 "academicClass"
             );
 
-    console.log(
-        "PROFILE SERVICE - STUDENT:",
-        student
-    );
-
     if (!student) {
         throw new Error(
             "Student profile not found."
@@ -125,103 +145,68 @@ export const getStudentProfileService = async (
     return student;
 };
 
-
 // ======================================================
-// Reset Student Password
-// Admin only
+// Get Own Admission Letter
+// Student (letter unlocks after the admission fee is paid)
 // ======================================================
 
-export const resetStudentPasswordService = async (
-    studentId
+export const getStudentAdmissionLetterService = async (
+    userId
 ) => {
-
-    // --------------------------------------------------
-    // 1. Find student
-    // --------------------------------------------------
-
-    const student =
-        await Student.findById(studentId);
-
-    if (!student) {
-        throw new Error(
-            "Student not found."
-        );
-    }
-
-    // --------------------------------------------------
-    // 2. Make sure student has a user account
-    // --------------------------------------------------
-
-    if (!student.user) {
-        throw new Error(
-            "Student does not have a user account."
-        );
-    }
-
-    // --------------------------------------------------
-    // 3. Find user account
-    // --------------------------------------------------
-
-    const user =
-        await User.findById(student.user);
+    const user = await User.findById(userId);
 
     if (!user) {
-        throw new Error(
-            "Student user account not found."
+        throw notFound("User account not found.");
+    }
+
+    if (user.role !== "student") {
+        throw forbidden(
+            "This account is not a student account."
         );
     }
 
-    // --------------------------------------------------
-    // 4. Generate temporary password
-    // Example: STU260002
-    // --------------------------------------------------
-
-    const temporaryPassword =
-        `STU${student.registrationNumber
-            .replace(/\//g, "")
-            .slice(-6)}`;
-
-    // --------------------------------------------------
-    // 5. Hash temporary password
-    // --------------------------------------------------
-
-    const hashedPassword =
-        await bcrypt.hash(
-            temporaryPassword,
-            10
+    if (!user.student) {
+        throw notFound(
+            "Student profile is not linked to this account."
         );
+    }
 
-    // --------------------------------------------------
-    // 6. Update user account
-    // --------------------------------------------------
+    const student = await Student.findById(user.student);
 
-    user.password = hashedPassword;
+    if (!student) {
+        throw notFound("Student profile not found.");
+    }
 
-    user.mustChangePassword = true;
+    const application =
+        (student.admissionApplication &&
+            (await AdmissionApplication.findById(
+                student.admissionApplication
+            ))) ||
+        (student.applicationNumber
+            ? await AdmissionApplication.findOne({
+                  applicationNumber: student.applicationNumber,
+              })
+            : null);
 
-    await user.save();
+    if (!application) {
+        throw notFound(
+            "No admission application is linked to your student record."
+        );
+    }
 
-    // --------------------------------------------------
-    // 7. Return reset information
-    // --------------------------------------------------
+    if (application.status !== "Approved") {
+        throw badRequest(
+            "This application has not been approved for admission."
+        );
+    }
 
-    return {
-        student: {
-            id: student._id,
-            fullName: student.fullName,
-            registrationNumber:
-                student.registrationNumber,
-        },
+    if (application.paymentStatus !== "Paid") {
+        throw badRequest(
+            "The admission letter unlocks once the admission fee is paid."
+        );
+    }
 
-        login: {
-            username:
-                user.username,
-
-            temporaryPassword,
-
-            mustChangePassword: true,
-        },
-    };
+    return application;
 };
 
 

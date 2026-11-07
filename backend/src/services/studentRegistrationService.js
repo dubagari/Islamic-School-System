@@ -1,39 +1,100 @@
 import bcrypt from "bcryptjs";
 
+import AcademicClass from "../models/AcademicClass.js";
+import AcademicLevel from "../models/AcademicLevel.js";
 import AdmissionApplication from "../models/AdmissionApplication.js";
 import Student from "../models/Student.js";
 import User from "../models/User.js";
 
+import { escapeRegex } from "../utils/search.js";
 import {
     generateStudentRegistrationNumber,
 } from "./studentRegistrationNumberService.js";
 
 // ======================================================
+// Convert the applicant's free-text level into a concrete
+// academic class where a single confident match exists.
+// ======================================================
+
+export const resolveAcademicClassForLevel = async (
+    applicationLevel
+) => {
+    const level = String(applicationLevel ?? "").trim();
+    if (!level) {
+        return null;
+    }
+
+    const levelRegex = new RegExp(
+        `^${escapeRegex(level)}$`,
+        "i"
+    );
+
+    // Prefer an exact class-name match.
+    const exactClass = await AcademicClass.findOne({
+        name: levelRegex,
+        isActive: true,
+    });
+
+    if (exactClass) {
+        return exactClass;
+    }
+
+    // Fall back to a unique matching academic level.
+    const matchingLevel = await AcademicLevel.findOne({
+        name: levelRegex,
+        isActive: true,
+    }).lean();
+
+    if (!matchingLevel) {
+        return null;
+    }
+
+    const levelClasses = await AcademicClass.find({
+        academicLevel: matchingLevel._id,
+        isActive: true,
+    })
+        .sort({ name: 1 })
+        .lean();
+
+    // Keep registration conservative: if several classes share the
+    // level, leave class assignment to admin.
+    return levelClasses.length === 1
+        ? levelClasses[0]
+        : null;
+};
+
+// ======================================================
+// Default student login
+// ======================================================
+
+export const DEFAULT_STUDENT_PASSWORD = "password";
+
+export const buildStudentLogin = (registrationNumber) => ({
+    username: registrationNumber,
+    defaultPassword: DEFAULT_STUDENT_PASSWORD,
+    mustChangePassword: true,
+});
+
+// ======================================================
 // Complete Student Registration
-// Called only after payment has been confirmed
+// Called only after payment has been confirmed.
+// Safe to call again; regenerating the same registration number
+// is prevented by the application claim below.
 // ======================================================
 
 export const completeStudentRegistrationService =
     async (applicationId) => {
 
         // --------------------------------------------------
-        // 1. Find admission application
+        // 1. Load application and verify prerequisites
         // --------------------------------------------------
 
         const application =
-            await AdmissionApplication.findById(
-                applicationId
-            );
+            await AdmissionApplication.findById(applicationId);
 
         if (!application) {
-            throw new Error(
-                "Admission application not found."
-            );
+            throw new Error("Admission application not found.");
         }
-
-        // --------------------------------------------------
-        // 2. Application must be approved
-        // --------------------------------------------------
 
         if (application.status !== "Approved") {
             throw new Error(
@@ -41,128 +102,132 @@ export const completeStudentRegistrationService =
             );
         }
 
-        // --------------------------------------------------
-        // 3. Payment must be completed
-        // --------------------------------------------------
-
-        if (
-            application.paymentStatus !== "Paid"
-        ) {
+        if (application.paymentStatus !== "Paid") {
             throw new Error(
                 "Payment must be completed before student registration."
             );
         }
 
         // --------------------------------------------------
-        // 4. Prevent duplicate registration
+        // 2. If an earlier call already claimed a number and
+        //    created the student, return the existing record.
         // --------------------------------------------------
 
-        if (application.registrationNumber) {
-            throw new Error(
-                "Student has already been registered."
-            );
+        const findExistingStudent = async () => {
+            if (!application.registrationNumber) {
+                return null;
+            }
+
+            return Student.findOne({
+                admissionApplication: application._id,
+                registrationNumber: application.registrationNumber,
+            });
+        };
+
+        let existingStudent = await findExistingStudent();
+        if (existingStudent) {
+            return {
+                student: existingStudent,
+                login: buildStudentLogin(
+                    application.registrationNumber
+                ),
+            };
         }
 
         // --------------------------------------------------
-        // 5. Generate registration number
-        // Example: 26/260001
+        // 3. Atomically claim the registration number so two
+        //    concurrent registrations cannot both win.
         // --------------------------------------------------
 
-        const registrationNumber =
-            await generateStudentRegistrationNumber();
+        let registrationNumber = application.registrationNumber;
+
+        if (!registrationNumber) {
+            const generated =
+                await generateStudentRegistrationNumber();
+
+            const claimed =
+                await AdmissionApplication.findOneAndUpdate(
+                    {
+                        _id: application._id,
+                        registrationNumber: null,
+                    },
+                    {
+                        $set: {
+                            registrationNumber: generated,
+                        },
+                    },
+                    {
+                        new: true,
+                    }
+                );
+
+            if (claimed) {
+                registrationNumber = claimed.registrationNumber;
+                application.registrationNumber = registrationNumber;
+            } else {
+                // Another request won the claim or an old number already
+                // exists in memory.
+                const refreshed =
+                    await AdmissionApplication.findById(application._id);
+                registrationNumber =
+                    refreshed?.registrationNumber ||
+                    application.registrationNumber;
+
+                if (!registrationNumber) {
+                    throw new Error(
+                        "Unable to lock this application for student registration."
+                    );
+                }
+
+                existingStudent = await findExistingStudent();
+                if (existingStudent) {
+                    return {
+                        student: existingStudent,
+                        login: buildStudentLogin(registrationNumber),
+                    };
+                }
+            }
+        }
 
         // --------------------------------------------------
-        // 6. Create Student
+        // 4. Create student
         // --------------------------------------------------
+
+        const matchedClass = await resolveAcademicClassForLevel(application.currentLevel);
 
         const student =
             await Student.create({
-                admissionApplication:
-                    application._id,
-
-                applicationNumber:
-                    application.applicationNumber,
-
+                admissionApplication: application._id,
+                applicationNumber: application.applicationNumber,
                 registrationNumber,
-
-                firstName:
-                    application.firstName,
-
-                middleName:
-                    application.middleName,
-
-                lastName:
-                    application.lastName,
-
-                gender:
-                    application.gender,
-
-                dateOfBirth:
-                    application.dateOfBirth,
-
-                email:
-                    application.email,
-
-                phone:
-                    application.phone,
-
-                address:
-                    application.address,
-
-                parentName:
-                    application.parentName,
-
-                parentPhone:
-                    application.parentPhone,
-
-                parentEmail:
-                    application.parentEmail,
-
-                relationship:
-                    application.relationship,
-
-                currentLevel:
-                    application.currentLevel,
-
-                previousMadrasa:
-                    application.previousMadrasa,
-
+                firstName: application.firstName,
+                middleName: application.middleName,
+                lastName: application.lastName,
+                gender: application.gender,
+                dateOfBirth: application.dateOfBirth,
+                email: application.email,
+                phone: application.phone,
+                address: application.address,
+                parentName: application.parentName,
+                parentPhone: application.parentPhone,
+                parentEmail: application.parentEmail,
+                relationship: application.relationship,
+                currentLevel: application.currentLevel,
+                previousMadrasa: application.previousMadrasa,
+                academicClass: matchedClass?._id || null,
                 status: "Active",
-
                 paymentStatus: "Paid",
-
-                paidAt:
-                    application.paidAt,
-
+                paidAt: application.paidAt,
                 isActive: true,
             });
 
         // --------------------------------------------------
-        // 7. Generate temporary password
+        // 5. Create student user
         // --------------------------------------------------
 
-        const defaultPassword =
-            `STU${registrationNumber
-                .replace(/\//g, "")
-                .slice(-6)}`;
-
+        const login = buildStudentLogin(registrationNumber);
         const hashedPassword =
-            await bcrypt.hash(
-                defaultPassword,
-                10
-            );
-
-
-
-        console.log("STUDENT LOGIN DEBUG:", {
-    registrationNumber,
-    defaultPassword,
-    hashedPassword,
-});
-
-        // --------------------------------------------------
-        // 8. Create Student User
-        // --------------------------------------------------
+            await bcrypt.hash(login.defaultPassword, 10);
 
         const user =
             await User.create({
@@ -174,57 +239,33 @@ export const completeStudentRegistrationService =
                     ]
                         .filter(Boolean)
                         .join(" "),
-
-                email:
-                    student.email,
-
-                username:
-                    student.registrationNumber,
-
-                password:
-                    hashedPassword,
-
+                email: student.email,
+                username: student.registrationNumber,
+                password: hashedPassword,
                 role: "student",
-
-                student:
-                    student._id,
-
-                mustChangePassword:
-                    true,
+                student: student._id,
+                mustChangePassword: true,
             });
 
         // --------------------------------------------------
-        // 9. Link User to Student
+        // 6. Link account back to student
         // --------------------------------------------------
 
         student.user = user._id;
-
         await student.save();
 
         // --------------------------------------------------
-        // 10. Update Admission Application
+        // 7. Re-fetch the application to expose the claimed
+        //    registration number to admin/payments flows.
         // --------------------------------------------------
 
-        application.registrationNumber =
-            registrationNumber;
-
-        await application.save();
-
-        // --------------------------------------------------
-        // 11. Return registration information
-        // --------------------------------------------------
+        const updatedApplication =
+            await AdmissionApplication.findById(application._id);
 
         return {
             student,
-
-            login: {
-                username:
-                    registrationNumber,
-
-                defaultPassword,
-
-                mustChangePassword:
-                    true,
-            },
+            application: updatedApplication,
+            academicClass: matchedClass || null,
+            login,
         };
     };

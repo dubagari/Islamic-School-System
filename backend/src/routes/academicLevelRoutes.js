@@ -8,10 +8,13 @@ import {
     deleteAcademicLevelController,
 } from "../controllers/academicLevelController.js";
 
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
 import {
-    protect,
-    authorize,
-} from "../middleware/authMiddleware.js";
+    createAcademicLevelSchema,
+    updateAcademicLevelSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
@@ -19,41 +22,37 @@ const router = express.Router();
 // Academic Level Routes
 // ======================================================
 
-// Create Academic Level
 router.post(
     "/",
     protect,
     authorize("admin"),
+    validate(createAcademicLevelSchema),
     createAcademicLevelController
 );
 
-// Get All Academic Levels
-router.get(
-    "/",
-    protect,
-    getAcademicLevelsController
-);
+router.get("/", protect, getAcademicLevelsController);
 
-// Get Academic Level By ID
 router.get(
     "/:id",
     protect,
+    validate(idParam("id"), "params"),
     getAcademicLevelByIdController
 );
 
-// Update Academic Level
 router.patch(
     "/:id",
     protect,
     authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAcademicLevelSchema),
     updateAcademicLevelController
 );
 
-// Delete Academic Level
 router.delete(
     "/:id",
     protect,
     authorize("admin"),
+    validate(idParam("id"), "params"),
     deleteAcademicLevelController
 );
 

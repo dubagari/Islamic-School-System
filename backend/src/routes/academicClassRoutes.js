@@ -9,9 +9,15 @@ import {
     deleteAcademicClassController,
     assignStudentToAcademicClassController,
 } from "../controllers/academicClassController.js";
+
 import { authorize, protect } from "../middleware/authMiddleware.js";
-
-
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    assignStudentToClassSchema,
+    createAcademicClassSchema,
+    updateAcademicClassSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
@@ -19,29 +25,52 @@ const router = express.Router();
 // Academic Class Routes
 // ======================================================
 
-// Create Academic Class
-router.post("/", protect, createAcademicClassController);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(createAcademicClassSchema),
+    createAcademicClassController
+);
 
-// Get All Academic Classes
 router.get("/", protect, getAcademicClassesController);
 
-// Get Academic Classes By Academic Level
-router.get("/level/:academicLevel", protect, getAcademicClassesByLevelController);
+router.get(
+    "/level/:academicLevel",
+    protect,
+    getAcademicClassesByLevelController
+);
 
-// ======================================================
-// Assign Student To Academic Class
-// Admin
-// ======================================================
+router.patch(
+    "/assign-student",
+    protect,
+    authorize("admin"),
+    validate(assignStudentToClassSchema),
+    assignStudentToAcademicClassController
+);
 
-router.patch("/assign-student", protect, authorize("admin"), assignStudentToAcademicClassController);
+router.get(
+    "/:id",
+    protect,
+    validate(idParam("id"), "params"),
+    getAcademicClassByIdController
+);
 
-// Get Academic Class By ID
-router.get("/:id", protect, getAcademicClassByIdController);
+router.put(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateAcademicClassSchema),
+    updateAcademicClassController
+);
 
-// Update Academic Class
-router.put("/:id", protect, updateAcademicClassController);
-
-// Delete Academic Class
-router.delete("/:id", protect, deleteAcademicClassController);
+router.delete(
+    "/:id",
+    protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    deleteAcademicClassController
+);
 
 export default router;

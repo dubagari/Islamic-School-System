@@ -9,49 +9,57 @@ import {
     deleteClassSubjectController,
 } from "../controllers/classSubjectController.js";
 
-import { protect } from "../middleware/authMiddleware.js";
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam } from "../validators/common.js";
+import {
+    createClassSubjectSchema,
+    updateClassSubjectSchema,
+} from "../validators/academicValidators.js";
 
 const router = express.Router();
 
 // ======================================================
-// Subject Routes
+// Class Subject Routes
 // ======================================================
 
-// Create Subject
-router.post("/", protect, createClassSubjectController);
-
-// Get All Subjects
-router.get(
+router.post(
     "/",
     protect,
-    getClassSubjectsController
+    authorize("admin"),
+    validate(createClassSubjectSchema),
+    createClassSubjectController
 );
 
-// Get Subjects By Section
+router.get("/", protect, getClassSubjectsController);
+
 router.get(
     "/section/:section",
     protect,
     getClassSubjectsBySectionController
 );
 
-// Get Subject By ID
 router.get(
     "/:id",
     protect,
+    validate(idParam("id"), "params"),
     getClassSubjectByIdController
 );
 
-// Update Subject
 router.put(
     "/:id",
     protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
+    validate(updateClassSubjectSchema),
     updateClassSubjectController
 );
 
-// Delete Subject
 router.delete(
     "/:id",
     protect,
+    authorize("admin"),
+    validate(idParam("id"), "params"),
     deleteClassSubjectController
 );
 

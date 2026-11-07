@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "Amiri", "Noto Naskh Arabic", serif;
+
+  /* Primary — deep emerald green */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+  --color-primary-950: #022c22;
+
+  /* Secondary — dark forest green */
+  --color-forest-50: #f2f7f4;
+  --color-forest-100: #dce9e0;
+  --color-forest-200: #b9d2c2;
+  --color-forest-300: #8db5a0;
+  --color-forest-400: #5f9079;
+  --color-forest-500: #3f7458;
+  --color-forest-600: #2f5c45;
+  --color-forest-700: #264939;
+  --color-forest-800: #1e3a2e;
+  --color-forest-900: #173125;
+  --color-forest-950: #0c1a13;
+
+  /* Accent — restrained gold */
+  --color-gold-50: #fdfbec;
+  --color-gold-100: #faf3c8;
+  --color-gold-200: #f3e39d;
+  --color-gold-300: #e9cf6b;
+  --color-gold-400: #dfb842;
+  --color-gold-500: #c99d2e;
+  --color-gold-600: #a97d20;
+  --color-gold-700: #855e19;
+  --color-gold-800: #6b4a19;
+  --color-gold-900: #5b3e18;
+
+  --color-ink-50: #f7f7f6;
+  --color-ink-100: #eaeae8;
+  --color-ink-200: #d6d6d3;
+  --color-ink-300: #b8b8b4;
+  --color-ink-400: #95958f;
+  --color-ink-500: #7a7a74;
+  --color-ink-600: #62625c;
+  --color-ink-700: #50504a;
+  --color-ink-800: #34342f;
+  --color-ink-900: #242420;
+  --color-ink-950: #14140f;
+
+  --shadow-card: 0 1px 2px 0 rgb(28 54 43 / 0.05), 0 1px 3px 0 rgb(28 54 43 / 0.06);
+  --shadow-pop: 0 4px 6px -1px rgb(28 54 43 / 0.08), 0 10px 20px -5px rgb(28 54 43 / 0.12);
+
+  --radius-card: 0.75rem;
+
+  --animate-fade-in: fade-in 0.15s ease-out;
+  --animate-scale-in: scale-in 0.15s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* Arabic typography for Qur'anic and Islamic content */
+.font-arabic {
+  font-family: var(--font-arabic);
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+html {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  @apply bg-forest-50 text-ink-800 antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 2px;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sidebar logo / decorative glyphs should not be translated */
+[translate="no"] {
+  translate: no;
+}
+
+/* Slim, unobtrusive scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-300) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-ink-200);
+  border-radius: 9999px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

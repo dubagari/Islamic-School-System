@@ -4,6 +4,11 @@ import bcrypt from "bcryptjs";
 import Teacher from "../models/Teacher.js";
 import User from "../models/User.js";
 import { generateNumber } from "./counterService.js";
+import {
+    getPagination,
+    paginatedResult,
+} from "../utils/pagination.js";
+import { buildSearchFilter } from "../utils/search.js";
 
 // ======================================================
 // Generate Default Password
@@ -181,15 +186,47 @@ export const createTeacherService = async (data) => {
 // Get All Teachers
 // ======================================================
 
-export const getTeachersService = async () => {
-    return await Teacher.find()
-        .populate(
-            "user",
-            "username email role isActive mustChangePassword lastLogin"
-        )
-        .sort({
-            createdAt: -1,
-        });
+export const getTeachersService = async (query = {}) => {
+    const { page, limit, skip } = getPagination(query);
+
+    const filter = {
+        ...buildSearchFilter(query.search, [
+            "teacherNumber",
+            "firstName",
+            "middleName",
+            "lastName",
+            "email",
+            "phone",
+            "specialization",
+        ]),
+    };
+
+    if (query.status) {
+        filter.status = query.status;
+    }
+
+    if (query.isActive !== undefined) {
+        filter.isActive =
+            query.isActive === true || query.isActive === "true";
+    }
+
+    if (query.employmentType) {
+        filter.employmentType = query.employmentType;
+    }
+
+    const [teachers, total] = await Promise.all([
+        Teacher.find(filter)
+            .populate(
+                "user",
+                "username email role isActive mustChangePassword lastLogin"
+            )
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Teacher.countDocuments(filter),
+    ]);
+
+    return paginatedResult(teachers, total, { page, limit });
 };
 
 // ======================================================

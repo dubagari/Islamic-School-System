@@ -60,18 +60,15 @@ classSubjectSchema.index(
 );
 
 // ======================================================
-// Prevent Duplicate Course Code
+// Course Code Lookup
 // ======================================================
+// Course codes are shared by all class arms in the same
+// level, so they are indexed but not unique.
 
-classSubjectSchema.index(
-    {
-        courseCode: 1,
-        academicSemester: 1,
-    },
-    {
-        unique: true,
-    }
-);
+classSubjectSchema.index({
+    courseCode: 1,
+    academicSemester: 1,
+});
 
 const ClassSubject =
     mongoose.model(

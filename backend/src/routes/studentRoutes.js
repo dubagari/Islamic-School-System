@@ -5,37 +5,58 @@ import {
     getStudentByIdController,
     getStudentProfileController,
     getStudentDashboardController,
+    getStudentAdmissionLetterController,
 } from "../controllers/studentController.js";
 
-import {
-    protect,
-    authorize,
-} from "../middleware/authMiddleware.js";
+import { authorize, protect } from "../middleware/authMiddleware.js";
+import validate from "../middleware/validate.js";
+import { idParam, paginationQuery } from "../validators/common.js";
 
 const router = express.Router();
 
 // ======================================================
-// Student - Get Dashboard
+// Student - Self Service
 // ======================================================
 
-router.get("/dashboard", protect, authorize("student"), getStudentDashboardController);
+router.get(
+    "/dashboard",
+    protect,
+    authorize("student"),
+    getStudentDashboardController
+);
+
+router.get(
+    "/profile",
+    protect,
+    authorize("student"),
+    getStudentProfileController
+);
+
+router.get(
+    "/me/admission-letter",
+    protect,
+    authorize("student"),
+    getStudentAdmissionLetterController
+);
 
 // ======================================================
-// Student - Get Own Profile
+// Admin - Student Management
 // ======================================================
 
-router.get("/profile", protect, authorize("student"), getStudentProfileController);
+router.get(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(paginationQuery, "query"),
+    getAllStudentsController
+);
 
-// ======================================================
-// Admin - Get All Students
-// ======================================================
-
-router.get("/", protect, authorize("admin"), getAllStudentsController);
-
-// ======================================================
-// Admin - Get Student By ID
-// ======================================================
-
-router.get("/:studentId", protect, authorize("admin"), getStudentByIdController);
+router.get(
+    "/:studentId",
+    protect,
+    authorize("admin"),
+    validate(idParam("studentId"), "params"),
+    getStudentByIdController
+);
 
 export default router;
